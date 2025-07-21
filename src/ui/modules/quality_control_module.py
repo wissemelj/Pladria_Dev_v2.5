@@ -46,6 +46,25 @@ class QualityControlModule:
         self.progress_var = None
         self.progress_bar = None
         self.status_label = None
+        self.status_icon = None
+
+        # Labels d'information des fichiers
+        self.qgis_info_label = None
+        self.suivi_info_label = None
+
+        # Boutons d'interface
+        self.analyze_button = None
+        self.export_button = None
+        self.results_label = None
+        self.results_frame = None
+
+        # Indicateurs de statut
+        self.files_status = None
+        self.analysis_status = None
+        self.report_status = None
+
+        # Dictionnaire pour stocker les affichages d'informations
+        self.info_displays = {}
 
         # Variables de sélection
         self.collaborator_var = tk.StringVar()
@@ -77,16 +96,16 @@ class QualityControlModule:
             self.main_frame.grid_rowconfigure(2, weight=0)  # Status compact
             self.main_frame.grid_columnconfigure(0, weight=1)
 
-            # Header ultra-compact
-            self._create_ultra_compact_header()
+            # Interface utilisateur modernisée et améliorée
+            self._create_enhanced_header()
 
-            # Contenu principal en grille 2x2
-            self._create_compact_main_content()
+            # Contenu principal en grille 2x2 avec design amélioré
+            self._create_enhanced_main_content()
 
-            # Status bar ultra-compact
-            self._create_ultra_compact_status()
+            # Barre de statut modernisée
+            self._create_enhanced_status_bar()
 
-            self.logger.info("Interface utilisateur ultra-compacte créée avec succès")
+            self.logger.info("Interface utilisateur modernisée créée avec succès")
 
         except Exception as e:
             self.logger.error(f"Erreur lors de la création de l'interface QC: {e}")
@@ -268,9 +287,9 @@ class QualityControlModule:
         tk.Label(header, text=f"{label}:", font=("Segoe UI", 7, "bold"),
                 fg=COLORS['TEXT_PRIMARY'], bg=COLORS['CARD']).pack(side=tk.LEFT, padx=(2, 0))
 
-        # Valeur
+        # Valeur - Texte en noir
         value_label = tk.Label(field_frame, textvariable=var, font=("Segoe UI", 7),
-                              fg=COLORS['INFO'], bg=COLORS['CARD'], anchor='w')
+                              fg=COLORS['TEXT_PRIMARY'], bg=COLORS['CARD'], anchor='w')  # Changé de INFO à TEXT_PRIMARY
         value_label.pack(fill=tk.X)
 
         # Stocker pour mise à jour
@@ -761,12 +780,12 @@ class QualityControlModule:
         )
         label_text.pack(side=tk.LEFT, padx=(5, 0))
 
-        # Valeur détectée
+        # Valeur détectée - Texte en noir
         value_label = tk.Label(
             field_frame,
             textvariable=var,
             font=UIConfig.FONT_SMALL,
-            fg=COLORS['INFO'],
+            fg=COLORS['TEXT_PRIMARY'],  # Changé de INFO à TEXT_PRIMARY pour texte noir
             bg=COLORS['CARD'],
             anchor='w'
         )
@@ -1063,8 +1082,15 @@ class QualityControlModule:
             if not file_path:
                 return
 
-            self._update_status("waiting", "Chargement du fichier QGis...")
-            self.progress_var.set(10)
+            # Utiliser les nouvelles améliorations visuelles si disponibles
+            try:
+                self._update_status_with_animation("Chargement du fichier QGis...", "📂", COLORS['INFO'])
+                self._update_progress_bar(10)
+            except:
+                # Fallback vers l'ancienne méthode
+                self._update_status("waiting", "Chargement du fichier QGis...")
+                if hasattr(self, 'progress_var') and self.progress_var:
+                    self.progress_var.set(10)
 
             def load_qgis():
                 pd = get_pandas()
@@ -1087,8 +1113,21 @@ class QualityControlModule:
                     text=f"✅ {filename} ({len(df)} lignes)",
                     fg=COLORS['SUCCESS']
                 )
-                self._update_status("success", "Fichier QGis chargé avec succès")
-                self.progress_var.set(0)
+                # Utiliser les nouvelles améliorations visuelles si disponibles
+                try:
+                    self._update_status_with_animation("Fichier QGis chargé avec succès", "✅", COLORS['SUCCESS'])
+                    self._update_progress_bar(100)
+                    # Réinitialiser la barre après un délai
+                    if self.main_frame and self.main_frame.winfo_exists():
+                        self.main_frame.after(2000, lambda: self._update_progress_bar(0))
+                except:
+                    # Fallback vers l'ancienne méthode
+                    self._update_status("success", "Fichier QGis chargé avec succès")
+
+                # Mettre à jour les indicateurs de statut
+                if hasattr(self, 'files_status'):
+                    self.files_status.config(text="📁 Fichiers: QGis chargé", fg=COLORS['SUCCESS'])
+
                 self._update_file_indicators()
                 self._check_analysis_ready()
                 self.logger.info(f"Fichier QGis chargé: {filename}")
@@ -1098,8 +1137,18 @@ class QualityControlModule:
                     text="❌ Erreur de chargement",
                     fg=COLORS['ERROR']
                 )
-                self._update_status("error", "Erreur lors du chargement QGis")
-                self.progress_var.set(0)
+                # Utiliser les nouvelles améliorations visuelles si disponibles
+                try:
+                    self._update_status_with_animation("Erreur lors du chargement QGis", "❌", COLORS['ERROR'])
+                    self._update_progress_bar(0)
+                except:
+                    # Fallback vers l'ancienne méthode
+                    self._update_status("error", "Erreur lors du chargement QGis")
+
+                # Mettre à jour les indicateurs de statut
+                if hasattr(self, 'files_status'):
+                    self.files_status.config(text="📁 Fichiers: Erreur QGis", fg=COLORS['ERROR'])
+
                 self._update_file_indicators()
                 messagebox.showerror("Erreur", f"Impossible de charger le fichier QGis:\n{error}")
                 self.logger.error(f"Erreur chargement QGis: {error}")
@@ -1126,8 +1175,15 @@ class QualityControlModule:
             if not file_path:
                 return
 
-            self._update_status("waiting", "Chargement du fichier suivi...")
-            self.progress_var.set(10)
+            # Utiliser les nouvelles améliorations visuelles si disponibles
+            try:
+                self._update_status_with_animation("Chargement du fichier suivi...", "📋", COLORS['INFO'])
+                self._update_progress_bar(10)
+            except:
+                # Fallback vers l'ancienne méthode
+                self._update_status("waiting", "Chargement du fichier suivi...")
+                if hasattr(self, 'progress_var') and self.progress_var:
+                    self.progress_var.set(10)
 
             def load_suivi():
                 pd = get_pandas()
@@ -1152,13 +1208,23 @@ class QualityControlModule:
                 self.insee_var.set(detected_info.get('insee', 'Non détecté'))
                 self.id_tache_var.set(detected_info.get('id_tache', 'Non détecté'))
 
+                # Évaluer et afficher le statut de conformité si des résultats QC existent
+                if hasattr(self, 'qc_results') and self.qc_results:
+                    evaluation_commune = self._evaluate_commune_status()
+                    self._display_commune_status(evaluation_commune)
+
                 filename = os.path.basename(file_path)
                 self.suivi_info_label.config(
                     text=f"✅ {filename} ({len(df)} lignes)",
                     fg=COLORS['SUCCESS']
                 )
                 self._update_status("success", "Fichier suivi chargé avec succès")
-                self.progress_var.set(0)
+                # Réinitialiser la barre de progression de manière sécurisée
+                try:
+                    self._update_progress_bar(0)
+                except:
+                    if hasattr(self, 'progress_var') and self.progress_var is not None:
+                        self.progress_var.set(0)
                 self._update_file_indicators()
                 self._check_analysis_ready()
                 self.logger.info(f"Fichier suivi chargé: {filename}")
@@ -1170,7 +1236,12 @@ class QualityControlModule:
                     fg=COLORS['ERROR']
                 )
                 self._update_status("error", "Erreur lors du chargement suivi")
-                self.progress_var.set(0)
+                # Réinitialiser la barre de progression de manière sécurisée
+                try:
+                    self._update_progress_bar(0)
+                except:
+                    if hasattr(self, 'progress_var') and self.progress_var is not None:
+                        self.progress_var.set(0)
                 self._update_file_indicators()
                 messagebox.showerror("Erreur", f"Impossible de charger le fichier suivi:\n{error}")
                 self.logger.error(f"Erreur chargement suivi: {error}")
@@ -1523,13 +1594,23 @@ class QualityControlModule:
     
     def _run_quality_analysis(self):
         """Lance l'analyse de contrôle qualité."""
+        # Vérifier le mode sélectionné
+        if self.is_autoevaluation_mode():
+            if not self._handle_future_functionality("Analyse Autoévaluation"):
+                return
+
         if not self._check_analysis_ready():
             messagebox.showwarning("Attention", "Veuillez charger tous les fichiers requis avant de lancer l'analyse.")
             return
 
         try:
             self._update_status("waiting", "Analyse en cours...")
-            self.progress_var.set(10)
+            # Mettre à jour la barre de progression de manière sécurisée
+            try:
+                self._update_progress_bar(10)
+            except:
+                if hasattr(self, 'progress_var') and self.progress_var is not None:
+                    self.progress_var.set(10)
 
             def run_analysis():
                 results = {
@@ -1558,14 +1639,24 @@ class QualityControlModule:
                 if hasattr(self, 'report_status'):
                     self.report_status.config(text="📊 Rapport: ⚠️ Prêt", fg=COLORS['WARNING'])
 
-                self.progress_var.set(100)
+                # Mettre à jour la barre de progression de manière sécurisée
+                try:
+                    self._update_progress_bar(100)
+                except:
+                    if hasattr(self, 'progress_var') and self.progress_var is not None:
+                        self.progress_var.set(100)
                 self.logger.info("Analyse qualité terminée")
 
             def on_error(error):
                 self._update_status("error", "Erreur lors de l'analyse")
                 if hasattr(self, 'analysis_status'):
                     self.analysis_status.config(text="🔍 Analyse: ❌ Erreur", fg=COLORS['ERROR'])
-                self.progress_var.set(0)
+                # Réinitialiser la barre de progression de manière sécurisée
+                try:
+                    self._update_progress_bar(0)
+                except:
+                    if hasattr(self, 'progress_var') and self.progress_var is not None:
+                        self.progress_var.set(0)
                 messagebox.showerror("Erreur", f"Erreur lors de l'analyse:\n{error}")
                 self.logger.error(f"Erreur analyse qualité: {error}")
 
@@ -2362,7 +2453,12 @@ class QualityControlModule:
                 return
 
             self._update_status("waiting", "Génération du rapport...")
-            self.progress_var.set(50)
+            # Mettre à jour la barre de progression de manière sécurisée
+            try:
+                self._update_progress_bar(50)
+            except:
+                if hasattr(self, 'progress_var') and self.progress_var is not None:
+                    self.progress_var.set(50)
 
             def generate_report():
                 return self._generate_excel_report(file_path)
@@ -2372,17 +2468,32 @@ class QualityControlModule:
                     self._update_status("success", "Rapport exporté avec succès")
                     if hasattr(self, 'report_status'):
                         self.report_status.config(text="📊 Rapport: ✅ Exporté", fg=COLORS['SUCCESS'])
-                    self.progress_var.set(100)
+                    # Mettre à jour la barre de progression de manière sécurisée
+                    try:
+                        self._update_progress_bar(100)
+                    except:
+                        if hasattr(self, 'progress_var') and self.progress_var is not None:
+                            self.progress_var.set(100)
                     messagebox.showinfo("Succès", f"Rapport exporté vers:\n{file_path}")
                     self.logger.info(f"Rapport exporté: {file_path}")
                 else:
                     self._update_status("error", "Erreur lors de l'export")
-                    self.progress_var.set(0)
+                    # Réinitialiser la barre de progression de manière sécurisée
+                    try:
+                        self._update_progress_bar(0)
+                    except:
+                        if hasattr(self, 'progress_var') and self.progress_var is not None:
+                            self.progress_var.set(0)
                     messagebox.showerror("Erreur", "Échec de la génération du rapport Excel.\nVérifiez les logs pour plus de détails.")
 
             def on_error(error):
                 self._update_status("error", "Erreur lors de l'export")
-                self.progress_var.set(0)
+                # Réinitialiser la barre de progression de manière sécurisée
+                try:
+                    self._update_progress_bar(0)
+                except:
+                    if hasattr(self, 'progress_var') and self.progress_var is not None:
+                        self.progress_var.set(0)
                 error_msg = f"Erreur lors de l'export:\n{str(error)}"
                 if len(error_msg) > 200:
                     error_msg = error_msg[:200] + "...\n\nVoir les logs pour plus de détails."
@@ -2401,6 +2512,11 @@ class QualityControlModule:
     def _generate_excel_report(self, file_path: str) -> bool:
         """Génère le rapport Excel avec 2 feuilles."""
         try:
+            # Vérifier le mode sélectionné
+            if self.is_autoevaluation_mode():
+                if not self._handle_future_functionality("Génération Rapport Autoévaluation"):
+                    return False
+
             self.logger.info(f"Début génération rapport Excel: {file_path}")
 
             # Vérifier que les résultats QC existent
@@ -2417,12 +2533,12 @@ class QualityControlModule:
                 os.makedirs(directory, exist_ok=True)
                 self.logger.info(f"Répertoire créé: {directory}")
 
-            # Générer les données des 3 feuilles d'abord
-            page1_data, page2_data, page3_data = self._prepare_excel_data()
-            self.logger.info("Données Excel préparées pour 3 feuilles")
+            # Générer les données des 4 feuilles d'abord
+            page1_data, page2_data, page3_data, page4_data = self._prepare_excel_data()
+            self.logger.info("Données Excel préparées pour 4 feuilles")
 
             # Créer le fichier Excel de manière isolée
-            success = self._write_excel_file(file_path, page1_data, page2_data, page3_data)
+            success = self._write_excel_file(file_path, page1_data, page2_data, page3_data, page4_data)
 
             if success:
                 # Vérifier que le fichier a été créé
@@ -2442,7 +2558,7 @@ class QualityControlModule:
             return False
 
     def _prepare_excel_data(self):
-        """Prépare les données pour les 3 feuilles Excel selon la nouvelle structure."""
+        """Prépare les données pour les 4 feuilles Excel selon la nouvelle structure."""
         try:
             summary = self.qc_results.get('summary', {})
             commune = summary.get('commune', 'COMMUNE')
@@ -2453,31 +2569,85 @@ class QualityControlModule:
             cms_total = summary.get('cms_total', '')
             pa_total = summary.get('pa_total', '')
 
-            # Page 1: Structure selon le nouveau modèle avec sections étendues
+            # Page 1: Structure améliorée avec en-tête professionnel et métadonnées
+            from datetime import datetime
+
+            # Évaluer le statut de conformité de la commune
+            evaluation_commune = self._evaluate_commune_status()
+            statut_commune = evaluation_commune['statut']
+            pourcentage_conformite = evaluation_commune['pourcentage_conformite']
+            raisons_ko = evaluation_commune['raisons_ko']
+            fautes_majeures = evaluation_commune['fautes_majeures']
+
+            # Calculer les statistiques globales pour l'en-tête
+            total_errors = sum([
+                self.qc_results.get('critere_0', {}).get('total_incoherences', 0),
+                self.qc_results.get('critere_2', {}).get('total_errors', 0),
+                self.qc_results.get('critere_3', {}).get('total_erreurs_detectees', 0),
+                self.qc_results.get('critere_4', {}).get('total_ad_a_analyser', 0)
+            ]) if self.qc_results else 0
+
+            # Déterminer le statut qualité global basé sur la conformité
+            fichiers_manquants = evaluation_commune.get('fichiers_manquants', False)
+
+            if statut_commune == "OK":
+                if pourcentage_conformite >= 95:
+                    statut_qualite = "EXCELLENT"
+                    statut_couleur = "SUCCESS"
+                else:
+                    statut_qualite = "BON"
+                    statut_couleur = "SUCCESS"
+            else:  # statut_commune == "KO"
+                if fichiers_manquants:
+                    statut_qualite = "FICHIERS MANQUANTS"
+                    statut_couleur = "ERROR"
+                elif fautes_majeures:
+                    statut_qualite = "CRITIQUE"
+                    statut_couleur = "ERROR"
+                else:
+                    statut_qualite = "À AMÉLIORER"
+                    statut_couleur = "ERROR"
+
             page1_data = [
-                # En-tête principal (ligne 1-2)
-                ['Nom de commune', 'ID tâche Plan Adressage', 'Code INSEE', 'Domaine', 'AFFECTATION', 'Controleur', '', '', '', ''],
+                # En-tête professionnel avec titre (ligne 1)
+                ['RAPPORT DE CONTRÔLE QUALITÉ - PLAN ADRESSAGE', '', '', '', f'STATUT: {statut_qualite}', f'ERREURS: {total_errors}', '', '', '', ''],
+
+                # Métadonnées d'analyse avec statut de conformité (ligne 2)
+                [f'Date: {datetime.now().strftime("%d/%m/%Y %H:%M")}', '', '', '', f'Analysé par: Module 5', f'Version: 3.0', '', '', '', ''],
+
+                # Statut de conformité de la commune (ligne 3)
+                [f'STATUT COMMUNE: {statut_commune}', f'CONFORMITÉ: {pourcentage_conformite:.1f}%', f'SEUIL: 90%', '', f'FAUTES MAJEURES: {len(fautes_majeures)}', '', '', '', '', ''],
+
+                # Ligne de séparation (ligne 4)
+                ['═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════', '', '', '', '', '', '', '', '', ''],
+
+                # Informations de base (ligne 5-7)
+                ['INFORMATIONS GÉNÉRALES', '', '', '', '', '', '', '', '', ''],
+                ['Nom de commune', 'ID tâche Plan Adressage', 'Code INSEE', 'Domaine', 'AFFECTATION', 'Contrôleur', '', '', '', ''],
                 [commune, id_tache, insee, domaine, collaborateur, '', '', '', '', ''],  # Collaborateur depuis colonne U, Contrôleur vide
                 ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
 
-                # Section CMS (lignes 4-5) - Avec formules Excel dynamiques
-                ['Nbr voies CMS Total', 'Nbr voies CMS Controllé', 'Nbr voies KO', '% Erreur CMS', '', '', '', '', '', ''],
-                [cms_total, '', '=SUMPRODUCT(--(\'Controle Qualité CMS\'!A2:A1000<>""))', '=IF(A5=0,0,C5/A5)', '', '', '', '', '', ''],  # Formules dynamiques - SUMPRODUCT compte seulement les cellules vraiment non vides
+                # Section CMS avec indicateurs visuels et calculs automatiques (lignes 8-10)
+                ['CONTRÔLE QUALITÉ CMS (Voies)', '', '', '', '', '', '', '', '', ''],
+                ['Nbr voies CMS Total', 'Nbr voies CMS Contrôlé', 'Nbr erreurs CMS détectées', '% Erreur CMS', 'Indicateur Qualité', 'Objectif: <5%', 'Statut Global CMS', '', '', ''],
+                [cms_total, '=COUNTA(Controle_Qualite_CMS.A2:A1000)-COUNTBLANK(Controle_Qualite_CMS.A2:A1000)', '=COUNTA(Controle_Qualite_CMS.C2:C1000)-COUNTBLANK(Controle_Qualite_CMS.C2:C1000)', '=IF(B9=0,0,C9/B9)', '=IF(D9<0.05,"EXCELLENT",IF(D9<0.1,"ACCEPTABLE","À CORRIGER"))', '< 5%', '=IF(D9<0.05,"CONFORME","NON CONFORME")', '', '', ''],  # Formules automatiques améliorées
                 ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
 
-                # Section PA (lignes 7-8)
-                ['Nbr IMB PA Total', 'Nbr IMB PA Controllé', 'Nbr IMB PA KO', '% Erreur PA', '', '', '', '', '', ''],
-                [pa_total, '', '=SUMPRODUCT(--(\'Controle Qualité PA\'!A2:A1000<>""))', '=IF(A8=0,0,C8/A8)', '', '', '', '', '', ''],  # Total PA depuis colonne H + formule pour compter seulement les codes IMB vraiment présents de la page 3 + formule % Erreur PA
+                # Section PA avec indicateurs visuels (lignes 12-14)
+                ['CONTRÔLE QUALITÉ PA (Adresses)', '', '', '', '', '', '', '', '', ''],
+                ['Nbr IMB PA Total', 'Nbr IMB PA Contrôlé', 'Nbr IMB PA KO', '% Erreur PA', 'Indicateur Qualité', 'Objectif: <3%', '', '', '', ''],
+                [pa_total, '', '=COUNTA(Controle_Qualite_PA.A2:A1000)', '=IF(A13=0,0,C13/A13)', '=IF(D13<0.03,"EXCELLENT",IF(D13<0.05,"ACCEPTABLE","À CORRIGER"))', '< 3%', '', '', '', ''],  # Formule avec indicateur visuel
                 ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
 
-                # Section Tickets (lignes 10-11)
-                ['Ticket 501/511', 'Ticket UPR', '% Erreur Banbou', '', '', '', '', '', '', ''],
+                # Section Tickets avec statuts améliorés (lignes 16-17)
+                ['STATUT DES TICKETS', '', '', '', '', '', '', '', '', ''],
+                ['Ticket 501/511', 'Ticket UPR', '% Erreur Banbou', 'Statut Global', 'Dernière MAJ', '', '', '', '', ''],
             ]
 
             # Calculer les pourcentages avec pondérations (pour les valeurs statiques)
             resume_erreurs_data = self._calculate_resume_erreurs()
 
-            # Remplir les statuts des tickets et calculer % Erreur Banbou
+            # Remplir les statuts des tickets et calculer % Erreur Banbou avec métadonnées
             if self.qc_results and 'critere_2' in self.qc_results:
                 critere_2 = self.qc_results['critere_2']
                 ticket_501_511_status = critere_2.get('ticket_501_511_status', '')
@@ -2487,10 +2657,18 @@ class QualityControlModule:
                 erreur_banbou_percentage = self._calculate_erreur_banbou_percentage()
                 erreur_banbou_str = f"{erreur_banbou_percentage:.0f}%"
 
-                page1_data.append([ticket_501_511_status, ticket_upr_status, erreur_banbou_str, '', '', '', 'Résumé Erreurs', '', '', ''])
+                # Déterminer le statut global des tickets
+                if ticket_501_511_status == "OK" and ticket_upr_status == "OK":
+                    statut_global = "✅ CONFORME"
+                elif ticket_501_511_status == "NOK" or ticket_upr_status == "NOK":
+                    statut_global = "❌ NON CONFORME"
+                else:
+                    statut_global = "⚠️ À VÉRIFIER"
+
+                page1_data.append([ticket_501_511_status, ticket_upr_status, erreur_banbou_str, statut_global, datetime.now().strftime("%d/%m/%Y"), '', 'RÉSUMÉ ERREURS', '', '', ''])
             else:
                 # Pas de données d'analyse, afficher vides
-                page1_data.append(['', '', '', '', '', '', 'Résumé Erreurs', '', '', ''])
+                page1_data.append(['', '', '', 'EN ATTENTE', datetime.now().strftime("%d/%m/%Y"), '', 'RÉSUMÉ ERREURS', '', '', ''])
 
             # Préparer les données d'écart Plan Adressage
             motifs_data = []
@@ -2517,35 +2695,110 @@ class QualityControlModule:
                 for motif in motifs_ordre:
                     motifs_data.append([motif, '', ''])
 
-            # Section Ecart Plan Adressage et résumé erreurs intégrés avec formules Excel dynamiques
+            # Section Ecart Plan Adressage avec en-têtes améliorés et résumé erreurs intégrés
             page1_data.extend([
-                ['', '', '', '', '', '', '% Erreur Par Catégorie', '% Brut', 'Pondération', 'Taux'],  # Ligne 12 - En-tête avec nouvelle colonne
-                ['Ecart Plan Adressage', '', '', '', '', '', '% Erreur CMS', '=D5', resume_erreurs_data['ponderation_cms'], '=H13*I13'],  # Ligne 13 - Formule pour % CMS
-                ['Motif', 'Suivi', 'Resultats Qgis', '', '', '', '% Erreur PA', '=D8', resume_erreurs_data['ponderation_pa'], '=H14*I14'],  # Ligne 14 - Formule pour référencer % Erreur PA
-                [motifs_data[0][0], motifs_data[0][1], motifs_data[0][2], '', '', '', '% Erreur Banbou', resume_erreurs_data['pourcentage_banbou_brut'], resume_erreurs_data['ponderation_banbou'], '=H15*I15'],  # Ligne 15 - Ad Ras
-                [motifs_data[1][0], motifs_data[1][1], motifs_data[1][2], '', '', '', '% Ecart Plan Adressage', resume_erreurs_data['pourcentage_ecart_brut'], resume_erreurs_data['ponderation_ecart'], '=H16*I16'],  # Ligne 16 - Ok
-                [motifs_data[2][0], motifs_data[2][1], motifs_data[2][2], '', '', '', '% Total', '', '', '=J13+J14+J15+J16'],  # Ligne 17 - Nok (formule pour total)
-                [motifs_data[3][0], motifs_data[3][1], motifs_data[3][2], '', '', '', '', '', '', ''],  # Ligne 18 - Upr Ras
-                [motifs_data[4][0], motifs_data[4][1], motifs_data[4][2], '', '', '', '', '', '', ''],  # Ligne 19 - Upr Ok
-                [motifs_data[5][0], motifs_data[5][1], motifs_data[5][2], '', '', '', '', '', '', ''],  # Ligne 20 - Upr Nok
-                [motifs_data[6][0], motifs_data[6][1], motifs_data[6][2], '', '', '', '', '', '', ''],  # Ligne 21 - Hors Commune
+                ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
+                ['ANALYSE DÉTAILLÉE - ÉCART PLAN ADRESSAGE', '', '', '', '', '', 'SYNTHÈSE QUALITÉ', '', '', ''],  # Ligne 20 - Titre des sections
+                ['Motif', 'Suivi', 'QGis', 'Écart', 'Statut', '', 'Catégorie d\'Erreur', '% Brut', 'Pondération', 'Score'],  # Ligne 21 - En-têtes améliorés
+
+                # Données des motifs avec calculs d'écart et statuts
+                [motifs_data[0][0], motifs_data[0][1], motifs_data[0][2],
+                 f'=ABS(B22-C22)' if motifs_data[0][1] and motifs_data[0][2] else '',
+                 f'=IF(D22=0,"OK",IF(D22<=2,"MINEUR","MAJEUR"))' if motifs_data[0][1] and motifs_data[0][2] else '',
+                 '', '% Erreur CMS', '=D9', resume_erreurs_data['ponderation_cms'], '=H22*I22'],  # Ad Ras
+
+                [motifs_data[1][0], motifs_data[1][1], motifs_data[1][2],
+                 f'=ABS(B23-C23)' if motifs_data[1][1] and motifs_data[1][2] else '',
+                 f'=IF(D23=0,"OK",IF(D23<=2,"MINEUR","MAJEUR"))' if motifs_data[1][1] and motifs_data[1][2] else '',
+                 '', '% Erreur PA', '=D13', resume_erreurs_data['ponderation_pa'], '=H23*I23'],  # Ok
+
+                [motifs_data[2][0], motifs_data[2][1], motifs_data[2][2],
+                 f'=ABS(B24-C24)' if motifs_data[2][1] and motifs_data[2][2] else '',
+                 f'=IF(D24=0,"OK",IF(D24<=2,"MINEUR","MAJEUR"))' if motifs_data[2][1] and motifs_data[2][2] else '',
+                 '', '% Erreur Banbou', resume_erreurs_data['pourcentage_banbou_brut'], resume_erreurs_data['ponderation_banbou'], '=H24*I24'],  # Nok
+
+                [motifs_data[3][0], motifs_data[3][1], motifs_data[3][2],
+                 f'=ABS(B25-C25)' if motifs_data[3][1] and motifs_data[3][2] else '',
+                 f'=IF(D25=0,"OK",IF(D25<=2,"MINEUR","MAJEUR"))' if motifs_data[3][1] and motifs_data[3][2] else '',
+                 '', '% Ecart Plan Adressage', resume_erreurs_data['pourcentage_ecart_brut'], resume_erreurs_data['ponderation_ecart'], '=H25*I25'],  # Upr Ras
+
+                [motifs_data[4][0], motifs_data[4][1], motifs_data[4][2],
+                 f'=ABS(B26-C26)' if motifs_data[4][1] and motifs_data[4][2] else '',
+                 f'=IF(D26=0,"OK",IF(D26<=2,"MINEUR","MAJEUR"))' if motifs_data[4][1] and motifs_data[4][2] else '',
+                 '', '', '', '', ''],  # Upr Ok
+
+                [motifs_data[5][0], motifs_data[5][1], motifs_data[5][2],
+                 f'=ABS(B27-C27)' if motifs_data[5][1] and motifs_data[5][2] else '',
+                 f'=IF(D27=0,"OK",IF(D27<=2,"MINEUR","MAJEUR"))' if motifs_data[5][1] and motifs_data[5][2] else '',
+                 '', '', '', '', ''],  # Upr Nok
+
+                [motifs_data[6][0], motifs_data[6][1], motifs_data[6][2],
+                 f'=ABS(B28-C28)' if motifs_data[6][1] and motifs_data[6][2] else '',
+                 f'=IF(D28=0,"OK",IF(D28<=2,"MINEUR","MAJEUR"))' if motifs_data[6][1] and motifs_data[6][2] else '',
+                 '', 'SCORE TOTAL', '', '', '=SUM(J22:J25)'],  # Hors Commune + Total
             ])
 
-            # Ajouter la ligne % Ecart Plan Adressage directement sous le tableau (ligne 22)
+            # Section Validation de Conformité (si statut KO)
+            if statut_commune == "KO":
+                page1_data.extend([
+                    ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
+                ])
+
+                # Titre différent selon le type de KO
+                if fichiers_manquants:
+                    page1_data.append(['🚫 VALIDATION DE CONFORMITÉ - FICHIERS MANQUANTS', '', '', '', '', '', '', '', '', ''])
+                    page1_data.append(['⚠️ ANALYSE IMPOSSIBLE - FICHIERS REQUIS MANQUANTS', '', '', '', '', '', '', '', '', ''])
+                else:
+                    page1_data.append(['🚨 VALIDATION DE CONFORMITÉ - STATUT KO', '', '', '', '', '', '', '', '', ''])
+                    page1_data.append([f'📊 Pourcentage de conformité: {pourcentage_conformite:.1f}%', f'🎯 Seuil requis: 90%', '', '', '', '', '', '', '', ''])
+
+                page1_data.append(['', '', '', '', '', '', '', '', '', ''])  # Ligne vide
+
+                # Ajouter les raisons du KO
+                if raisons_ko:
+                    if fichiers_manquants:
+                        page1_data.append(['🚫 FICHIERS MANQUANTS CRITIQUES:', '', '', '', '', '', '', '', '', ''])
+                    else:
+                        page1_data.append(['🔍 RAISONS DU STATUT KO:', '', '', '', '', '', '', '', '', ''])
+
+                    for i, raison in enumerate(raisons_ko[:5], 1):  # Limiter à 5 raisons
+                        page1_data.append([f'{i}. {raison}', '', '', '', '', '', '', '', '', ''])
+                    page1_data.append(['', '', '', '', '', '', '', '', '', ''])  # Ligne vide
+
+                # Ajouter les fautes majeures détaillées (sauf fichiers manquants déjà traités)
+                autres_fautes = [f for f in fautes_majeures if f['type'] not in ['MANQUANT_QGIS', 'MANQUANT_SUIVI', 'STRUCTURE_QGIS_INVALIDE', 'STRUCTURE_SUIVI_INVALIDE']]
+                if autres_fautes:
+                    page1_data.append(['⚠️ AUTRES FAUTES MAJEURES DÉTECTÉES:', '', '', '', '', '', '', '', '', ''])
+                    for i, faute in enumerate(autres_fautes[:3], 1):  # Limiter à 3 fautes
+                        page1_data.append([f'{i}. {faute["type"]}: {faute["description"]}', '', '', '', '', '', '', '', '', ''])
+                    if len(autres_fautes) > 3:
+                        page1_data.append([f'... et {len(autres_fautes) - 3} autres fautes majeures', '', '', '', '', '', '', '', '', ''])
+                    page1_data.append(['', '', '', '', '', '', '', '', '', ''])  # Ligne vide
+
+                # Instructions spéciales si fichiers manquants
+                if fichiers_manquants:
+                    page1_data.extend([
+                        ['📋 ACTIONS REQUISES:', '', '', '', '', '', '', '', '', ''],
+                        ['1. Charger le fichier Résultats QGis (si MANQUANT_QGIS)', '', '', '', '', '', '', '', '', ''],
+                        ['2. Charger le fichier Suivi Commune (si MANQUANT_SUIVI)', '', '', '', '', '', '', '', '', ''],
+                        ['3. Relancer l\'analyse complète après chargement', '', '', '', '', '', '', '', '', ''],
+                        ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
+                    ])
+
+            # Ligne vide finale
             page1_data.extend([
-                ['% Ecart Plan Adressage', '=H16', '', '', '', '', '', '', '', ''],  # Ligne 22 - Formule référençant H16 (% Brut Ecart Plan Adressage)
                 ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide finale
             ])
 
-            # Page 2: Controle Qualité CMS - Structure vide pour saisie manuelle
+            # Page 2: Controle Qualité CMS - Structure améliorée pour identification des erreurs
             page2_data = [
-                # En-tête avec les colonnes spécifiées
-                ['ID Tache', 'Voie demandé', 'Motif Voie Initial', 'Etat', 'Commentaire Controleur']
+                # En-tête amélioré avec colonnes clarifiées pour identification des erreurs CMS
+                ['ID Tache', 'Nom de la Voie', 'Type Erreur CMS', 'Localisation Erreur', 'Description Erreur', 'Statut Correction', 'Commentaire Controleur', 'Date Verification']
             ]
 
-            # Ajouter des lignes vides pour la saisie manuelle (pas de remplissage automatique)
-            for i in range(20):  # 20 lignes vides pour saisie manuelle
-                page2_data.append([' ', ' ', ' ', ' ', ' '])  # Espaces au lieu de chaînes vides (5 colonnes)
+            # Ajouter des lignes vides pour la saisie manuelle (structure étendue pour meilleure traçabilité)
+            for i in range(25):  # 25 lignes vides pour saisie manuelle (augmenté pour plus de flexibilité)
+                page2_data.append([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])  # 8 colonnes pour structure complète
 
             # Page 3: Controle Qualité PA - Structure avec colonnes spécifiées + colonne Batiment
             page3_data = [
@@ -2634,14 +2887,344 @@ class QualityControlModule:
             for i in range(lignes_vides_necessaires):
                 page3_data.append([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])  # Espaces au lieu de chaînes vides (8 colonnes maintenant)
 
-            return page1_data, page2_data, page3_data
+            # Préparer les données pour la feuille Ecart (Page 4)
+            page4_data = self._prepare_ecart_data()
+
+            return page1_data, page2_data, page3_data, page4_data
 
         except Exception as e:
             self.logger.error(f"Erreur préparation données Excel: {e}")
             raise
 
-    def _write_excel_file(self, file_path: str, page1_data: list, page2_data: list, page3_data: list) -> bool:
-        """Écrit le fichier Excel avec 3 feuilles et mise en forme."""
+    def _prepare_ecart_data(self):
+        """Prépare les données pour la feuille Ecart (Page 4) avec analyse détaillée par IMB."""
+        try:
+            pd = get_pandas()
+
+            # En-tête de la feuille Ecart
+            ecart_data = [
+                ['ANALYSE DES ÉCARTS ENTRE FICHIERS QGIS ET SUIVI COMMUNE', '', '', '', '', ''],
+                ['', '', '', '', '', ''],
+                ['📊 SECTION 1: RÉSUMÉ PAR MOTIF', '', '', '', '', ''],
+                ['Type d\'Écart', 'Fichier QGis', 'Suivi Commune', 'Différence', 'Détails', 'Statut'],
+                ['', '', '', '', '', '']
+            ]
+
+            # Récupérer les résultats du critère 0 (Écart Plan Adressage)
+            critere_0_results = self.qc_results.get('critere_0', {}) if self.qc_results else {}
+
+            if critere_0_results.get('status') == 'COMPLETE':
+                # Ajouter les écarts détectés par motif
+                motifs_qgis = critere_0_results.get('motifs_qgis', {})
+                motifs_suivi = critere_0_results.get('motifs_suivi', {})
+                ecarts_detectes = critere_0_results.get('ecarts_detectes', [])
+
+                # Tous les motifs analysés
+                tous_motifs = set(motifs_qgis.keys()) | set(motifs_suivi.keys())
+
+                for motif in sorted(tous_motifs):
+                    count_qgis = motifs_qgis.get(motif, 0)
+                    count_suivi = motifs_suivi.get(motif, 0)
+                    difference = count_qgis - count_suivi
+
+                    # Déterminer le statut
+                    if difference == 0:
+                        statut = "✅ OK"
+                        details = "Aucun écart"
+                    else:
+                        statut = "❌ ÉCART"
+                        if difference > 0:
+                            details = f"+{difference} dans QGis"
+                        else:
+                            details = f"{difference} dans QGis"
+
+                    ecart_data.append([
+                        f"Motif: {motif}",
+                        str(count_qgis),
+                        str(count_suivi),
+                        str(difference) if difference != 0 else "0",
+                        details,
+                        statut
+                    ])
+
+                # Ajouter une ligne de séparation
+                ecart_data.append(['', '', '', '', '', ''])
+
+                # Résumé des écarts par motif
+                total_ecarts = len([e for e in ecarts_detectes if e.get('difference', 0) != 0])
+                ecart_data.append([
+                    'RÉSUMÉ MOTIFS',
+                    f"Total écarts détectés: {total_ecarts}",
+                    '',
+                    '',
+                    '',
+                    '✅ OK' if total_ecarts == 0 else '❌ ATTENTION'
+                ])
+
+                # Ajouter des lignes de séparation avant la section détaillée
+                ecart_data.extend([
+                    ['', '', '', '', '', ''],
+                    ['', '', '', '', '', ''],
+                    ['🔍 SECTION 2: ANALYSE DÉTAILLÉE PAR IMB', '', '', '', '', ''],
+                    ['Code IMB', 'Motif QGis', 'Motif Suivi', 'Statut Comparaison', 'Détails', 'Action'],
+                    ['', '', '', '', '', '']
+                ])
+
+                # Ajouter l'analyse détaillée par IMB et récupérer les statistiques
+                try:
+                    imb_analysis, imb_stats = self._analyze_imb_level_gaps()
+                    ecart_data.extend(imb_analysis)
+                except Exception as e:
+                    self.logger.error(f"Erreur analyse IMB détaillée: {e}")
+                    # Ajouter un message d'erreur propre au lieu de planter
+                    ecart_data.extend([
+                        ['⚠️ ERREUR ANALYSE IMB', '', '', '', '', ''],
+                        [f'Impossible d\'analyser les écarts IMB: {str(e)}', '', '', '', '', ''],
+                        ['Vérifiez les fichiers et relancez l\'analyse', '', '', '', '', ''],
+                        ['', '', '', '', '', '']
+                    ])
+                    imb_analysis = []
+                    imb_stats = {}
+
+                # Mettre à jour le résumé des motifs avec le nouveau calcul basé sur l'analyse IMB
+                if imb_stats:
+                    total_ecarts_reel = imb_stats.get('total_ecarts_reel', 0)
+                    nb_donnees_manquantes = imb_stats.get('nb_donnees_manquantes', 0)
+                    nb_motifs_differents = imb_stats.get('nb_motifs_differents', 0)
+
+                    # Trouver et mettre à jour la ligne de résumé des motifs
+                    for i, row in enumerate(ecart_data):
+                        if row[0] == 'RÉSUMÉ MOTIFS':
+                            ecart_data[i] = [
+                                'RÉSUMÉ MOTIFS',
+                                f"Total écarts détectés: {total_ecarts_reel} (Manquants: {nb_donnees_manquantes}, Différents: {nb_motifs_differents})",
+                                '',
+                                '',
+                                '',
+                                '✅ OK' if total_ecarts_reel == 0 else '❌ ATTENTION'
+                            ]
+                            break
+
+            else:
+                # Si l'analyse n'a pas été effectuée, on peut quand même faire l'analyse IMB
+                ecart_data.append([
+                    'ERREUR',
+                    'Analyse par motif non effectuée',
+                    '',
+                    '',
+                    'Veuillez d\'abord lancer l\'analyse qualité',
+                    '⚠️ PENDING'
+                ])
+
+                # Ajouter des lignes de séparation avant la section détaillée
+                ecart_data.extend([
+                    ['', '', '', '', '', ''],
+                    ['', '', '', '', '', ''],
+                    ['🔍 SECTION 2: ANALYSE DÉTAILLÉE PAR IMB', '', '', '', '', ''],
+                    ['Code IMB', 'Motif QGis', 'Motif Suivi', 'Statut Comparaison', 'Détails', 'Action'],
+                    ['', '', '', '', '', '']
+                ])
+
+                # Ajouter l'analyse détaillée par IMB même sans critère 0
+                imb_analysis, imb_stats = self._analyze_imb_level_gaps()
+                ecart_data.extend(imb_analysis)
+
+            # Ajouter des lignes vides pour compléter
+            while len(ecart_data) < 25:
+                ecart_data.append(['', '', '', '', '', ''])
+
+            return ecart_data
+
+        except Exception as e:
+            self.logger.error(f"Erreur préparation données feuille Ecart: {e}")
+            # Retourner une feuille d'erreur basique
+            return [
+                ['ERREUR GÉNÉRATION FEUILLE ÉCART', '', '', '', '', ''],
+                ['', '', '', '', '', ''],
+                [f'Erreur: {str(e)}', '', '', '', '', ''],
+                ['', '', '', '', '', '']
+            ]
+
+    def _analyze_imb_level_gaps(self):
+        """Analyse détaillée des écarts au niveau des codes IMB individuels."""
+        try:
+            pd = get_pandas()
+            imb_analysis_data = []
+
+            if self.qgis_data is None or self.suivi_data is None:
+                return [
+                    ['⚠️ DONNÉES MANQUANTES', '', '', '', '', ''],
+                    ['Fichiers QGis ou Suivi Commune non chargés', '', '', '', '', ''],
+                    ['Veuillez charger les fichiers requis', '', '', '', '', ''],
+                    ['', '', '', '', '', '']
+                ], {
+                    'total_imb': 0,
+                    'matches': 0,
+                    'differences': 0,
+                    'error': 'Données manquantes'
+                }
+
+            # Extraire les données QGis (colonne A = IMB, colonne J = motif)
+            qgis_imb_motifs = {}
+            if len(self.qgis_data.columns) > 9:  # Au moins colonne J (index 9)
+                for index, row in self.qgis_data.iterrows():
+                    imb_code = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ''  # Colonne A
+                    motif = str(row.iloc[9]).strip().upper() if pd.notna(row.iloc[9]) else ''  # Colonne J
+
+                    if imb_code and imb_code not in ['', 'nan', 'NAN']:
+                        if imb_code not in qgis_imb_motifs:
+                            qgis_imb_motifs[imb_code] = []
+                        qgis_imb_motifs[imb_code].append(motif)
+
+            # Extraire les données Suivi Commune (page 2, colonne C = IMB, colonne I = motif)
+            suivi_imb_motifs = {}
+            try:
+                # Vérifier que le chemin du fichier Suivi existe
+                if not hasattr(self, 'current_suivi_file_path') or not self.current_suivi_file_path:
+                    raise FileNotFoundError("Chemin du fichier Suivi Commune non défini")
+
+                # Lire la page 2 (index 1) du fichier Suivi Commune
+                suivi_page2_df = pd.read_excel(self.current_suivi_file_path, sheet_name=1, date_format=None)
+
+                if len(suivi_page2_df.columns) > 8:  # Au moins colonne I (index 8)
+                    for index, row in suivi_page2_df.iterrows():
+                        imb_code = str(row.iloc[2]).strip() if pd.notna(row.iloc[2]) else ''  # Colonne C
+                        motif = str(row.iloc[8]).strip().upper() if pd.notna(row.iloc[8]) else ''  # Colonne I
+
+                        if imb_code and imb_code not in ['', 'nan', 'NAN']:
+                            if imb_code not in suivi_imb_motifs:
+                                suivi_imb_motifs[imb_code] = []
+                            suivi_imb_motifs[imb_code].append(motif)
+
+            except Exception as e:
+                self.logger.error(f"Erreur lecture page 2 Suivi Commune: {e}")
+                # Retourner des données vides plutôt qu'une erreur dans les données Excel
+                return [
+                    ['⚠️ ANALYSE IMPOSSIBLE', '', '', '', '', ''],
+                    ['Fichier Suivi Commune non accessible', '', '', '', '', ''],
+                    ['Veuillez vérifier le fichier et relancer l\'analyse', '', '', '', '', ''],
+                    ['', '', '', '', '', '']
+                ], {
+                    'total_imb': 0,
+                    'matches': 0,
+                    'differences': 0,
+                    'error': f'Erreur lecture Suivi: {str(e)}'
+                }
+
+            # Analyser les écarts pour chaque IMB
+            all_imb_codes = set(qgis_imb_motifs.keys()) | set(suivi_imb_motifs.keys())
+
+            matches = 0
+            mismatches = 0
+            missing_in_qgis = 0
+            missing_in_suivi = 0
+
+            for imb_code in sorted(all_imb_codes):
+                qgis_motifs = qgis_imb_motifs.get(imb_code, [])
+                suivi_motifs = suivi_imb_motifs.get(imb_code, [])
+
+                # Cas 1: IMB présent dans les deux fichiers
+                if qgis_motifs and suivi_motifs:
+                    # Comparer les motifs (prendre le premier de chaque liste pour simplifier)
+                    qgis_motif = qgis_motifs[0] if qgis_motifs else ''
+                    suivi_motif = suivi_motifs[0] if suivi_motifs else ''
+
+                    if qgis_motif == suivi_motif:
+                        # Motifs identiques
+                        statut = '✅ MATCH'
+                        details = 'Motifs identiques'
+                        action = 'Aucune'
+                        matches += 1
+                    else:
+                        # Motifs différents
+                        statut = '❌ MISMATCH'
+                        details = f'Motifs différents'
+                        action = 'Vérifier et corriger'
+                        mismatches += 1
+
+                    # Gérer les doublons
+                    if len(qgis_motifs) > 1 or len(suivi_motifs) > 1:
+                        details += f' (QGis: {len(qgis_motifs)} entrées, Suivi: {len(suivi_motifs)} entrées)'
+                        if statut == '✅ MATCH':
+                            statut = '⚠️ MATCH+DOUBLONS'
+                            action = 'Vérifier doublons'
+
+                    imb_analysis_data.append([
+                        imb_code,
+                        qgis_motif,
+                        suivi_motif,
+                        statut,
+                        details,
+                        action
+                    ])
+
+                # Cas 2: IMB présent seulement dans QGis
+                elif qgis_motifs and not suivi_motifs:
+                    qgis_motif = qgis_motifs[0] if qgis_motifs else ''
+                    imb_analysis_data.append([
+                        imb_code,
+                        qgis_motif,
+                        'ABSENT',
+                        '⚠️ MANQUANT SUIVI',
+                        'IMB présent dans QGis mais absent du Suivi Commune',
+                        'Ajouter dans Suivi'
+                    ])
+                    missing_in_suivi += 1
+
+                # Cas 3: IMB présent seulement dans Suivi Commune
+                elif not qgis_motifs and suivi_motifs:
+                    suivi_motif = suivi_motifs[0] if suivi_motifs else ''
+                    imb_analysis_data.append([
+                        imb_code,
+                        'ABSENT',
+                        suivi_motif,
+                        '⚠️ MANQUANT QGIS',
+                        'IMB présent dans Suivi Commune mais absent de QGis',
+                        'Ajouter dans QGis'
+                    ])
+                    missing_in_qgis += 1
+
+            # Calculer le total des écarts selon la nouvelle logique
+            nb_donnees_manquantes = missing_in_qgis + missing_in_suivi
+            nb_motifs_differents = mismatches
+            total_ecarts_reel = nb_donnees_manquantes + nb_motifs_differents
+
+            # Ajouter un résumé de l'analyse détaillée
+            if imb_analysis_data:
+                imb_analysis_data.extend([
+                    ['', '', '', '', '', ''],
+                    ['=== RÉSUMÉ ANALYSE IMB ===', '', '', '', '', ''],
+                    [f'Total IMB analysés: {len(all_imb_codes)}', '', '', '', '', ''],
+                    [f'✅ Matches: {matches}', '', '', '', '', ''],
+                    [f'❌ Mismatches: {mismatches}', '', '', '', '', ''],
+                    [f'⚠️ Manquants QGis: {missing_in_qgis}', '', '', '', '', ''],
+                    [f'⚠️ Manquants Suivi: {missing_in_suivi}', '', '', '', '', ''],
+                    ['', '', '', '', '', ''],
+                    [f'📊 TOTAL ÉCARTS: {total_ecarts_reel} (Manquants: {nb_donnees_manquantes}, Différents: {nb_motifs_differents})', '', '', '', '', '']
+                ])
+            else:
+                imb_analysis_data.append(['Aucun IMB trouvé pour l\'analyse', '', '', '', '', ''])
+
+            # Préparer les statistiques pour le retour
+            stats = {
+                'matches': matches,
+                'mismatches': mismatches,
+                'missing_in_qgis': missing_in_qgis,
+                'missing_in_suivi': missing_in_suivi,
+                'total_imb': len(all_imb_codes),
+                'nb_donnees_manquantes': nb_donnees_manquantes,
+                'nb_motifs_differents': nb_motifs_differents,
+                'total_ecarts_reel': total_ecarts_reel
+            }
+
+            return imb_analysis_data, stats
+
+        except Exception as e:
+            self.logger.error(f"Erreur analyse IMB détaillée: {e}")
+            return [['Erreur analyse IMB', f'Erreur: {str(e)}', '', '', '', '']], {}
+
+    def _write_excel_file(self, file_path: str, page1_data: list, page2_data: list, page3_data: list, page4_data: list) -> bool:
+        """Écrit le fichier Excel avec 4 feuilles et mise en forme."""
         try:
             pd = get_pandas()
 
@@ -2650,23 +3233,34 @@ class QualityControlModule:
             commune = summary.get('commune', 'Commune')
             collaborateur = summary.get('collaborateur', 'Collaborateur')
 
-            # Créer les DataFrames avec colonnes appropriées
-            df_page1 = pd.DataFrame(page1_data, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8', 'Col9', 'Col10'])
-            df_page2 = pd.DataFrame(page2_data, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5'])  # 5 colonnes maintenant
-            df_page3 = pd.DataFrame(page3_data, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8'])  # 8 colonnes maintenant (ajout colonne Batiment)
+            # Nettoyer les données avant création des DataFrames
+            page1_data_clean = self._clean_excel_data(page1_data)
+            page2_data_clean = self._clean_excel_data(page2_data)
+            page3_data_clean = self._clean_excel_data(page3_data)
+            page4_data_clean = self._clean_excel_data(page4_data)
 
-            self.logger.info("DataFrames créés pour 3 feuilles")
+            # Créer les DataFrames avec colonnes appropriées et données nettoyées
+            df_page1 = pd.DataFrame(page1_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8', 'Col9', 'Col10'])
+            df_page2 = pd.DataFrame(page2_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8'])  # 8 colonnes maintenant (structure étendue CMS)
+            df_page3 = pd.DataFrame(page3_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8'])  # 8 colonnes maintenant (ajout colonne Batiment)
+            df_page4 = pd.DataFrame(page4_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6'])  # 6 colonnes pour la feuille Ecart
 
-            # Noms des feuilles selon la nouvelle structure
-            sheet1_name = f"Etat de lieu {commune}_{collaborateur}"
-            sheet2_name = "Controle Qualité CMS"
-            sheet3_name = "Controle Qualité PA"
+            self.logger.info("DataFrames créés pour 4 feuilles")
+
+            # Noms des feuilles selon la nouvelle structure (nettoyés pour Excel)
+            commune_clean = self._clean_sheet_name(commune)
+            collaborateur_clean = self._clean_sheet_name(collaborateur)
+
+            sheet1_name = f"Etat_de_lieu_{commune_clean}_{collaborateur_clean}"
+            sheet2_name = "Controle_Qualite_CMS"
+            sheet3_name = "Controle_Qualite_PA"
+            sheet4_name = "Ecart"
 
             # Limiter la longueur des noms de feuilles (Excel limite à 31 caractères)
             if len(sheet1_name) > 31:
-                sheet1_name = f"Etat de lieu {commune[:10]}_{collaborateur[:10]}"
+                sheet1_name = f"Etat_{commune_clean[:8]}_{collaborateur_clean[:8]}"
                 if len(sheet1_name) > 31:
-                    sheet1_name = "Etat de lieu"
+                    sheet1_name = "Etat_de_lieu"
 
             # Écrire le fichier Excel avec mise en forme
             with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
@@ -2683,21 +3277,27 @@ class QualityControlModule:
                 self._format_page2(writer.sheets[sheet2_name])
 
                 # Page 3: Controle Qualité PA (avec structure)
-                # S'assurer que toutes les lignes ont 7 colonnes
+                # S'assurer que toutes les lignes ont 8 colonnes (structure étendue)
                 page3_data_fixed = []
                 for row in page3_data:
                     row_copy = row.copy() if isinstance(row, list) else list(row)
-                    if len(row_copy) < 7:
-                        row_copy.extend([' '] * (7 - len(row_copy)))  # Ajouter des espaces si nécessaire
-                    page3_data_fixed.append(row_copy[:7])  # Limiter à 7 colonnes
+                    if len(row_copy) < 8:
+                        row_copy.extend([' '] * (8 - len(row_copy)))  # Ajouter des espaces si nécessaire
+                    page3_data_fixed.append(row_copy[:8])  # Limiter à 8 colonnes
 
-                df_page3_fixed = pd.DataFrame(page3_data_fixed, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7'])
+                df_page3_fixed = pd.DataFrame(page3_data_fixed, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8'])
                 df_page3_fixed.to_excel(writer, sheet_name=sheet3_name, index=False, header=False)
 
                 # Appliquer la mise en forme à la page 3
                 self._format_page3(writer.sheets[sheet3_name])
 
-                self.logger.info(f"3 feuilles Excel écrites: {sheet1_name}, {sheet2_name}, {sheet3_name}")
+                # Page 4: Feuille Ecart
+                df_page4.to_excel(writer, sheet_name=sheet4_name, index=False, header=False)
+
+                # Appliquer la mise en forme à la page 4
+                self._format_page4_ecart(writer.sheets[sheet4_name])
+
+                self.logger.info(f"4 feuilles Excel écrites: {sheet1_name}, {sheet2_name}, {sheet3_name}, {sheet4_name}")
 
             self.logger.info("Fichier Excel écrit avec succès avec mise en forme")
             return True
@@ -2706,23 +3306,203 @@ class QualityControlModule:
             self.logger.error(f"Erreur écriture fichier Excel: {e}")
             return False
 
+    def _clean_sheet_name(self, name: str) -> str:
+        """Nettoie un nom pour l'utiliser comme nom de feuille Excel."""
+        if not name:
+            return "Sheet"
+
+        # Remplacer les caractères interdits par des underscores
+        forbidden_chars = ['\\', '/', '*', '?', ':', '[', ']']
+        clean_name = str(name)
+        for char in forbidden_chars:
+            clean_name = clean_name.replace(char, '_')
+
+        # Remplacer les espaces par des underscores
+        clean_name = clean_name.replace(' ', '_')
+
+        # Supprimer les caractères spéciaux supplémentaires
+        clean_name = ''.join(c for c in clean_name if c.isalnum() or c in ['_', '-'])
+
+        # Limiter la longueur
+        if len(clean_name) > 20:
+            clean_name = clean_name[:20]
+
+        return clean_name if clean_name else "Sheet"
+
+    def _clean_excel_data(self, data: list) -> list:
+        """Nettoie les données pour éviter les erreurs Excel."""
+        cleaned_data = []
+
+        for row in data:
+            cleaned_row = []
+            for cell in row:
+                if cell is None:
+                    cleaned_row.append('')
+                elif isinstance(cell, str):
+                    # Nettoyer les caractères problématiques
+                    clean_cell = cell.replace('\x00', '').replace('\r', '').replace('\n', ' ')
+                    # Limiter la longueur des cellules (Excel limite à 32767 caractères)
+                    if len(clean_cell) > 32000:
+                        clean_cell = clean_cell[:32000] + "..."
+                    cleaned_row.append(clean_cell)
+                elif isinstance(cell, (int, float)):
+                    # Vérifier les valeurs numériques
+                    if str(cell).lower() in ['inf', '-inf', 'nan']:
+                        cleaned_row.append(0)
+                    else:
+                        cleaned_row.append(cell)
+                else:
+                    cleaned_row.append(str(cell))
+
+            cleaned_data.append(cleaned_row)
+
+        return cleaned_data
+
+    def _format_page4_ecart(self, worksheet):
+        """Applique la mise en forme à la feuille Ecart (Page 4)."""
+        try:
+            from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+
+            # Styles de base
+            title_font = Font(name='Arial', size=14, bold=True, color='FFFFFF')
+            header_font = Font(name='Arial', size=11, bold=True, color='FFFFFF')
+            data_font = Font(name='Arial', size=10)
+
+            title_fill = PatternFill(start_color='2F4F4F', end_color='2F4F4F', fill_type='solid')  # Gris foncé
+            header_fill = PatternFill(start_color='4682B4', end_color='4682B4', fill_type='solid')  # Bleu acier
+
+            # Couleurs selon les spécifications
+            match_fill = PatternFill(start_color='90EE90', end_color='90EE90', fill_type='solid')  # Vert pour ✅ MATCH
+            match_doublons_fill = PatternFill(start_color='FFFF00', end_color='FFFF00', fill_type='solid')  # Jaune pour ⚠️ MATCH+DOUBLONS
+            mismatch_fill = PatternFill(start_color='FFA500', end_color='FFA500', fill_type='solid')  # Orangé pour ❌ MISMATCH
+            manquant_fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')  # Rouge pour ⚠️ MANQUANT
+
+            center_alignment = Alignment(horizontal='center', vertical='center')
+            left_alignment = Alignment(horizontal='left', vertical='center')
+
+            thin_border = Border(
+                left=Side(style='thin'),
+                right=Side(style='thin'),
+                top=Side(style='thin'),
+                bottom=Side(style='thin')
+            )
+
+            # Titre principal (ligne 1)
+            for col in range(1, 7):  # A à F
+                cell = worksheet.cell(row=1, column=col)
+                cell.font = title_font
+                cell.fill = title_fill
+                cell.alignment = center_alignment
+                cell.border = thin_border
+
+            # Fusionner les cellules du titre
+            worksheet.merge_cells('A1:F1')
+
+            # Identifier et formater les en-têtes de sections
+            for row_num in range(1, worksheet.max_row + 1):
+                cell_value = worksheet.cell(row=row_num, column=1).value
+                if cell_value and ('===' in str(cell_value) or 'Type d\'Écart' in str(cell_value) or 'Code IMB' in str(cell_value)):
+                    # C'est un en-tête de section ou de colonne
+                    for col in range(1, 7):
+                        cell = worksheet.cell(row=row_num, column=col)
+                        if 'SECTION' in str(cell_value):
+                            # En-tête de section
+                            cell.font = title_font
+                            cell.fill = title_fill
+                        else:
+                            # En-tête de colonne
+                            cell.font = header_font
+                            cell.fill = header_fill
+                        cell.alignment = center_alignment
+                        cell.border = thin_border
+
+            # Mise en forme des données
+            for row_num in range(1, worksheet.max_row + 1):
+                cell_value = worksheet.cell(row=row_num, column=1).value
+
+                # Ignorer les lignes d'en-têtes déjà formatées
+                if cell_value and ('===' in str(cell_value) or 'Type d\'Écart' in str(cell_value) or 'Code IMB' in str(cell_value)):
+                    continue
+
+                for col in range(1, 7):
+                    cell = worksheet.cell(row=row_num, column=col)
+                    cell.font = data_font
+                    cell.border = thin_border
+
+                    # Alignement selon la colonne
+                    if col == 1:  # Première colonne (Type d'écart ou Code IMB)
+                        cell.alignment = left_alignment
+                    else:
+                        cell.alignment = center_alignment
+
+                    # Coloration selon le statut (colonnes F et D pour les différentes sections)
+                    if col in [4, 6]:  # Colonnes de statut
+                        if cell.value:
+                            cell_val = str(cell.value)
+
+                            # Appliquer les couleurs selon les spécifications
+                            if '✅' in cell_val and 'MATCH' in cell_val and 'DOUBLONS' not in cell_val:
+                                # Vert pour ✅ MATCH (sans doublons)
+                                cell.fill = match_fill
+                            elif '⚠️' in cell_val and 'MATCH+DOUBLONS' in cell_val:
+                                # Jaune pour ⚠️ MATCH+DOUBLONS
+                                cell.fill = match_doublons_fill
+                            elif '❌' in cell_val and 'MISMATCH' in cell_val:
+                                # Orangé pour ❌ MISMATCH
+                                cell.fill = mismatch_fill
+                            elif '⚠️' in cell_val and 'MANQUANT' in cell_val:
+                                # Rouge pour ⚠️ MANQUANT
+                                cell.fill = manquant_fill
+                            elif '❌' in cell_val and 'ÉCART' in cell_val:
+                                # Orangé pour les écarts de la section 1
+                                cell.fill = mismatch_fill
+                            elif '✅' in cell_val and 'OK' in cell_val:
+                                # Vert pour les OK de la section 1
+                                cell.fill = match_fill
+                            elif '❌' in cell_val and 'ATTENTION' in cell_val:
+                                # Rouge pour les résumés d'attention
+                                cell.fill = manquant_fill
+
+            # Ajuster la largeur des colonnes
+            worksheet.column_dimensions['A'].width = 25  # Type d'Écart
+            worksheet.column_dimensions['B'].width = 15  # Fichier QGis
+            worksheet.column_dimensions['C'].width = 15  # Suivi Commune
+            worksheet.column_dimensions['D'].width = 12  # Différence
+            worksheet.column_dimensions['E'].width = 25  # Détails
+            worksheet.column_dimensions['F'].width = 15  # Statut
+
+            # Figer la première ligne et les en-têtes
+            worksheet.freeze_panes = 'A4'
+
+            self.logger.info("Mise en forme appliquée à la feuille Ecart")
+
+        except Exception as e:
+            self.logger.error(f"Erreur mise en forme feuille Ecart: {e}")
+
     def _format_page1(self, worksheet):
-        """Applique la mise en forme à la page 1 selon le modèle (avec bordures)."""
+        """Applique la mise en forme améliorée à la page 1 avec design professionnel."""
         try:
             from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 
-            # Définir les couleurs selon votre modèle
+            # Définir les couleurs améliorées
             blue_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
             green_fill = PatternFill(start_color="70AD47", end_color="70AD47", fill_type="solid")
             orange_fill = PatternFill(start_color="C65911", end_color="C65911", fill_type="solid")
+            purple_fill = PatternFill(start_color="7030A0", end_color="7030A0", fill_type="solid")
+            light_blue_fill = PatternFill(start_color="B4C6E7", end_color="B4C6E7", fill_type="solid")
+            light_green_fill = PatternFill(start_color="C6E0B4", end_color="C6E0B4", fill_type="solid")
+            light_orange_fill = PatternFill(start_color="F2CC8F", end_color="F2CC8F", fill_type="solid")
 
-            # Police blanche pour les en-têtes (Calibri 11)
+            # Polices améliorées
             white_font = Font(color="FFFFFF", bold=True, size=11, name="Calibri")
             bold_font = Font(bold=True, size=11, name="Calibri")
             normal_font = Font(size=11, name="Calibri")
+            title_font = Font(color="FFFFFF", bold=True, size=14, name="Calibri")
+            header_font = Font(color="FFFFFF", bold=True, size=12, name="Calibri")
 
-            # Alignement centré
+            # Alignements améliorés
             center_alignment = Alignment(horizontal="center", vertical="center")
+            left_alignment = Alignment(horizontal="left", vertical="center")
 
             # Définir les bordures
             thin_border = Border(
@@ -2732,85 +3512,158 @@ class QualityControlModule:
                 bottom=Side(style='thin')
             )
 
-            # Appliquer la mise en forme selon les sections (AVEC BORDURES)
+            thick_border = Border(
+                left=Side(style='thick'),
+                right=Side(style='thick'),
+                top=Side(style='thick'),
+                bottom=Side(style='thick')
+            )
 
-            # En-tête principal (ligne 1) - Bleu avec bordures
-            for col in range(1, 7):  # A1:F1
+            # NOUVELLE MISE EN FORME AMÉLIORÉE
+
+            # En-tête principal du rapport (ligne 1) - Titre principal
+            for col in range(1, 11):  # A1:J1 - Titre sur toute la largeur
                 cell = worksheet.cell(row=1, column=col)
+                cell.fill = purple_fill
+                cell.font = title_font
+                cell.alignment = center_alignment
+                cell.border = thick_border
+
+            # Métadonnées (ligne 2) - Informations contextuelles
+            for col in range(1, 11):  # A2:J2
+                cell = worksheet.cell(row=2, column=col)
+                cell.fill = light_blue_fill
+                cell.font = bold_font
+                cell.alignment = center_alignment
+                cell.border = thin_border
+
+            # Section Informations Générales (lignes 4-6)
+            for col in range(1, 11):  # A4:J4 - Titre section
+                cell = worksheet.cell(row=4, column=col)
+                cell.fill = blue_fill
+                cell.font = header_font
+                cell.alignment = center_alignment
+                cell.border = thin_border
+
+            for row in range(5, 7):  # Lignes 5-6 - En-tête et données
+                for col in range(1, 7):  # A5:F6
+                    cell = worksheet.cell(row=row, column=col)
+                    if row == 5:  # En-tête
+                        cell.fill = light_blue_fill
+                        cell.font = bold_font
+                    else:  # Données
+                        cell.font = normal_font
+                    cell.alignment = center_alignment
+                    cell.border = thin_border
+
+            # Section CMS (lignes 8-10) - Vert avec indicateurs
+            for col in range(1, 11):  # A8:J8 - Titre section
+                cell = worksheet.cell(row=8, column=col)
+                cell.fill = green_fill
+                cell.font = header_font
+                cell.alignment = center_alignment
+                cell.border = thin_border
+
+            for row in range(9, 11):  # Lignes 9-10
+                for col in range(1, 7):  # A9:F10
+                    cell = worksheet.cell(row=row, column=col)
+                    if row == 9:  # En-tête
+                        cell.fill = light_green_fill
+                        cell.font = bold_font
+                    else:  # Données
+                        cell.font = normal_font
+                    cell.alignment = center_alignment
+                    cell.border = thin_border
+
+            # Section PA (lignes 12-14) - Orange avec indicateurs
+            for col in range(1, 11):  # A12:J12 - Titre section
+                cell = worksheet.cell(row=12, column=col)
+                cell.fill = orange_fill
+                cell.font = header_font
+                cell.alignment = center_alignment
+                cell.border = thin_border
+
+            for row in range(13, 15):  # Lignes 13-14
+                for col in range(1, 7):  # A13:F14
+                    cell = worksheet.cell(row=row, column=col)
+                    if row == 13:  # En-tête
+                        cell.fill = light_orange_fill
+                        cell.font = bold_font
+                    else:  # Données
+                        cell.font = normal_font
+                    cell.alignment = center_alignment
+                    cell.border = thin_border
+
+            # Section Tickets (lignes 16-18) - Bleu avec statuts
+            for col in range(1, 11):  # A16:J16 - Titre section
+                cell = worksheet.cell(row=16, column=col)
+                cell.fill = blue_fill
+                cell.font = header_font
+                cell.alignment = center_alignment
+                cell.border = thin_border
+
+            for row in range(17, 19):  # Lignes 17-18
+                for col in range(1, 7):  # A17:F18
+                    cell = worksheet.cell(row=row, column=col)
+                    if row == 17:  # En-tête
+                        cell.fill = light_blue_fill
+                        cell.font = bold_font
+                    else:  # Données
+                        cell.font = normal_font
+                    cell.alignment = center_alignment
+                    cell.border = thin_border
+
+            # Section Analyse Détaillée (lignes 20-29) - Purple avec données
+            for col in range(1, 11):  # A20:J20 - Titre section
+                cell = worksheet.cell(row=20, column=col)
+                cell.fill = purple_fill
+                cell.font = header_font
+                cell.alignment = center_alignment
+                cell.border = thick_border
+
+            # En-têtes de l'analyse détaillée (ligne 21)
+            for col in range(1, 11):  # A21:J21
+                cell = worksheet.cell(row=21, column=col)
                 cell.fill = blue_fill
                 cell.font = white_font
                 cell.alignment = center_alignment
                 cell.border = thin_border
 
-            # Section CMS (lignes 4-5) - Vert avec bordures
-            for row in range(4, 6):  # Lignes 4-5
-                for col in range(1, 5):  # A4:D5
+            # Données de l'analyse détaillée (lignes 22-29)
+            for row in range(22, 30):  # Lignes 22-29
+                for col in range(1, 11):  # A22:J29
                     cell = worksheet.cell(row=row, column=col)
-                    if row == 4:  # En-tête
-                        cell.fill = green_fill
-                        cell.font = white_font
+                    cell.font = normal_font
                     cell.alignment = center_alignment
                     cell.border = thin_border
 
-            # Section PA (lignes 7-8) - Orange avec bordures
-            for row in range(7, 9):  # Lignes 7-8
-                for col in range(1, 5):  # A7:D8
-                    cell = worksheet.cell(row=row, column=col)
-                    if row == 7:  # En-tête
-                        cell.fill = orange_fill
-                        cell.font = white_font
-                    cell.alignment = center_alignment
-                    cell.border = thin_border
+                    # Coloration spéciale pour les colonnes de synthèse qualité (G-J)
+                    if col >= 7:  # Colonnes G, H, I, J
+                        cell.fill = light_blue_fill
 
-            # Section Tickets (lignes 10-11) - Bleu avec bordures
-            for row in range(10, 12):  # Lignes 10-11
-                for col in range(1, 4):  # A10:C11
-                    cell = worksheet.cell(row=row, column=col)
-                    if row == 10:  # En-tête
-                        cell.fill = blue_fill
-                        cell.font = white_font
-                    cell.alignment = center_alignment
-                    cell.border = thin_border
+            # Pas de section conclusion - supprimée sur demande
 
-            # Section Résumé Erreurs (G11:J17) - Bleu avec bordures - Consécutif (ajout colonne % Brut)
-            for row in range(11, 18):  # Lignes 11-17 (tableau consécutif)
-                for col in range(7, 11):  # G11:J17 (ajout colonne J pour % Brut)
-                    cell = worksheet.cell(row=row, column=col)
-                    if row == 11 or row == 12:  # En-têtes (Résumé Erreurs + % Erreur Par Catégorie)
-                        cell.fill = blue_fill
-                        cell.font = white_font
-                    cell.alignment = center_alignment
-                    cell.border = thin_border
+            # Ajuster les largeurs de colonnes pour le nouveau format
+            worksheet.column_dimensions['A'].width = 25  # Motifs/Informations principales
+            worksheet.column_dimensions['B'].width = 20  # Données Suivi/ID tâche
+            worksheet.column_dimensions['C'].width = 20  # Données QGis/INSEE
+            worksheet.column_dimensions['D'].width = 15  # Écart/Domaine
+            worksheet.column_dimensions['E'].width = 18  # Statut/Affectation
+            worksheet.column_dimensions['F'].width = 18  # Objectifs/Contrôleur
+            worksheet.column_dimensions['G'].width = 22  # Catégories d'erreur
+            worksheet.column_dimensions['H'].width = 12  # % Brut
+            worksheet.column_dimensions['I'].width = 14  # Pondération
+            worksheet.column_dimensions['J'].width = 12  # Score/Taux
 
-            # Section Ecart Plan Adressage (lignes 13-21) - Bleu avec bordures
-            for row in range(13, 22):  # Lignes 13-21
-                for col in range(1, 4):  # A13:C21
-                    cell = worksheet.cell(row=row, column=col)
-                    if row == 13 or row == 14:  # En-têtes
-                        cell.fill = blue_fill
-                        cell.font = white_font
-                    cell.alignment = center_alignment
-                    cell.border = thin_border
-
-            # Section % Ecart Plan Adressage sous le tableau (ligne 22) - Bleu avec bordures
-            for col in range(1, 3):  # A22:B22 (seulement 2 colonnes)
-                cell = worksheet.cell(row=22, column=col)
-                cell.fill = blue_fill
-                cell.font = white_font
-                cell.alignment = center_alignment
-                cell.border = thin_border
-
-            # Ajuster la largeur des colonnes
-            worksheet.column_dimensions['A'].width = 20
-            worksheet.column_dimensions['B'].width = 25
-            worksheet.column_dimensions['C'].width = 15
-            worksheet.column_dimensions['D'].width = 15
-            worksheet.column_dimensions['E'].width = 15
-            worksheet.column_dimensions['F'].width = 15
-            worksheet.column_dimensions['G'].width = 20
-            worksheet.column_dimensions['H'].width = 10
-            worksheet.column_dimensions['I'].width = 12
-            worksheet.column_dimensions['J'].width = 10
+            # Fusionner les cellules pour les titres principaux
+            worksheet.merge_cells('A1:J1')  # Titre principal
+            worksheet.merge_cells('A2:J2')  # Métadonnées
+            worksheet.merge_cells('A4:J4')  # Section Informations Générales
+            worksheet.merge_cells('A8:J8')  # Section CMS
+            worksheet.merge_cells('A12:J12')  # Section PA
+            worksheet.merge_cells('A16:J16')  # Section Tickets
+            worksheet.merge_cells('A20:F20')  # Analyse Détaillée (gauche)
+            worksheet.merge_cells('G20:J20')  # Synthèse Qualité (droite)
 
             # Appliquer l'alignement centré aux cellules de données
             # Centrer toutes les cellules de données, y compris les motifs
@@ -2918,8 +3771,13 @@ class QualityControlModule:
             ]
 
             for cell_ref in percentage_cells:
-                cell = worksheet[cell_ref]
-                cell.number_format = '0%'
+                try:
+                    cell = worksheet[cell_ref]
+                    if cell and hasattr(cell, 'number_format'):
+                        cell.number_format = '0%'
+                except Exception as cell_error:
+                    self.logger.warning(f"Erreur formatage cellule {cell_ref}: {cell_error}")
+                    continue
 
             self.logger.info("Formatage des pourcentages appliqué")
 
@@ -2980,50 +3838,102 @@ class QualityControlModule:
             # Continue sans mise en forme si erreur
 
     def _format_page2(self, worksheet):
-        """Applique la mise en forme à la page 2 - Contrôle Qualité CMS."""
+        """Applique la mise en forme à la page 2 - Contrôle Qualité CMS améliorée."""
         try:
-            from openpyxl.styles import PatternFill, Font, Alignment
+            from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
             from openpyxl.worksheet.datavalidation import DataValidation
 
-            # Définir les styles
-            blue_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+            # Définir les styles améliorés
+            header_fill = PatternFill(start_color="2F5597", end_color="2F5597", fill_type="solid")  # Bleu professionnel
             white_font = Font(color="FFFFFF", bold=True, size=11, name="Calibri")
-            center_alignment = Alignment(horizontal="center", vertical="center")
+            center_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+            left_alignment = Alignment(horizontal="left", vertical="center")
 
-            # Mise en forme de l'en-tête (ligne 1) - 5 colonnes seulement
-            header_columns = ['A', 'B', 'C', 'D', 'E']
+            # Bordures pour structure professionnelle
+            thin_border = Border(
+                left=Side(style='thin'),
+                right=Side(style='thin'),
+                top=Side(style='thin'),
+                bottom=Side(style='thin')
+            )
+
+            # Mise en forme de l'en-tête (ligne 1) - 8 colonnes pour structure complète
+            header_columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
             for col_letter in header_columns:
                 cell = worksheet[f"{col_letter}1"]
-                cell.fill = blue_fill
+                cell.fill = header_fill
                 cell.font = white_font
                 cell.alignment = center_alignment
+                cell.border = thin_border
 
-            # Ajuster la largeur des colonnes selon le contenu
-            worksheet.column_dimensions['A'].width = 15  # ID Tache
-            worksheet.column_dimensions['B'].width = 30  # Voie demandé
-            worksheet.column_dimensions['C'].width = 20  # Motif Voie Initial
-            worksheet.column_dimensions['D'].width = 20  # Etat (élargie pour validation)
-            worksheet.column_dimensions['E'].width = 25  # Commentaire Controleur
+            # Ajuster la largeur des colonnes selon le nouveau contenu
+            worksheet.column_dimensions['A'].width = 12   # ID Tache
+            worksheet.column_dimensions['B'].width = 25   # Nom de la Voie
+            worksheet.column_dimensions['C'].width = 18   # Type Erreur CMS
+            worksheet.column_dimensions['D'].width = 20   # Localisation Erreur
+            worksheet.column_dimensions['E'].width = 30   # Description Erreur
+            worksheet.column_dimensions['F'].width = 15   # Statut Correction
+            worksheet.column_dimensions['G'].width = 25   # Commentaire Controleur
+            worksheet.column_dimensions['H'].width = 15   # Date Verification
 
-            # Ajouter la validation de données pour la colonne D (Etat)
-            validation_options = '"Nok-Mineure,Nok Majeure"'
-            dv = DataValidation(type="list", formula1=validation_options, allow_blank=True)
-            dv.error = "Veuillez sélectionner une option valide"
-            dv.errorTitle = "Valeur incorrecte"
-            dv.prompt = "Sélectionnez: Nok-Mineure ou Nok Majeure"
-            dv.promptTitle = "Etat"
+            # Ajouter les validations de données pour améliorer la saisie
 
-            # Appliquer la validation aux lignes 2 à 22 (données + lignes vides)
-            dv.add(f"D2:D22")
-            worksheet.add_data_validation(dv)
+            # Validation pour Type Erreur CMS (colonne C)
+            type_erreur_options = '"Géométrie,Attributs,Topologie,Nomenclature,Complétude,Cohérence"'
+            dv_type = DataValidation(type="list", formula1=type_erreur_options, allow_blank=True)
+            dv_type.error = "Veuillez sélectionner un type d'erreur valide"
+            dv_type.errorTitle = "Type d'erreur incorrect"
+            dv_type.prompt = "Sélectionnez le type d'erreur CMS détectée"
+            dv_type.promptTitle = "Type Erreur CMS"
+            dv_type.add("C2:C26")  # 25 lignes de données
+            worksheet.add_data_validation(dv_type)
 
-            # Appliquer l'alignement centré à toutes les cellules de données
-            for row in range(1, 22):  # Lignes 1 à 21 (en-tête + 20 lignes de données)
-                for col in range(1, 6):  # Colonnes A à E (5 colonnes)
+            # Validation pour Statut Correction (colonne F)
+            statut_options = '"À corriger,En cours,Corrigé,Validé,Rejeté"'
+            dv_statut = DataValidation(type="list", formula1=statut_options, allow_blank=True)
+            dv_statut.error = "Veuillez sélectionner un statut valide"
+            dv_statut.errorTitle = "Statut incorrect"
+            dv_statut.prompt = "Sélectionnez le statut de correction"
+            dv_statut.promptTitle = "Statut Correction"
+            dv_statut.add("F2:F26")  # 25 lignes de données
+            worksheet.add_data_validation(dv_statut)
+
+            # Appliquer les styles et alignements aux cellules de données
+            for row in range(1, 27):  # Lignes 1 à 26 (en-tête + 25 lignes de données)
+                for col in range(1, 9):  # Colonnes A à H (8 colonnes)
                     cell = worksheet.cell(row=row, column=col)
-                    cell.alignment = center_alignment
+                    cell.border = thin_border
 
-            self.logger.info("Mise en forme de la page 2 appliquée avec validation de données")
+                    if row == 1:  # En-tête déjà formaté
+                        continue
+                    elif col in [1, 3, 4, 6]:  # Colonnes centrées (ID, Type, Localisation, Statut)
+                        cell.alignment = center_alignment
+                    else:  # Colonnes alignées à gauche (Nom, Description, Commentaire, Date)
+                        cell.alignment = left_alignment
+
+            # Ajouter des couleurs conditionnelles pour le statut de correction
+            from openpyxl.formatting.rule import CellIsRule
+
+            # Couleurs pour les statuts
+            red_fill = PatternFill(start_color="FFE6E6", end_color="FFE6E6", fill_type="solid")      # À corriger
+            yellow_fill = PatternFill(start_color="FFF2CC", end_color="FFF2CC", fill_type="solid")   # En cours
+            green_fill = PatternFill(start_color="E6F7E6", end_color="E6F7E6", fill_type="solid")    # Corrigé/Validé
+            gray_fill = PatternFill(start_color="F0F0F0", end_color="F0F0F0", fill_type="solid")     # Rejeté
+
+            # Règles de formatage conditionnel pour la colonne Statut Correction (F)
+            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"À corriger"'], fill=red_fill))
+            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"En cours"'], fill=yellow_fill))
+            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"Corrigé"'], fill=green_fill))
+            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"Validé"'], fill=green_fill))
+            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"Rejeté"'], fill=gray_fill))
+
+            # Figer la première ligne pour faciliter la navigation
+            worksheet.freeze_panes = 'A2'
+
+            # Ajouter un filtre automatique sur l'en-tête
+            worksheet.auto_filter.ref = "A1:H26"
+
+            self.logger.info("Mise en forme avancée de la page 2 CMS appliquée avec succès")
 
         except Exception as e:
             self.logger.warning(f"Erreur lors de la mise en forme de la page 2: {e}")
@@ -3106,6 +4016,174 @@ class QualityControlModule:
             self.logger.error(f"Erreur calcul % Erreur Banbou: {e}")
             return 0.0
 
+    def _evaluate_commune_status(self) -> Dict[str, Any]:
+        """
+        Évalue le statut de conformité de la commune selon les règles de validation.
+
+        RÈGLES DE VALIDATION :
+        1. Note globale < 90% → KO
+        2. Fautes majeures détectées → KO immédiat
+
+        Returns:
+            Dict contenant le statut, pourcentage de conformité et raisons du KO
+        """
+        try:
+            if not self.qc_results:
+                return {
+                    'statut': 'N/A',
+                    'pourcentage_conformite': 0.0,
+                    'raisons_ko': ['Aucune analyse effectuée'],
+                    'fautes_majeures': [],
+                    'note_globale_ko': False
+                }
+
+            # 1. CALCUL DU POURCENTAGE DE CONFORMITÉ GLOBAL
+            pourcentage_conformite = self._calculate_conformite_percentage()
+
+            # 2. DÉTECTION DES FAUTES MAJEURES
+            fautes_majeures = self._detect_fautes_majeures()
+
+            # 3. ÉVALUATION DU STATUT
+            raisons_ko = []
+            note_globale_ko = False
+            fichiers_manquants = False
+
+            # Vérifier les fautes majeures critiques (fichiers manquants) en priorité
+            fautes_fichiers = [f for f in fautes_majeures if f['type'] in ['MANQUANT_QGIS', 'MANQUANT_SUIVI', 'STRUCTURE_QGIS_INVALIDE', 'STRUCTURE_SUIVI_INVALIDE']]
+            if fautes_fichiers:
+                fichiers_manquants = True
+                for faute in fautes_fichiers:
+                    raisons_ko.append(f"FICHIER CRITIQUE: {faute['type']} - {faute['description']}")
+
+            # Vérifier le seuil de conformité (90%) seulement si les fichiers sont présents
+            if not fichiers_manquants and pourcentage_conformite < 90.0:
+                note_globale_ko = True
+                raisons_ko.append(f"Note globale insuffisante: {pourcentage_conformite:.1f}% < 90%")
+
+            # Vérifier les autres fautes majeures (KO immédiat)
+            autres_fautes = [f for f in fautes_majeures if f['type'] not in ['MANQUANT_QGIS', 'MANQUANT_SUIVI', 'STRUCTURE_QGIS_INVALIDE', 'STRUCTURE_SUIVI_INVALIDE']]
+            if autres_fautes:
+                for faute in autres_fautes:
+                    raisons_ko.append(f"Faute majeure: {faute['type']} - {faute['description']}")
+
+            # Déterminer le statut final
+            if fichiers_manquants:
+                statut = "KO"  # KO immédiat si fichiers manquants
+            elif note_globale_ko or autres_fautes:
+                statut = "KO"  # KO si note insuffisante ou autres fautes
+            else:
+                statut = "OK"  # OK si tout est conforme
+
+            self.logger.info(f"Évaluation commune - Statut: {statut}, Conformité: {pourcentage_conformite:.1f}%, "
+                           f"Fautes majeures: {len(fautes_majeures)}")
+
+            return {
+                'statut': statut,
+                'pourcentage_conformite': pourcentage_conformite,
+                'raisons_ko': raisons_ko,
+                'fautes_majeures': fautes_majeures,
+                'note_globale_ko': note_globale_ko,
+                'fichiers_manquants': fichiers_manquants,
+                'fautes_fichiers': fautes_fichiers,
+                'seuil_conformite': 90.0
+            }
+
+        except Exception as e:
+            self.logger.error(f"Erreur évaluation statut commune: {e}")
+            return {
+                'statut': 'ERROR',
+                'pourcentage_conformite': 0.0,
+                'raisons_ko': [f'Erreur de calcul: {str(e)}'],
+                'fautes_majeures': [],
+                'note_globale_ko': False
+            }
+
+    def _calculate_conformite_percentage(self) -> float:
+        """
+        Calcule le pourcentage de conformité global basé sur les 5 critères avec pondérations.
+
+        PONDÉRATIONS :
+        - CMS: 30% (0.3)
+        - PA: 60% (0.6)
+        - Banbou: 5% (0.05)
+        - Écart: 5% (0.05)
+
+        Returns:
+            Pourcentage de conformité (0-100%)
+        """
+        try:
+            # Récupérer les résultats des critères
+            summary = self.qc_results.get('summary', {})
+
+            # Calculer les taux d'erreur par catégorie
+            taux_erreur_cms = self._calculate_taux_erreur_cms()
+            taux_erreur_pa = self._calculate_taux_erreur_pa()
+            taux_erreur_banbou = self._calculate_erreur_banbou_percentage() / 100.0  # Convertir en décimal
+            taux_erreur_ecart = self._calculate_ecart_plan_adressage_percentage() / 100.0  # Convertir en décimal
+
+            # Appliquer les pondérations aux taux d'erreur
+            score_erreur_pondere = (
+                taux_erreur_cms * 0.3 +      # CMS: 30%
+                taux_erreur_pa * 0.6 +       # PA: 60%
+                taux_erreur_banbou * 0.05 +  # Banbou: 5%
+                taux_erreur_ecart * 0.05     # Écart: 5%
+            )
+
+            # Convertir le score d'erreur en pourcentage de conformité
+            # Conformité = 100% - (Score d'erreur pondéré * 100)
+            pourcentage_conformite = max(0.0, 100.0 - (score_erreur_pondere * 100.0))
+
+            self.logger.info(f"Calcul conformité - CMS: {taux_erreur_cms:.3f}, PA: {taux_erreur_pa:.3f}, "
+                           f"Banbou: {taux_erreur_banbou:.3f}, Écart: {taux_erreur_ecart:.3f}, "
+                           f"Score pondéré: {score_erreur_pondere:.3f}, Conformité: {pourcentage_conformite:.1f}%")
+
+            return pourcentage_conformite
+
+        except Exception as e:
+            self.logger.error(f"Erreur calcul conformité: {e}")
+            return 0.0
+
+    def _calculate_taux_erreur_cms(self) -> float:
+        """Calcule le taux d'erreur CMS (à implémenter selon vos critères CMS)."""
+        try:
+            # Pour l'instant, retourner 0.0 - à adapter selon vos critères CMS spécifiques
+            # Vous pouvez ici implémenter la logique de calcul des erreurs CMS
+            return 0.0
+        except Exception:
+            return 0.0
+
+    def _calculate_taux_erreur_pa(self) -> float:
+        """Calcule le taux d'erreur PA basé sur les critères 3, 4 et 5."""
+        try:
+            if not self.qc_results:
+                return 0.0
+
+            # Compter le total d'erreurs PA (critères 3, 4, 5)
+            critere_3 = self.qc_results.get('critere_3', {})
+            critere_4 = self.qc_results.get('critere_4', {})
+            critere_5 = self.qc_results.get('critere_5', {})
+
+            total_erreurs_pa = (
+                critere_3.get('total_erreurs_detectees', 0) +
+                critere_4.get('total_ad_a_analyser', 0) +
+                critere_5.get('total_motifs_incorrects', 0)
+            )
+
+            # Base de calcul : nombre total d'enregistrements PA
+            total_records_pa = 0
+            if self.qgis_data is not None:
+                total_records_pa = len(self.qgis_data)
+
+            if total_records_pa > 0:
+                taux_erreur = total_erreurs_pa / total_records_pa
+                return min(1.0, taux_erreur)  # Limiter à 100%
+
+            return 0.0
+
+        except Exception as e:
+            self.logger.error(f"Erreur calcul taux erreur PA: {e}")
+            return 0.0
+
     def _calculate_resume_erreurs(self) -> Dict[str, str]:
         """Calcule les pourcentages du résumé erreurs avec pondérations."""
         try:
@@ -3116,18 +4194,21 @@ class QualityControlModule:
             ponderation_ecart = "0,05"
 
             # Calculer les pourcentages bruts
-            pourcentage_cms_brut = 0.0  # À calculer selon vos critères CMS
-            pourcentage_pa_brut = 0.0   # À calculer selon vos critères PA
-            pourcentage_banbou_brut = self._calculate_erreur_banbou_percentage()  # Calculé selon les tickets
-            pourcentage_ecart_brut = self._calculate_ecart_plan_adressage_percentage()
+            pourcentage_cms_brut = self._calculate_taux_erreur_cms() * 100.0  # Convertir en pourcentage
+            pourcentage_pa_brut = self._calculate_taux_erreur_pa() * 100.0    # Convertir en pourcentage
+            pourcentage_banbou_brut = self._calculate_erreur_banbou_percentage()  # Déjà en pourcentage
+            pourcentage_ecart_brut = self._calculate_ecart_plan_adressage_percentage()  # Déjà en pourcentage
 
-            # Convertir en pourcentage (diviser par 100 pour avoir une valeur sous 1)
+            # Convertir en décimal pour les calculs pondérés
+            pourcentage_cms_decimal = pourcentage_cms_brut / 100.0
+            pourcentage_pa_decimal = pourcentage_pa_brut / 100.0
+            pourcentage_banbou_decimal = pourcentage_banbou_brut / 100.0
             pourcentage_ecart_decimal = pourcentage_ecart_brut / 100.0
 
             # Calculer les taux pondérés (pourcentage décimal * pondération)
-            taux_cms = pourcentage_cms_brut * 0.3
-            taux_pa = pourcentage_pa_brut * 0.6
-            taux_banbou = pourcentage_banbou_brut * 0.05
+            taux_cms = pourcentage_cms_decimal * 0.3
+            taux_pa = pourcentage_pa_decimal * 0.6
+            taux_banbou = pourcentage_banbou_decimal * 0.05
             taux_ecart = pourcentage_ecart_decimal * 0.05
 
             # Calculer le total
@@ -3215,6 +4296,415 @@ class QualityControlModule:
         except Exception as e:
             self.logger.warning(f"Erreur calcul pourcentage écart Plan Adressage: {e}")
             return 0.0
+
+    def _detect_fautes_majeures(self) -> List[Dict[str, Any]]:
+        """
+        Détecte les fautes majeures dans les résultats des 5 critères.
+
+        FAUTES MAJEURES DÉTECTÉES :
+        1. IMB supprimé (à implémenter selon vos critères)
+        2. OK fautif (motif "OK" avec adresse optimum = adresse BAN)
+        3. Autres fautes critiques
+
+        Returns:
+            Liste des fautes majeures détectées
+        """
+        try:
+            fautes_majeures = []
+
+            if not self.qc_results:
+                return fautes_majeures
+
+            # 1. DÉTECTION DES "OK FAUTIFS" (Critère 3)
+            fautes_ok = self._detect_ok_fautifs()
+            fautes_majeures.extend(fautes_ok)
+
+            # 2. DÉTECTION DES FICHIERS MANQUANTS (FAUTES MAJEURES CRITIQUES)
+            fautes_fichiers_manquants = self._detect_fichiers_manquants()
+            fautes_majeures.extend(fautes_fichiers_manquants)
+
+            # 3. DÉTECTION DES IMB SUPPRIMÉS (à implémenter selon vos critères)
+            fautes_imb_supprimes = self._detect_imb_supprimes()
+            fautes_majeures.extend(fautes_imb_supprimes)
+
+            # 4. DÉTECTION D'AUTRES FAUTES MAJEURES
+            autres_fautes = self._detect_autres_fautes_majeures()
+            fautes_majeures.extend(autres_fautes)
+
+            self.logger.info(f"Fautes majeures détectées: {len(fautes_majeures)}")
+            for faute in fautes_majeures:
+                self.logger.warning(f"FAUTE MAJEURE - {faute['type']}: {faute['description']}")
+
+            return fautes_majeures
+
+        except Exception as e:
+            self.logger.error(f"Erreur détection fautes majeures: {e}")
+            return []
+
+    def _detect_ok_fautifs(self) -> List[Dict[str, Any]]:
+        """Détecte les motifs 'OK' fautifs où adresse optimum = adresse BAN."""
+        try:
+            fautes_ok = []
+
+            # Vérifier les résultats du critère 3
+            critere_3 = self.qc_results.get('critere_3', {})
+            erreurs_motif_ok = critere_3.get('erreurs_motif_ok', [])
+
+            for erreur in erreurs_motif_ok:
+                faute = {
+                    'type': 'OK_FAUTIF',
+                    'description': f"IMB {erreur.get('imb_code', 'N/A')} - Motif 'OK' incorrect (adresses identiques)",
+                    'imb_code': erreur.get('imb_code', ''),
+                    'adresse_optimum': erreur.get('adresse_optimum', ''),
+                    'adresse_ban': erreur.get('adresse_ban', ''),
+                    'critere_source': 3,
+                    'gravite': 'MAJEURE'
+                }
+                fautes_ok.append(faute)
+
+            return fautes_ok
+
+        except Exception as e:
+            self.logger.error(f"Erreur détection OK fautifs: {e}")
+            return []
+
+    def _detect_fichiers_manquants(self) -> List[Dict[str, Any]]:
+        """
+        Détecte les fautes majeures liées aux fichiers manquants.
+
+        FAUTES MAJEURES CRITIQUES :
+        1. MANQUANT QGIS - Fichier Résultats QGis non chargé
+        2. MANQUANT SUIVI - Fichier Suivi Commune non chargé
+
+        Returns:
+            Liste des fautes majeures de fichiers manquants
+        """
+        try:
+            fautes_fichiers = []
+
+            # 1. VÉRIFICATION FICHIER QGIS
+            if not hasattr(self, 'qgis_data') or self.qgis_data is None or len(self.qgis_data) == 0:
+                faute_qgis = {
+                    'type': 'MANQUANT_QGIS',
+                    'description': 'Fichier Résultats QGis manquant ou vide - Analyse impossible',
+                    'fichier_requis': 'Résultats QGis (Excel)',
+                    'impact': 'Critères 3, 4, 5 non analysables',
+                    'critere_source': 'FICHIER',
+                    'gravite': 'CRITIQUE'
+                }
+                fautes_fichiers.append(faute_qgis)
+                self.logger.error("FAUTE MAJEURE CRITIQUE: Fichier QGis manquant")
+
+            # 2. VÉRIFICATION FICHIER SUIVI COMMUNE
+            if not hasattr(self, 'suivi_data') or self.suivi_data is None or len(self.suivi_data) == 0:
+                faute_suivi = {
+                    'type': 'MANQUANT_SUIVI',
+                    'description': 'Fichier Suivi Commune manquant ou vide - Analyse impossible',
+                    'fichier_requis': 'Suivi Commune (Excel)',
+                    'impact': 'Critères 0, 2 non analysables',
+                    'critere_source': 'FICHIER',
+                    'gravite': 'CRITIQUE'
+                }
+                fautes_fichiers.append(faute_suivi)
+                self.logger.error("FAUTE MAJEURE CRITIQUE: Fichier Suivi Commune manquant")
+
+            # 3. VÉRIFICATION COHÉRENCE DES FICHIERS
+            if hasattr(self, 'qgis_data') and self.qgis_data is not None and len(self.qgis_data) > 0:
+                if hasattr(self, 'suivi_data') and self.suivi_data is not None and len(self.suivi_data) > 0:
+                    # Les deux fichiers sont présents - vérifier la cohérence basique
+                    try:
+                        # Vérifier que les fichiers ont des données exploitables
+                        qgis_columns = list(self.qgis_data.columns) if hasattr(self.qgis_data, 'columns') else []
+                        suivi_sheets = list(self.suivi_data.keys()) if isinstance(self.suivi_data, dict) else []
+
+                        # Vérifier les colonnes critiques du fichier QGis
+                        colonnes_critiques_qgis = ['A', 'J', 'U']  # IMB, Motif, Adresse BAN
+                        colonnes_manquantes_qgis = [col for col in colonnes_critiques_qgis if col not in qgis_columns]
+
+                        if colonnes_manquantes_qgis:
+                            faute_structure_qgis = {
+                                'type': 'STRUCTURE_QGIS_INVALIDE',
+                                'description': f'Fichier QGis - Colonnes critiques manquantes: {", ".join(colonnes_manquantes_qgis)}',
+                                'colonnes_manquantes': colonnes_manquantes_qgis,
+                                'colonnes_requises': colonnes_critiques_qgis,
+                                'critere_source': 'FICHIER',
+                                'gravite': 'MAJEURE'
+                            }
+                            fautes_fichiers.append(faute_structure_qgis)
+
+                        # Vérifier la structure du fichier Suivi (doit avoir au moins 2 pages)
+                        if len(suivi_sheets) < 2:
+                            faute_structure_suivi = {
+                                'type': 'STRUCTURE_SUIVI_INVALIDE',
+                                'description': f'Fichier Suivi Commune - Structure invalide: {len(suivi_sheets)} page(s) trouvée(s), minimum 2 requises',
+                                'pages_trouvees': len(suivi_sheets),
+                                'pages_requises': 2,
+                                'critere_source': 'FICHIER',
+                                'gravite': 'MAJEURE'
+                            }
+                            fautes_fichiers.append(faute_structure_suivi)
+
+                    except Exception as e:
+                        self.logger.warning(f"Erreur vérification cohérence fichiers: {e}")
+
+            if fautes_fichiers:
+                self.logger.warning(f"Fautes majeures fichiers détectées: {len(fautes_fichiers)}")
+                for faute in fautes_fichiers:
+                    self.logger.error(f"FICHIER MANQUANT/INVALIDE - {faute['type']}: {faute['description']}")
+
+            return fautes_fichiers
+
+        except Exception as e:
+            self.logger.error(f"Erreur détection fichiers manquants: {e}")
+            return []
+
+    def _detect_imb_supprimes(self) -> List[Dict[str, Any]]:
+        """
+        Détecte les IMB supprimés de manière incorrecte.
+
+        NOTE: Cette méthode est un placeholder - à implémenter selon vos critères spécifiques
+        pour détecter les suppressions incorrectes d'IMB.
+        """
+        try:
+            fautes_imb = []
+
+            # TODO: Implémenter la logique de détection des IMB supprimés
+            # Exemple de logique possible :
+            # - Comparer avec un fichier de référence
+            # - Détecter des motifs suspects de suppression
+            # - Vérifier la cohérence des suppressions
+
+            # Placeholder pour l'instant
+            self.logger.debug("Détection IMB supprimés - À implémenter selon critères spécifiques")
+
+            return fautes_imb
+
+        except Exception as e:
+            self.logger.error(f"Erreur détection IMB supprimés: {e}")
+            return []
+
+    def _detect_autres_fautes_majeures(self) -> List[Dict[str, Any]]:
+        """Détecte d'autres types de fautes majeures selon les critères de qualité."""
+        try:
+            autres_fautes = []
+
+            # 1. MOTIFS INCORRECTS CRITIQUES (Critère 5)
+            critere_5 = self.qc_results.get('critere_5', {})
+            motifs_incorrects = critere_5.get('motifs_incorrects_entries', [])
+
+            # Considérer les motifs incorrects comme fautes majeures si nombreux
+            if len(motifs_incorrects) > 5:  # Seuil configurable
+                faute = {
+                    'type': 'MOTIFS_INCORRECTS_MASSIFS',
+                    'description': f"Nombre excessif de motifs incorrects: {len(motifs_incorrects)} détectés",
+                    'count': len(motifs_incorrects),
+                    'critere_source': 5,
+                    'gravite': 'MAJEURE'
+                }
+                autres_fautes.append(faute)
+
+            # 2. DOUBLONS SUSPECTS EXCESSIFS (Critère 3)
+            critere_3 = self.qc_results.get('critere_3', {})
+            doublons_suspects = critere_3.get('total_doublons_suspects', 0)
+
+            if doublons_suspects > 10:  # Seuil configurable
+                faute = {
+                    'type': 'DOUBLONS_SUSPECTS_EXCESSIFS',
+                    'description': f"Nombre excessif de doublons suspects: {doublons_suspects} détectés",
+                    'count': doublons_suspects,
+                    'critere_source': 3,
+                    'gravite': 'MAJEURE'
+                }
+                autres_fautes.append(faute)
+
+            # 3. ÉCARTS PLAN ADRESSAGE CRITIQUES (Critère 0)
+            critere_0 = self.qc_results.get('critere_0', {})
+            total_incoherences = critere_0.get('total_incoherences', 0)
+
+            if total_incoherences > 20:  # Seuil configurable
+                faute = {
+                    'type': 'ECARTS_PLAN_ADRESSAGE_CRITIQUES',
+                    'description': f"Écarts Plan Adressage excessifs: {total_incoherences} incohérences",
+                    'count': total_incoherences,
+                    'critere_source': 0,
+                    'gravite': 'MAJEURE'
+                }
+                autres_fautes.append(faute)
+
+            return autres_fautes
+
+        except Exception as e:
+            self.logger.error(f"Erreur détection autres fautes majeures: {e}")
+            return []
+
+    def _display_commune_status(self, evaluation_commune: Dict[str, Any]):
+        """
+        Affiche le statut de conformité de la commune dans l'interface utilisateur.
+
+        Args:
+            evaluation_commune: Résultat de l'évaluation de conformité
+        """
+        try:
+            statut = evaluation_commune['statut']
+            pourcentage_conformite = evaluation_commune['pourcentage_conformite']
+            fautes_majeures = evaluation_commune['fautes_majeures']
+            raisons_ko = evaluation_commune['raisons_ko']
+
+            # Créer ou mettre à jour le widget de statut de conformité
+            if not hasattr(self, 'statut_conformite_frame'):
+                self._create_statut_conformite_widget()
+
+            # Mettre à jour le statut
+            fichiers_manquants = evaluation_commune.get('fichiers_manquants', False)
+
+            if statut == "OK":
+                statut_text = f"✅ CONFORME ({pourcentage_conformite:.1f}%)"
+                statut_color = COLORS['SUCCESS']
+                bg_color = "#E8F5E8"  # Vert clair
+            elif statut == "KO":
+                if fichiers_manquants:
+                    statut_text = f"🚫 FICHIERS MANQUANTS - ANALYSE IMPOSSIBLE"
+                    statut_color = COLORS['ERROR']
+                    bg_color = "#FFE0E0"  # Rouge très clair
+                elif fautes_majeures:
+                    statut_text = f"🚨 NON CONFORME - FAUTES MAJEURES ({pourcentage_conformite:.1f}%)"
+                    statut_color = COLORS['ERROR']
+                    bg_color = "#FFE8E8"  # Rouge clair
+                else:
+                    statut_text = f"❌ NON CONFORME - NOTE INSUFFISANTE ({pourcentage_conformite:.1f}%)"
+                    statut_color = COLORS['ERROR']
+                    bg_color = "#FFE8E8"  # Rouge clair
+            else:
+                statut_text = f"⏳ EN ATTENTE D'ANALYSE"
+                statut_color = COLORS['INFO']
+                bg_color = COLORS['LIGHT']
+
+            # Mettre à jour les variables d'affichage
+            self.statut_conformite_var.set(statut_text)
+            self.statut_conformite_label.config(fg=statut_color, bg=bg_color)
+
+            # Mettre à jour les détails
+            if fichiers_manquants:
+                details_text = f"FICHIERS REQUIS MANQUANTS | Fautes critiques: {len(fautes_majeures)}"
+            else:
+                details_text = f"Seuil: 90% | Fautes majeures: {len(fautes_majeures)}"
+                if raisons_ko:
+                    details_text += f" | Raisons: {len(raisons_ko)}"
+
+            self.statut_details_var.set(details_text)
+
+            # Afficher un tooltip avec les détails si statut KO
+            if statut == "KO" and (raisons_ko or fautes_majeures):
+                tooltip_text = "DÉTAILS DU STATUT KO:\n\n"
+
+                if raisons_ko:
+                    tooltip_text += "RAISONS:\n"
+                    for i, raison in enumerate(raisons_ko[:3], 1):
+                        tooltip_text += f"{i}. {raison}\n"
+                    if len(raisons_ko) > 3:
+                        tooltip_text += f"... et {len(raisons_ko) - 3} autres\n"
+
+                if fautes_majeures:
+                    tooltip_text += "\nFAUTES MAJEURES:\n"
+                    for i, faute in enumerate(fautes_majeures[:2], 1):
+                        tooltip_text += f"{i}. {faute['type']}\n"
+                    if len(fautes_majeures) > 2:
+                        tooltip_text += f"... et {len(fautes_majeures) - 2} autres\n"
+
+                # Stocker le tooltip pour affichage au survol
+                self.statut_tooltip_text = tooltip_text
+
+            self.logger.info(f"Statut conformité affiché: {statut} ({pourcentage_conformite:.1f}%)")
+
+        except Exception as e:
+            self.logger.error(f"Erreur affichage statut commune: {e}")
+
+    def _create_statut_conformite_widget(self):
+        """Crée le widget d'affichage du statut de conformité dans l'interface."""
+        try:
+            # Créer le frame pour le statut de conformité dans la section des informations détectées
+            if hasattr(self, 'info_frame') and self.info_frame:
+                # Créer un frame séparé pour le statut de conformité
+                self.statut_conformite_frame = tk.Frame(self.info_frame, bg=COLORS['CARD'])
+                self.statut_conformite_frame.pack(fill=tk.X, padx=5, pady=(10, 5))
+
+                # Titre de la section
+                title_label = tk.Label(
+                    self.statut_conformite_frame,
+                    text="🏆 STATUT DE CONFORMITÉ",
+                    font=("Segoe UI", 10, "bold"),
+                    fg=COLORS['PRIMARY'],
+                    bg=COLORS['CARD']
+                )
+                title_label.pack(anchor=tk.W, pady=(0, 5))
+
+                # Variables pour l'affichage
+                self.statut_conformite_var = tk.StringVar(value="⏳ EN ATTENTE D'ANALYSE")
+                self.statut_details_var = tk.StringVar(value="Seuil: 90% | Fautes majeures: 0")
+
+                # Label principal du statut
+                self.statut_conformite_label = tk.Label(
+                    self.statut_conformite_frame,
+                    textvariable=self.statut_conformite_var,
+                    font=("Segoe UI", 9, "bold"),
+                    fg=COLORS['INFO'],
+                    bg=COLORS['LIGHT'],
+                    relief=tk.RAISED,
+                    bd=1,
+                    padx=10,
+                    pady=5
+                )
+                self.statut_conformite_label.pack(fill=tk.X, pady=(0, 3))
+
+                # Label des détails
+                details_label = tk.Label(
+                    self.statut_conformite_frame,
+                    textvariable=self.statut_details_var,
+                    font=("Segoe UI", 8),
+                    fg=COLORS['TEXT_PRIMARY'],
+                    bg=COLORS['CARD']
+                )
+                details_label.pack(anchor=tk.W)
+
+                # Bind pour afficher les détails au survol (si KO)
+                self.statut_conformite_label.bind("<Enter>", self._on_statut_hover_enter)
+                self.statut_conformite_label.bind("<Leave>", self._on_statut_hover_leave)
+
+                self.logger.info("Widget statut conformité créé")
+
+        except Exception as e:
+            self.logger.error(f"Erreur création widget statut conformité: {e}")
+
+    def _on_statut_hover_enter(self, event):
+        """Affiche les détails du statut au survol de la souris."""
+        try:
+            if hasattr(self, 'statut_tooltip_text') and self.statut_tooltip_text:
+                # Créer une fenêtre tooltip simple
+                self.tooltip_window = tk.Toplevel()
+                self.tooltip_window.wm_overrideredirect(True)
+                self.tooltip_window.wm_geometry(f"+{event.x_root+10}+{event.y_root+10}")
+
+                tooltip_label = tk.Label(
+                    self.tooltip_window,
+                    text=self.statut_tooltip_text,
+                    background="#FFFFCC",
+                    relief=tk.SOLID,
+                    borderwidth=1,
+                    font=("Segoe UI", 8),
+                    justify=tk.LEFT
+                )
+                tooltip_label.pack()
+        except Exception:
+            pass
+
+    def _on_statut_hover_leave(self, event):
+        """Cache les détails du statut quand la souris quitte la zone."""
+        try:
+            if hasattr(self, 'tooltip_window'):
+                self.tooltip_window.destroy()
+                delattr(self, 'tooltip_window')
+        except Exception:
+            pass
 
     def _display_modern_results(self, results: Dict[str, Any]):
         """Affiche les résultats de l'analyse avec un design moderne."""
@@ -3654,3 +5144,760 @@ class QualityControlModule:
         """Cache le module."""
         if self.main_frame:
             self.main_frame.grid_forget()
+
+    # ==========================================
+    # INTERFACE UTILISATEUR MODERNISÉE
+    # ==========================================
+
+    def _create_enhanced_header(self):
+        """Crée un en-tête modernisé avec design amélioré."""
+        header_frame = tk.Frame(self.main_frame, bg=COLORS['CARD'], height=50)
+        header_frame.grid(row=0, column=0, sticky="ew", padx=3, pady=2)
+        header_frame.pack_propagate(False)
+        header_frame.config(highlightbackground=COLORS['ACCENT'], highlightthickness=2)
+
+        # Conteneur principal avec padding amélioré
+        content = tk.Frame(header_frame, bg=COLORS['CARD'])
+        content.pack(fill=tk.BOTH, expand=True, padx=15, pady=8)
+
+        # Titre principal avec style amélioré
+        title_frame = tk.Frame(content, bg=COLORS['CARD'])
+        title_frame.pack(side=tk.LEFT)
+
+        title_label = tk.Label(
+            title_frame,
+            text="🔍 Module 5 - Contrôle Qualité",
+            font=("Segoe UI", 14, "bold"),
+            fg=COLORS['ACCENT'],
+            bg=COLORS['CARD']
+        )
+        title_label.pack(side=tk.LEFT)
+
+        # Version avec badge moderne
+        version_badge = tk.Label(
+            title_frame,
+            text="v3.0",
+            font=("Segoe UI", 9, "bold"),
+            fg='white',
+            bg=COLORS['SUCCESS'],
+            padx=8,
+            pady=2
+        )
+        version_badge.pack(side=tk.LEFT, padx=(10, 0))
+
+        # Bouton de choix Mode (Autoévaluation / Contrôle Qualité) - Fonctionnalité future
+        self._create_mode_selection_button(content)
+
+        # Indicateurs de statut modernisés
+        self._create_enhanced_status_indicators(content)
+
+    def _create_mode_selection_button(self, parent: tk.Widget):
+        """Crée le bouton de sélection du mode (Autoévaluation / Contrôle Qualité)."""
+        try:
+            # Séparateur avant le bouton de mode
+            separator = tk.Frame(parent, width=2, bg=COLORS['BORDER'])
+            separator.pack(side=tk.LEFT, fill=tk.Y, padx=10)
+
+            # Frame pour le bouton de mode
+            mode_frame = tk.Frame(parent, bg=COLORS['CARD'])
+            mode_frame.pack(side=tk.LEFT)
+
+            # Variable pour stocker le mode sélectionné
+            self.selected_mode = tk.StringVar(value="Contrôle Qualité")
+
+            # Label descriptif
+            mode_label = tk.Label(
+                mode_frame,
+                text="Mode:",
+                font=("Segoe UI", 9, "bold"),
+                fg=COLORS['TEXT_PRIMARY'],
+                bg=COLORS['CARD']
+            )
+            mode_label.pack(side=tk.LEFT, padx=(0, 5))
+
+            # Bouton de sélection avec menu déroulant
+            self.mode_button = tk.Menubutton(
+                mode_frame,
+                text="🔍 Contrôle Qualité",
+                font=("Segoe UI", 9, "bold"),
+                fg='white',
+                bg=COLORS['PRIMARY'],
+                activebackground=COLORS['ACCENT'],
+                activeforeground='white',
+                relief='flat',
+                padx=12,
+                pady=4,
+                cursor='hand2',
+                direction='below'
+            )
+            self.mode_button.pack(side=tk.LEFT)
+
+            # Menu déroulant pour les options
+            mode_menu = tk.Menu(self.mode_button, tearoff=0)
+            self.mode_button.config(menu=mode_menu)
+
+            # Options du menu
+            mode_menu.add_command(
+                label="🔍 Contrôle Qualité",
+                command=lambda: self._select_mode("Contrôle Qualité", "🔍")
+            )
+            mode_menu.add_command(
+                label="📊 Autoévaluation",
+                command=lambda: self._select_mode("Autoévaluation", "📊")
+            )
+
+            # Tooltip informatif
+            self._create_mode_tooltip()
+
+            self.logger.info("Bouton de sélection de mode créé avec succès")
+
+        except Exception as e:
+            self.logger.warning(f"Erreur création bouton mode: {e}")
+
+    def _select_mode(self, mode: str, icon: str):
+        """Sélectionne le mode d'analyse."""
+        try:
+            self.selected_mode.set(mode)
+            self.mode_button.config(text=f"{icon} {mode}")
+
+            # Feedback visuel
+            if mode == "Autoévaluation":
+                self.mode_button.config(bg=COLORS['INFO'])
+                mode_description = "Mode Autoévaluation sélectionné (fonctionnalité future)"
+            else:
+                self.mode_button.config(bg=COLORS['PRIMARY'])
+                mode_description = "Mode Contrôle Qualité sélectionné (actuel)"
+
+            # Afficher un message informatif
+            if hasattr(self, 'status_label') and self.status_label:
+                original_text = self.status_label.cget('text')
+                self.status_label.config(text=mode_description, fg=COLORS['INFO'])
+
+                # Restaurer le texte original après 3 secondes
+                self.parent.after(3000, lambda: self._restore_status_text(original_text))
+
+            self.logger.info(f"Mode sélectionné: {mode}")
+
+        except Exception as e:
+            self.logger.warning(f"Erreur sélection mode: {e}")
+
+    def _restore_status_text(self, original_text: str):
+        """Restaure le texte de statut original."""
+        try:
+            if hasattr(self, 'status_label') and self.status_label:
+                self.status_label.config(text=original_text, fg=COLORS['TEXT_SECONDARY'])
+        except Exception as e:
+            self.logger.warning(f"Erreur restauration statut: {e}")
+
+    def _create_mode_tooltip(self):
+        """Crée un tooltip informatif pour le bouton de mode."""
+        try:
+            def show_tooltip(event):
+                tooltip_text = (
+                    "Sélection du mode d'analyse:\n\n"
+                    "🔍 Contrôle Qualité:\n"
+                    "   • Mode actuel et fonctionnel\n"
+                    "   • Analyse complète des 5 critères\n"
+                    "   • Génération de rapports Excel\n\n"
+                    "📊 Autoévaluation:\n"
+                    "   • Fonctionnalité future\n"
+                    "   • Auto-analyse des données\n"
+                    "   • Suggestions d'amélioration"
+                )
+
+                # Créer une fenêtre tooltip simple
+                tooltip = tk.Toplevel()
+                tooltip.wm_overrideredirect(True)
+                tooltip.wm_geometry(f"+{event.x_root+10}+{event.y_root+10}")
+                tooltip.configure(bg='#FFFFDD')
+
+                label = tk.Label(
+                    tooltip,
+                    text=tooltip_text,
+                    font=("Segoe UI", 8),
+                    bg='#FFFFDD',
+                    fg='black',
+                    justify=tk.LEFT,
+                    padx=8,
+                    pady=6
+                )
+                label.pack()
+
+                # Supprimer le tooltip après 5 secondes
+                tooltip.after(5000, tooltip.destroy)
+
+                # Supprimer le tooltip si on clique ailleurs
+                def hide_tooltip(event):
+                    tooltip.destroy()
+
+                tooltip.bind("<Button-1>", hide_tooltip)
+                tooltip.bind("<FocusOut>", hide_tooltip)
+
+            # Lier l'événement hover au bouton
+            self.mode_button.bind("<Enter>", show_tooltip)
+
+        except Exception as e:
+            self.logger.warning(f"Erreur création tooltip: {e}")
+
+    def get_selected_mode(self) -> str:
+        """Retourne le mode actuellement sélectionné."""
+        try:
+            if hasattr(self, 'selected_mode') and self.selected_mode:
+                return self.selected_mode.get()
+            return "Contrôle Qualité"  # Mode par défaut
+        except Exception as e:
+            self.logger.warning(f"Erreur récupération mode: {e}")
+            return "Contrôle Qualité"
+
+    def is_autoevaluation_mode(self) -> bool:
+        """Vérifie si le mode Autoévaluation est sélectionné."""
+        return self.get_selected_mode() == "Autoévaluation"
+
+    def is_quality_control_mode(self) -> bool:
+        """Vérifie si le mode Contrôle Qualité est sélectionné."""
+        return self.get_selected_mode() == "Contrôle Qualité"
+
+    def _handle_future_functionality(self, feature_name: str):
+        """Gère les fonctionnalités futures non encore implémentées."""
+        try:
+            if self.is_autoevaluation_mode():
+                messagebox.showinfo(
+                    "Fonctionnalité Future",
+                    f"🚀 {feature_name}\n\n"
+                    f"Cette fonctionnalité sera disponible dans une future version.\n\n"
+                    f"Mode Autoévaluation en cours de développement:\n"
+                    f"• Auto-analyse intelligente des données\n"
+                    f"• Suggestions d'amélioration automatiques\n"
+                    f"• Rapports d'autoévaluation personnalisés\n\n"
+                    f"Restez connecté pour les mises à jour !"
+                )
+                return False
+            return True
+        except Exception as e:
+            self.logger.warning(f"Erreur gestion fonctionnalité future: {e}")
+            return True
+
+    def _create_enhanced_status_indicators(self, parent: tk.Widget):
+        """Crée les indicateurs de statut avec design modernisé."""
+        # Séparateur élégant
+        separator = tk.Frame(parent, width=2, bg=COLORS['BORDER'])
+        separator.pack(side=tk.LEFT, fill=tk.Y, padx=15)
+
+        # Conteneur des indicateurs
+        indicators_frame = tk.Frame(parent, bg=COLORS['CARD'])
+        indicators_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        # Indicateur fichiers avec icône améliorée
+        self.files_status = tk.Label(
+            indicators_frame,
+            text="📁 Fichiers: En attente",
+            font=("Segoe UI", 9, "bold"),
+            fg=COLORS['WARNING'],
+            bg=COLORS['CARD']
+        )
+        self.files_status.pack(side=tk.LEFT, padx=8)
+
+        # Point séparateur
+        tk.Label(
+            indicators_frame,
+            text="•",
+            font=("Segoe UI", 12),
+            fg=COLORS['BORDER'],
+            bg=COLORS['CARD']
+        ).pack(side=tk.LEFT, padx=5)
+
+        # Indicateur analyse
+        self.analysis_status = tk.Label(
+            indicators_frame,
+            text="⚙️ Analyse: Prête",
+            font=("Segoe UI", 9, "bold"),
+            fg=COLORS['INFO'],
+            bg=COLORS['CARD']
+        )
+        self.analysis_status.pack(side=tk.LEFT, padx=8)
+
+        # Point séparateur
+        tk.Label(
+            indicators_frame,
+            text="•",
+            font=("Segoe UI", 12),
+            fg=COLORS['BORDER'],
+            bg=COLORS['CARD']
+        ).pack(side=tk.LEFT, padx=5)
+
+        # Indicateur rapport
+        self.report_status = tk.Label(
+            indicators_frame,
+            text="📊 Rapport: En attente",
+            font=("Segoe UI", 9, "bold"),
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['CARD']
+        )
+        self.report_status.pack(side=tk.LEFT, padx=8)
+
+    def _create_enhanced_main_content(self):
+        """Crée le contenu principal avec design modernisé."""
+        main_content = tk.Frame(self.main_frame, bg=COLORS['BG'])
+        main_content.grid(row=1, column=0, sticky="nsew", padx=3, pady=2)
+
+        # Configuration de la grille 2x2 avec espacement amélioré
+        main_content.grid_rowconfigure(0, weight=1)
+        main_content.grid_rowconfigure(1, weight=1)
+        main_content.grid_columnconfigure(0, weight=1)
+        main_content.grid_columnconfigure(1, weight=1)
+
+        # Création des quadrants avec design amélioré
+        self._create_enhanced_files_quadrant(main_content, 0, 0)
+        self._create_enhanced_info_quadrant(main_content, 0, 1)
+        self._create_enhanced_analysis_quadrant(main_content, 1, 0)
+        self._create_enhanced_results_quadrant(main_content, 1, 1)
+
+    def _create_enhanced_files_quadrant(self, parent: tk.Widget, row: int, col: int):
+        """Quadrant 1: Chargement des fichiers avec design modernisé."""
+        frame = tk.Frame(parent, bg=COLORS['CARD'], relief='flat', bd=0)
+        frame.grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
+        frame.config(highlightbackground=COLORS['ACCENT'], highlightthickness=2)
+
+        # En-tête avec gradient visuel
+        title_frame = tk.Frame(frame, bg=COLORS['ACCENT'], height=35)
+        title_frame.pack(fill=tk.X)
+        title_frame.pack_propagate(False)
+
+        title_label = tk.Label(
+            title_frame,
+            text="📁 Chargement des Fichiers",
+            font=("Segoe UI", 11, "bold"),
+            fg='white',
+            bg=COLORS['ACCENT']
+        )
+        title_label.pack(expand=True)
+
+        # Contenu avec padding amélioré
+        content = tk.Frame(frame, bg=COLORS['CARD'])
+        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=10)
+
+        # Créer les labels d'information s'ils n'existent pas
+        if self.qgis_info_label is None:
+            self.qgis_info_label = tk.Label(content, text="Aucun fichier chargé", bg=COLORS['CARD'])
+        if self.suivi_info_label is None:
+            self.suivi_info_label = tk.Label(content, text="Aucun fichier chargé", bg=COLORS['CARD'])
+
+        # Section QGis avec design amélioré
+        self._create_enhanced_file_section(content, "QGis", "🗺️", self._load_qgis_file, self.qgis_info_label)
+
+        # Séparateur élégant
+        separator = tk.Frame(content, height=1, bg=COLORS['BORDER'])
+        separator.pack(fill=tk.X, pady=8)
+
+        # Section Suivi Commune
+        self._create_enhanced_file_section(content, "Suivi Commune", "📋", self._load_suivi_file, self.suivi_info_label)
+
+    def _create_enhanced_file_section(self, parent: tk.Widget, title: str, icon: str, command, info_label):
+        """Crée une section de fichier avec design amélioré."""
+        section_frame = tk.Frame(parent, bg=COLORS['CARD'])
+        section_frame.pack(fill=tk.X, pady=3)
+
+        # En-tête de section
+        header_frame = tk.Frame(section_frame, bg=COLORS['CARD'])
+        header_frame.pack(fill=tk.X)
+
+        tk.Label(
+            header_frame,
+            text=f"{icon} {title}",
+            font=("Segoe UI", 10, "bold"),
+            fg=COLORS['TEXT_PRIMARY'],
+            bg=COLORS['CARD']
+        ).pack(side=tk.LEFT)
+
+        # Bouton avec style amélioré et effet hover
+        btn = tk.Button(
+            header_frame,
+            text="📂 Charger",
+            font=("Segoe UI", 9, "bold"),
+            fg='white',
+            bg=COLORS['PRIMARY'],
+            activebackground=COLORS['ACCENT'],
+            activeforeground='white',
+            relief='flat',
+            padx=12,
+            pady=4,
+            cursor='hand2',
+            command=command
+        )
+        btn.pack(side=tk.RIGHT)
+
+        # Effet hover pour le bouton
+        def on_enter(e):
+            btn.config(bg=COLORS['ACCENT'])
+        def on_leave(e):
+            btn.config(bg=COLORS['PRIMARY'])
+
+        btn.bind("<Enter>", on_enter)
+        btn.bind("<Leave>", on_leave)
+
+        # Label d'information avec style amélioré
+        info_label.config(
+            font=("Segoe UI", 8),
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['CARD'],
+            wraplength=200,
+            justify=tk.LEFT
+        )
+        info_label.pack(anchor=tk.W, pady=(5, 0))
+
+    def _create_enhanced_info_quadrant(self, parent: tk.Widget, row: int, col: int):
+        """Quadrant 2: Informations détectées avec design modernisé."""
+        frame = tk.Frame(parent, bg=COLORS['CARD'], relief='flat', bd=0)
+        frame.grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
+        frame.config(highlightbackground=COLORS['SUCCESS'], highlightthickness=2)
+
+        # En-tête avec couleur distinctive
+        title_frame = tk.Frame(frame, bg=COLORS['SUCCESS'], height=35)
+        title_frame.pack(fill=tk.X)
+        title_frame.pack_propagate(False)
+
+        title_label = tk.Label(
+            title_frame,
+            text="ℹ️ Informations Détectées",
+            font=("Segoe UI", 11, "bold"),
+            fg='white',
+            bg=COLORS['SUCCESS']
+        )
+        title_label.pack(expand=True)
+
+        # Contenu avec grille améliorée
+        content = tk.Frame(frame, bg=COLORS['CARD'])
+        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=10)
+
+        # Configuration de la grille pour les champs d'information
+        content.grid_columnconfigure(0, weight=1)
+        content.grid_columnconfigure(1, weight=1)
+
+        # Champs d'information avec design amélioré
+        self._create_enhanced_info_field(content, 0, 0, "🏢", "Commune", self.commune_var)
+        self._create_enhanced_info_field(content, 0, 1, "👤", "Collaborateur", self.collaborator_var)
+        self._create_enhanced_info_field(content, 1, 0, "🆔", "INSEE", self.insee_var)
+        self._create_enhanced_info_field(content, 1, 1, "📋", "ID Tâche", self.id_tache_var)
+
+        # Note informative avec style amélioré
+        note_frame = tk.Frame(content, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        note_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+        note_frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+
+        note_label = tk.Label(
+            note_frame,
+            text="💡 Ces informations sont détectées automatiquement lors du chargement des fichiers",
+            font=("Segoe UI", 8, "italic"),
+            fg=COLORS['INFO'],
+            bg=COLORS['LIGHT'],
+            wraplength=300,
+            justify=tk.CENTER
+        )
+        note_label.pack(pady=8)
+
+    def _create_enhanced_info_field(self, parent: tk.Widget, row: int, col: int,
+                                   icon: str, label: str, var: tk.StringVar):
+        """Crée un champ d'information avec design modernisé."""
+        field_frame = tk.Frame(parent, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        field_frame.grid(row=row, column=col, sticky="ew", padx=3, pady=3)
+        field_frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+
+        # Contenu avec padding amélioré
+        content = tk.Frame(field_frame, bg=COLORS['LIGHT'])
+        content.pack(fill=tk.X, padx=8, pady=6)
+
+        # En-tête avec icône
+        header = tk.Frame(content, bg=COLORS['LIGHT'])
+        header.pack(fill=tk.X)
+
+        tk.Label(
+            header,
+            text=f"{icon} {label}",
+            font=("Segoe UI", 9, "bold"),
+            fg=COLORS['TEXT_PRIMARY'],
+            bg=COLORS['LIGHT']
+        ).pack(side=tk.LEFT)
+
+        # Valeur avec style amélioré - Texte en noir
+        value_label = tk.Label(
+            content,
+            textvariable=var,
+            font=("Segoe UI", 9),
+            fg=COLORS['TEXT_PRIMARY'],  # Changé de ACCENT à TEXT_PRIMARY pour texte noir
+            bg=COLORS['LIGHT'],
+            wraplength=120,
+            justify=tk.LEFT
+        )
+        value_label.pack(anchor=tk.W, pady=(3, 0))
+
+        # Stocker la référence pour les mises à jour
+        self.info_displays[label.lower()] = value_label
+
+    def _create_enhanced_analysis_quadrant(self, parent: tk.Widget, row: int, col: int):
+        """Quadrant 3: Analyse et critères avec design modernisé."""
+        frame = tk.Frame(parent, bg=COLORS['CARD'], relief='flat', bd=0)
+        frame.grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
+        frame.config(highlightbackground=COLORS['WARNING'], highlightthickness=2)
+
+        # En-tête avec couleur distinctive
+        title_frame = tk.Frame(frame, bg=COLORS['WARNING'], height=35)
+        title_frame.pack(fill=tk.X)
+        title_frame.pack_propagate(False)
+
+        title_label = tk.Label(
+            title_frame,
+            text="⚙️ Analyse & Critères",
+            font=("Segoe UI", 11, "bold"),
+            fg='white',
+            bg=COLORS['WARNING']
+        )
+        title_label.pack(expand=True)
+
+        # Contenu avec scrollbar si nécessaire
+        content = tk.Frame(frame, bg=COLORS['CARD'])
+        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=10)
+
+        # Informations sur les critères avec design compact mais lisible
+        criteria_info = tk.Frame(content, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        criteria_info.pack(fill=tk.X, pady=(0, 8))
+        criteria_info.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+
+        criteria_label = tk.Label(
+            criteria_info,
+            text="🔍 5 Critères de Contrôle Qualité",
+            font=("Segoe UI", 9, "bold"),
+            fg=COLORS['TEXT_PRIMARY'],
+            bg=COLORS['LIGHT']
+        )
+        criteria_label.pack(pady=6)
+
+        # Boutons d'action avec design amélioré
+        buttons_frame = tk.Frame(content, bg=COLORS['CARD'])
+        buttons_frame.pack(fill=tk.X, pady=(5, 0))
+
+        # Bouton Analyser avec style principal
+        self.analyze_button = tk.Button(
+            buttons_frame,
+            text="🔍 Analyser",
+            font=("Segoe UI", 10, "bold"),
+            fg='white',
+            bg=COLORS['PRIMARY'],
+            activebackground=COLORS['ACCENT'],
+            activeforeground='white',
+            relief='flat',
+            padx=20,
+            pady=8,
+            cursor='hand2',
+            command=self._run_quality_analysis
+        )
+        self.analyze_button.pack(side=tk.LEFT, padx=(0, 8))
+
+        # Effet hover pour le bouton Analyser
+        def on_analyze_enter(e):
+            self.analyze_button.config(bg=COLORS['ACCENT'])
+        def on_analyze_leave(e):
+            self.analyze_button.config(bg=COLORS['PRIMARY'])
+
+        self.analyze_button.bind("<Enter>", on_analyze_enter)
+        self.analyze_button.bind("<Leave>", on_analyze_leave)
+
+        # Bouton Export avec style secondaire
+        self.export_button = tk.Button(
+            buttons_frame,
+            text="📊 Exporter Rapport",
+            font=("Segoe UI", 10, "bold"),
+            fg=COLORS['TEXT_PRIMARY'],
+            bg=COLORS['LIGHT'],
+            activebackground=COLORS['SUCCESS'],
+            activeforeground='white',
+            relief='flat',
+            padx=20,
+            pady=8,
+            cursor='hand2',
+            command=self._export_qc_report
+        )
+        self.export_button.pack(side=tk.LEFT)
+
+        # Effet hover pour le bouton Export
+        def on_export_enter(e):
+            self.export_button.config(bg=COLORS['SUCCESS'], fg='white')
+        def on_export_leave(e):
+            self.export_button.config(bg=COLORS['LIGHT'], fg=COLORS['TEXT_PRIMARY'])
+
+        self.export_button.bind("<Enter>", on_export_enter)
+        self.export_button.bind("<Leave>", on_export_leave)
+
+        # Barre de progression modernisée
+        progress_frame = tk.Frame(content, bg=COLORS['CARD'])
+        progress_frame.pack(fill=tk.X, pady=(10, 0))
+
+        tk.Label(
+            progress_frame,
+            text="📈 Progression",
+            font=("Segoe UI", 9, "bold"),
+            fg=COLORS['TEXT_PRIMARY'],
+            bg=COLORS['CARD']
+        ).pack(anchor=tk.W)
+
+        # Conteneur pour la barre de progression avec bordure
+        progress_container = tk.Frame(progress_frame, bg=COLORS['BORDER'], height=8)
+        progress_container.pack(fill=tk.X, pady=(5, 0))
+        progress_container.pack_propagate(False)
+
+        # Barre de progression avec couleur dynamique
+        self.progress_bar = tk.Frame(progress_container, bg=COLORS['SUCCESS'], height=6)
+        self.progress_bar.place(x=1, y=1, width=0, height=6)
+
+    def _create_enhanced_results_quadrant(self, parent: tk.Widget, row: int, col: int):
+        """Quadrant 4: Résultats avec design modernisé."""
+        frame = tk.Frame(parent, bg=COLORS['CARD'], relief='flat', bd=0)
+        frame.grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
+        frame.config(highlightbackground=COLORS['INFO'], highlightthickness=2)
+
+        # En-tête avec couleur distinctive
+        title_frame = tk.Frame(frame, bg=COLORS['INFO'], height=35)
+        title_frame.pack(fill=tk.X)
+        title_frame.pack_propagate(False)
+
+        title_label = tk.Label(
+            title_frame,
+            text="📊 Résultats d'Analyse",
+            font=("Segoe UI", 11, "bold"),
+            fg='white',
+            bg=COLORS['INFO']
+        )
+        title_label.pack(expand=True)
+
+        # Contenu avec scrollbar pour les résultats
+        content = tk.Frame(frame, bg=COLORS['CARD'])
+        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=10)
+
+        # Zone de résultats avec style amélioré
+        results_container = tk.Frame(content, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        results_container.pack(fill=tk.BOTH, expand=True)
+        results_container.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+
+        # Créer le results_frame pour compatibilité avec les méthodes d'affichage
+        self.results_frame = tk.Frame(results_container, bg=COLORS['LIGHT'])
+        self.results_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        # Label de résultats avec style modernisé
+        self.results_label = tk.Label(
+            self.results_frame,
+            text="🔄 En attente d'analyse...\n\n💡 Chargez les fichiers et lancez l'analyse pour voir les résultats détaillés",
+            font=("Segoe UI", 9),
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['LIGHT'],
+            wraplength=300,
+            justify=tk.CENTER
+        )
+        self.results_label.pack(expand=True, pady=20)
+
+    def _create_enhanced_status_bar(self):
+        """Crée la barre de statut modernisée."""
+        status_frame = tk.Frame(self.main_frame, bg=COLORS['LIGHT'], height=35)
+        status_frame.grid(row=2, column=0, sticky="ew", padx=3, pady=2)
+        status_frame.pack_propagate(False)
+        status_frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+
+        # Contenu avec padding amélioré
+        content = tk.Frame(status_frame, bg=COLORS['LIGHT'])
+        content.pack(fill=tk.BOTH, expand=True, padx=15, pady=6)
+
+        # Icône de statut avec animation potentielle
+        self.status_icon = tk.Label(
+            content,
+            text="⚡",
+            font=("Segoe UI", 12),
+            fg=COLORS['SUCCESS'],
+            bg=COLORS['LIGHT']
+        )
+        self.status_icon.pack(side=tk.LEFT)
+
+        # Message de statut avec style amélioré
+        self.status_label = tk.Label(
+            content,
+            text="Prêt - Module de Contrôle Qualité initialisé",
+            font=("Segoe UI", 9),
+            fg=COLORS['TEXT_PRIMARY'],
+            bg=COLORS['LIGHT']
+        )
+        self.status_label.pack(side=tk.LEFT, padx=(8, 0))
+
+        # Indicateur de temps/version à droite
+        time_label = tk.Label(
+            content,
+            text="Pladria v3.0 | Module 5",
+            font=("Segoe UI", 8),
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['LIGHT']
+        )
+        time_label.pack(side=tk.RIGHT)
+
+    # ==========================================
+    # MÉTHODES D'AMÉLIORATION DE L'EXPÉRIENCE UTILISATEUR
+    # ==========================================
+
+    def _update_progress_bar(self, percentage: float):
+        """Met à jour la barre de progression avec animation."""
+        try:
+            if (hasattr(self, 'progress_bar') and
+                self.progress_bar is not None and
+                self.progress_bar.winfo_exists()):
+
+                # Calculer la largeur basée sur le pourcentage
+                container_width = self.progress_bar.master.winfo_width()
+                if container_width > 2:  # S'assurer que le conteneur a une taille
+                    new_width = max(0, min(container_width - 2, int((container_width - 2) * percentage / 100)))
+
+                    # Changer la couleur selon le pourcentage
+                    if percentage < 30:
+                        color = COLORS['ERROR']
+                    elif percentage < 70:
+                        color = COLORS['WARNING']
+                    else:
+                        color = COLORS['SUCCESS']
+
+                    self.progress_bar.config(bg=color)
+                    self.progress_bar.place(width=new_width)
+            else:
+                # Fallback vers l'ancienne méthode si disponible
+                if hasattr(self, 'progress_var') and self.progress_var is not None:
+                    self.progress_var.set(percentage)
+        except Exception as e:
+            self.logger.error(f"Erreur mise à jour barre de progression: {e}")
+
+    def _update_status_with_animation(self, message: str, icon: str = "⚡", color: str = None):
+        """Met à jour le statut avec une animation visuelle."""
+        try:
+            if (hasattr(self, 'status_label') and
+                self.status_label is not None and
+                self.status_label.winfo_exists()):
+                self.status_label.config(text=message)
+
+            if (hasattr(self, 'status_icon') and
+                self.status_icon is not None and
+                self.status_icon.winfo_exists()):
+                self.status_icon.config(text=icon)
+                if color:
+                    self.status_icon.config(fg=color)
+            else:
+                # Fallback vers l'ancienne méthode si disponible
+                if hasattr(self, '_update_status'):
+                    try:
+                        self._update_status("info", message)
+                    except:
+                        pass  # Ignorer les erreurs de fallback
+
+        except Exception as e:
+            self.logger.error(f"Erreur mise à jour statut: {e}")
+
+    def _animate_button_click(self, button: tk.Button):
+        """Anime un bouton lors du clic."""
+        try:
+            if button is not None and button.winfo_exists():
+                original_bg = button.cget('bg')
+                button.config(bg=COLORS['ACCENT'])
+                button.after(100, lambda: button.config(bg=original_bg) if button.winfo_exists() else None)
+        except Exception as e:
+            self.logger.error(f"Erreur animation bouton: {e}")
