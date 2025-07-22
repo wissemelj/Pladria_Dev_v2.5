@@ -2608,44 +2608,41 @@ class QualityControlModule:
                     statut_qualite = "À AMÉLIORER"
                     statut_couleur = "ERROR"
 
-            page1_data = [
-                # En-tête professionnel avec titre (ligne 1)
-                ['RAPPORT DE CONTRÔLE QUALITÉ - PLAN ADRESSAGE', '', '', '', f'STATUT: {statut_qualite}', f'ERREURS: {total_errors}', '', '', '', ''],
-
-                # Métadonnées d'analyse avec statut de conformité (ligne 2)
-                [f'Date: {datetime.now().strftime("%d/%m/%Y %H:%M")}', '', '', '', f'Analysé par: Module 5', f'Version: 3.0', '', '', '', ''],
-
-                # Statut de conformité de la commune (ligne 3)
-                [f'STATUT COMMUNE: {statut_commune}', f'CONFORMITÉ: {pourcentage_conformite:.1f}%', f'SEUIL: 90%', '', f'FAUTES MAJEURES: {len(fautes_majeures)}', '', '', '', '', ''],
-
-                # Ligne de séparation (ligne 4)
-                ['═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════', '', '', '', '', '', '', '', '', ''],
-
-                # Informations de base (ligne 5-7)
-                ['INFORMATIONS GÉNÉRALES', '', '', '', '', '', '', '', '', ''],
-                ['Nom de commune', 'ID tâche Plan Adressage', 'Code INSEE', 'Domaine', 'AFFECTATION', 'Contrôleur', '', '', '', ''],
-                [commune, id_tache, insee, domaine, collaborateur, '', '', '', '', ''],  # Collaborateur depuis colonne U, Contrôleur vide
-                ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
-
-                # Section CMS avec indicateurs visuels et calculs automatiques (lignes 8-10)
-                ['CONTRÔLE QUALITÉ CMS (Voies)', '', '', '', '', '', '', '', '', ''],
-                ['Nbr voies CMS Total', 'Nbr voies CMS Contrôlé', 'Nbr erreurs CMS détectées', '% Erreur CMS', 'Indicateur Qualité', 'Objectif: <5%', 'Statut Global CMS', '', '', ''],
-                [cms_total, '=COUNTA(Controle_Qualite_CMS.A2:A1000)-COUNTBLANK(Controle_Qualite_CMS.A2:A1000)', '=COUNTA(Controle_Qualite_CMS.C2:C1000)-COUNTBLANK(Controle_Qualite_CMS.C2:C1000)', '=IF(B9=0,0,C9/B9)', '=IF(D9<0.05,"EXCELLENT",IF(D9<0.1,"ACCEPTABLE","À CORRIGER"))', '< 5%', '=IF(D9<0.05,"CONFORME","NON CONFORME")', '', '', ''],  # Formules automatiques améliorées
-                ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
-
-                # Section PA avec indicateurs visuels (lignes 12-14)
-                ['CONTRÔLE QUALITÉ PA (Adresses)', '', '', '', '', '', '', '', '', ''],
-                ['Nbr IMB PA Total', 'Nbr IMB PA Contrôlé', 'Nbr IMB PA KO', '% Erreur PA', 'Indicateur Qualité', 'Objectif: <3%', '', '', '', ''],
-                [pa_total, '', '=COUNTA(Controle_Qualite_PA.A2:A1000)', '=IF(A13=0,0,C13/A13)', '=IF(D13<0.03,"EXCELLENT",IF(D13<0.05,"ACCEPTABLE","À CORRIGER"))', '< 3%', '', '', '', ''],  # Formule avec indicateur visuel
-                ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
-
-                # Section Tickets avec statuts améliorés (lignes 16-17)
-                ['STATUT DES TICKETS', '', '', '', '', '', '', '', '', ''],
-                ['Ticket 501/511', 'Ticket UPR', '% Erreur Banbou', 'Statut Global', 'Dernière MAJ', '', '', '', '', ''],
-            ]
-
-            # Calculer les pourcentages avec pondérations (pour les valeurs statiques)
+            # Calculer les pourcentages avec pondérations (pour les valeurs statiques) AVANT de créer page1_data
             resume_erreurs_data = self._calculate_resume_erreurs()
+
+            page1_data = [
+                # Tableau 1: Informations de base (commence directement ligne 1)
+                ['INFORMATIONS GÉNÉRALES', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                ['Nom de commune', 'ID tâche Plan Adressage', 'Code INSEE', 'Domaine', 'AFFECTATION', 'Contrôleur', '', '', '', '', '', '', '', '', '', ''],
+                [commune, id_tache, insee, domaine, collaborateur, '', '', '', '', '', '', '', '', '', '', ''],  # Collaborateur depuis colonne U, Contrôleur vide
+
+                # Espacement de 2 lignes entre tableaux
+                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+
+                # Tableau 2: Section CMS avec indicateurs visuels et calculs automatiques
+                ['Qualité CMS Adresse', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                ['Nbr voies CMS Total', 'Nbr erreurs CMS détectées', '% Erreur CMS', 'Objectif: <5%', 'Statut Global CMS', '', '', '', 'Résumé Erreurs', '', '', '', '', ''],
+                [cms_total, '=SUMPRODUCT(--(LEN(TRIM(Controle_Qualite_CMS!A2:A1000))>0))', '=IF(A8=0,0,B8/A8)', '< 5%', '=IF(C8<0.05,"CONFORME","NON CONFORME")', '', '', '', '', '', '', '', '', ''],  # Formule robuste qui ignore les espaces vides
+
+                # Espacement de 2 lignes entre tableaux + En-têtes Résumé Erreurs
+                ['', '', '', '', '', '', '', '', 'Catégorie d\'Erreur', '% Brut', 'Pondération', 'Score', 'Statut Commune', 'Conformité'],
+                ['', '', '', '', '', '', '', '', '% Erreur CMS', '=C8', resume_erreurs_data['ponderation_cms'], '=J9*K9', f'STATUT: {statut_commune}', f'{pourcentage_conformite:.1f}%'],
+
+                # Tableau 3: Section PA avec indicateurs visuels + Données Résumé Erreurs
+                ['CONTRÔLE QUALITÉ PA (Adresses)', '', '', '', '', '', '', '', '% Erreur PA', '=D12', resume_erreurs_data['ponderation_pa'], '=J10*K10', f'SEUIL: 90%', f'FAUTES: {len(fautes_majeures)}'],
+                ['Nbr IMB PA Total', 'Nbr IMB PA Contrôlé', 'Nbr IMB PA KO', '% Erreur PA', 'Indicateur Qualité', 'Objectif: <3%', '', '', '% Erreur Banbou', resume_erreurs_data['pourcentage_banbou_brut'], resume_erreurs_data['ponderation_banbou'], '=J11*K11', '', ''],
+                [pa_total, '', '=IFERROR(COUNTA(Controle_Qualite_PA!A2:A1000),0)', '=IF(A12=0,0,C12/A12)', '=IF(D12<0.03,"EXCELLENT",IF(D12<0.05,"ACCEPTABLE","À CORRIGER"))', '< 3%', '', '', '% Ecart Plan Adressage', resume_erreurs_data['pourcentage_ecart_brut'], resume_erreurs_data['ponderation_ecart'], '=J12*K12', '', ''],  # Formule avec indicateur visuel ajustée avec IFERROR et syntaxe correcte
+
+                # Espacement de 2 lignes entre tableaux + Fin Résumé Erreurs
+                ['', '', '', '', '', '', '', '', 'SCORE TOTAL', '', '', '=SUM(L9:L12)', '', ''],
+                ['', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+
+                # Tableau 4: Section Tickets avec statuts améliorés
+                ['STATUT DES TICKETS', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                ['Ticket 501/511', 'Ticket UPR', '% Erreur Banbou', 'Statut Global', 'Dernière MAJ', '', '', '', '', '', '', '', '', ''],
+            ]
 
             # Remplir les statuts des tickets et calculer % Erreur Banbou avec métadonnées
             if self.qc_results and 'critere_2' in self.qc_results:
@@ -2665,10 +2662,16 @@ class QualityControlModule:
                 else:
                     statut_global = "⚠️ À VÉRIFIER"
 
-                page1_data.append([ticket_501_511_status, ticket_upr_status, erreur_banbou_str, statut_global, datetime.now().strftime("%d/%m/%Y"), '', 'RÉSUMÉ ERREURS', '', '', ''])
+                page1_data.append([ticket_501_511_status, ticket_upr_status, erreur_banbou_str, statut_global, datetime.now().strftime("%d/%m/%Y"), '', '', '', '', '', '', '', '', '', '', ''])
             else:
                 # Pas de données d'analyse, afficher vides
-                page1_data.append(['', '', '', 'EN ATTENTE', datetime.now().strftime("%d/%m/%Y"), '', 'RÉSUMÉ ERREURS', '', '', ''])
+                page1_data.append(['', '', '', 'EN ATTENTE', datetime.now().strftime("%d/%m/%Y"), '', '', '', '', '', '', '', '', '', '', ''])
+
+            # Espacement de 2 lignes avant le tableau d'analyse détaillée
+            page1_data.extend([
+                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+            ])
 
             # Préparer les données d'écart Plan Adressage
             motifs_data = []
@@ -2695,110 +2698,65 @@ class QualityControlModule:
                 for motif in motifs_ordre:
                     motifs_data.append([motif, '', ''])
 
-            # Section Ecart Plan Adressage avec en-têtes améliorés et résumé erreurs intégrés
+            # Tableau 5: Analyse Détaillée - Écart Plan Adressage (séparé)
             page1_data.extend([
-                ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
-                ['ANALYSE DÉTAILLÉE - ÉCART PLAN ADRESSAGE', '', '', '', '', '', 'SYNTHÈSE QUALITÉ', '', '', ''],  # Ligne 20 - Titre des sections
-                ['Motif', 'Suivi', 'QGis', 'Écart', 'Statut', '', 'Catégorie d\'Erreur', '% Brut', 'Pondération', 'Score'],  # Ligne 21 - En-têtes améliorés
+                ['ANALYSE DÉTAILLÉE - ÉCART PLAN ADRESSAGE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],  # Titre section (16 colonnes)
+                ['Motif', 'Suivi', 'QGis', 'Écart', 'Statut', '', '', '', '', '', '', '', '', '', '', ''],  # En-têtes (16 colonnes)
 
-                # Données des motifs avec calculs d'écart et statuts
+                # Données des motifs avec calculs d'écart et statuts (ajustement des numéros de ligne)
                 [motifs_data[0][0], motifs_data[0][1], motifs_data[0][2],
-                 f'=ABS(B22-C22)' if motifs_data[0][1] and motifs_data[0][2] else '',
-                 f'=IF(D22=0,"OK",IF(D22<=2,"MINEUR","MAJEUR"))' if motifs_data[0][1] and motifs_data[0][2] else '',
-                 '', '% Erreur CMS', '=D9', resume_erreurs_data['ponderation_cms'], '=H22*I22'],  # Ad Ras
+                 f'=ABS(B23-C23)' if motifs_data[0][1] and motifs_data[0][2] else '',
+                 f'=IF(D23=0,"OK",IF(D23<=2,"MINEUR","MAJEUR"))' if motifs_data[0][1] and motifs_data[0][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', ''],  # Ad Ras (16 colonnes)
 
                 [motifs_data[1][0], motifs_data[1][1], motifs_data[1][2],
-                 f'=ABS(B23-C23)' if motifs_data[1][1] and motifs_data[1][2] else '',
-                 f'=IF(D23=0,"OK",IF(D23<=2,"MINEUR","MAJEUR"))' if motifs_data[1][1] and motifs_data[1][2] else '',
-                 '', '% Erreur PA', '=D13', resume_erreurs_data['ponderation_pa'], '=H23*I23'],  # Ok
+                 f'=ABS(B24-C24)' if motifs_data[1][1] and motifs_data[1][2] else '',
+                 f'=IF(D24=0,"OK",IF(D24<=2,"MINEUR","MAJEUR"))' if motifs_data[1][1] and motifs_data[1][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', ''],  # Ok (16 colonnes)
 
                 [motifs_data[2][0], motifs_data[2][1], motifs_data[2][2],
-                 f'=ABS(B24-C24)' if motifs_data[2][1] and motifs_data[2][2] else '',
-                 f'=IF(D24=0,"OK",IF(D24<=2,"MINEUR","MAJEUR"))' if motifs_data[2][1] and motifs_data[2][2] else '',
-                 '', '% Erreur Banbou', resume_erreurs_data['pourcentage_banbou_brut'], resume_erreurs_data['ponderation_banbou'], '=H24*I24'],  # Nok
+                 f'=ABS(B25-C25)' if motifs_data[2][1] and motifs_data[2][2] else '',
+                 f'=IF(D25=0,"OK",IF(D25<=2,"MINEUR","MAJEUR"))' if motifs_data[2][1] and motifs_data[2][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', ''],  # Nok (16 colonnes)
 
                 [motifs_data[3][0], motifs_data[3][1], motifs_data[3][2],
-                 f'=ABS(B25-C25)' if motifs_data[3][1] and motifs_data[3][2] else '',
-                 f'=IF(D25=0,"OK",IF(D25<=2,"MINEUR","MAJEUR"))' if motifs_data[3][1] and motifs_data[3][2] else '',
-                 '', '% Ecart Plan Adressage', resume_erreurs_data['pourcentage_ecart_brut'], resume_erreurs_data['ponderation_ecart'], '=H25*I25'],  # Upr Ras
+                 f'=ABS(B26-C26)' if motifs_data[3][1] and motifs_data[3][2] else '',
+                 f'=IF(D26=0,"OK",IF(D26<=2,"MINEUR","MAJEUR"))' if motifs_data[3][1] and motifs_data[3][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', ''],  # Upr Ras (16 colonnes)
 
                 [motifs_data[4][0], motifs_data[4][1], motifs_data[4][2],
-                 f'=ABS(B26-C26)' if motifs_data[4][1] and motifs_data[4][2] else '',
-                 f'=IF(D26=0,"OK",IF(D26<=2,"MINEUR","MAJEUR"))' if motifs_data[4][1] and motifs_data[4][2] else '',
-                 '', '', '', '', ''],  # Upr Ok
+                 f'=ABS(B27-C27)' if motifs_data[4][1] and motifs_data[4][2] else '',
+                 f'=IF(D27=0,"OK",IF(D27<=2,"MINEUR","MAJEUR"))' if motifs_data[4][1] and motifs_data[4][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', ''],  # Upr Ok (16 colonnes)
 
                 [motifs_data[5][0], motifs_data[5][1], motifs_data[5][2],
-                 f'=ABS(B27-C27)' if motifs_data[5][1] and motifs_data[5][2] else '',
-                 f'=IF(D27=0,"OK",IF(D27<=2,"MINEUR","MAJEUR"))' if motifs_data[5][1] and motifs_data[5][2] else '',
-                 '', '', '', '', ''],  # Upr Nok
+                 f'=ABS(B28-C28)' if motifs_data[5][1] and motifs_data[5][2] else '',
+                 f'=IF(D28=0,"OK",IF(D28<=2,"MINEUR","MAJEUR"))' if motifs_data[5][1] and motifs_data[5][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', ''],  # Upr Nok (16 colonnes)
 
                 [motifs_data[6][0], motifs_data[6][1], motifs_data[6][2],
-                 f'=ABS(B28-C28)' if motifs_data[6][1] and motifs_data[6][2] else '',
-                 f'=IF(D28=0,"OK",IF(D28<=2,"MINEUR","MAJEUR"))' if motifs_data[6][1] and motifs_data[6][2] else '',
-                 '', 'SCORE TOTAL', '', '', '=SUM(J22:J25)'],  # Hors Commune + Total
+                 f'=ABS(B29-C29)' if motifs_data[6][1] and motifs_data[6][2] else '',
+                 f'=IF(D29=0,"OK",IF(D29<=2,"MINEUR","MAJEUR"))' if motifs_data[6][1] and motifs_data[6][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', ''],  # Hors Commune (16 colonnes)
             ])
 
-            # Section Validation de Conformité (si statut KO)
-            if statut_commune == "KO":
-                page1_data.extend([
-                    ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
-                ])
-
-                # Titre différent selon le type de KO
-                if fichiers_manquants:
-                    page1_data.append(['🚫 VALIDATION DE CONFORMITÉ - FICHIERS MANQUANTS', '', '', '', '', '', '', '', '', ''])
-                    page1_data.append(['⚠️ ANALYSE IMPOSSIBLE - FICHIERS REQUIS MANQUANTS', '', '', '', '', '', '', '', '', ''])
-                else:
-                    page1_data.append(['🚨 VALIDATION DE CONFORMITÉ - STATUT KO', '', '', '', '', '', '', '', '', ''])
-                    page1_data.append([f'📊 Pourcentage de conformité: {pourcentage_conformite:.1f}%', f'🎯 Seuil requis: 90%', '', '', '', '', '', '', '', ''])
-
-                page1_data.append(['', '', '', '', '', '', '', '', '', ''])  # Ligne vide
-
-                # Ajouter les raisons du KO
-                if raisons_ko:
-                    if fichiers_manquants:
-                        page1_data.append(['🚫 FICHIERS MANQUANTS CRITIQUES:', '', '', '', '', '', '', '', '', ''])
-                    else:
-                        page1_data.append(['🔍 RAISONS DU STATUT KO:', '', '', '', '', '', '', '', '', ''])
-
-                    for i, raison in enumerate(raisons_ko[:5], 1):  # Limiter à 5 raisons
-                        page1_data.append([f'{i}. {raison}', '', '', '', '', '', '', '', '', ''])
-                    page1_data.append(['', '', '', '', '', '', '', '', '', ''])  # Ligne vide
-
-                # Ajouter les fautes majeures détaillées (sauf fichiers manquants déjà traités)
-                autres_fautes = [f for f in fautes_majeures if f['type'] not in ['MANQUANT_QGIS', 'MANQUANT_SUIVI', 'STRUCTURE_QGIS_INVALIDE', 'STRUCTURE_SUIVI_INVALIDE']]
-                if autres_fautes:
-                    page1_data.append(['⚠️ AUTRES FAUTES MAJEURES DÉTECTÉES:', '', '', '', '', '', '', '', '', ''])
-                    for i, faute in enumerate(autres_fautes[:3], 1):  # Limiter à 3 fautes
-                        page1_data.append([f'{i}. {faute["type"]}: {faute["description"]}', '', '', '', '', '', '', '', '', ''])
-                    if len(autres_fautes) > 3:
-                        page1_data.append([f'... et {len(autres_fautes) - 3} autres fautes majeures', '', '', '', '', '', '', '', '', ''])
-                    page1_data.append(['', '', '', '', '', '', '', '', '', ''])  # Ligne vide
-
-                # Instructions spéciales si fichiers manquants
-                if fichiers_manquants:
-                    page1_data.extend([
-                        ['📋 ACTIONS REQUISES:', '', '', '', '', '', '', '', '', ''],
-                        ['1. Charger le fichier Résultats QGis (si MANQUANT_QGIS)', '', '', '', '', '', '', '', '', ''],
-                        ['2. Charger le fichier Suivi Commune (si MANQUANT_SUIVI)', '', '', '', '', '', '', '', '', ''],
-                        ['3. Relancer l\'analyse complète après chargement', '', '', '', '', '', '', '', '', ''],
-                        ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide
-                    ])
-
-            # Ligne vide finale
+            # Espacement de 2 lignes entre tableaux
             page1_data.extend([
-                ['', '', '', '', '', '', '', '', '', ''],  # Ligne vide finale
+                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
             ])
 
-            # Page 2: Controle Qualité CMS - Structure améliorée pour identification des erreurs
+            # Fin des données de la page 1 - plus de commentaires indésirables
+
+            # Page 2: Controle Qualité CMS - Structure selon capture d'écran
             page2_data = [
-                # En-tête amélioré avec colonnes clarifiées pour identification des erreurs CMS
-                ['ID Tache', 'Nom de la Voie', 'Type Erreur CMS', 'Localisation Erreur', 'Description Erreur', 'Statut Correction', 'Commentaire Controleur', 'Date Verification']
+                # En-tête selon la nouvelle structure demandée
+                ['ID Tache', 'Voie demandé', 'Motif Voie Initial', 'Motif Voie Corrigé', 'Commentaire Controleur']
             ]
 
-            # Ajouter des lignes vides pour la saisie manuelle (structure étendue pour meilleure traçabilité)
-            for i in range(25):  # 25 lignes vides pour saisie manuelle (augmenté pour plus de flexibilité)
-                page2_data.append([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])  # 8 colonnes pour structure complète
+            # Ajouter des lignes vides pour la saisie manuelle
+            for i in range(25):  # 25 lignes vides pour saisie manuelle
+                page2_data.append([' ', ' ', ' ', ' ', ' '])  # 5 colonnes selon la nouvelle structure
 
             # Page 3: Controle Qualité PA - Structure avec colonnes spécifiées + colonne Batiment
             page3_data = [
@@ -3240,8 +3198,12 @@ class QualityControlModule:
             page4_data_clean = self._clean_excel_data(page4_data)
 
             # Créer les DataFrames avec colonnes appropriées et données nettoyées
-            df_page1 = pd.DataFrame(page1_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8', 'Col9', 'Col10'])
-            df_page2 = pd.DataFrame(page2_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8'])  # 8 colonnes maintenant (structure étendue CMS)
+            # Déterminer le nombre maximum de colonnes pour page1 (minimum 14 pour le tableau Résumé Erreurs après suppression F et G)
+            max_cols_page1 = max(len(row) for row in page1_data_clean) if page1_data_clean else 14
+            max_cols_page1 = max(max_cols_page1, 14)  # S'assurer qu'on a au moins 14 colonnes
+            page1_columns = [f'Col{i+1}' for i in range(max_cols_page1)]
+            df_page1 = pd.DataFrame(page1_data_clean, columns=page1_columns)
+            df_page2 = pd.DataFrame(page2_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5'])  # 5 colonnes selon nouvelle structure CMS
             df_page3 = pd.DataFrame(page3_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8'])  # 8 colonnes maintenant (ajout colonne Batiment)
             df_page4 = pd.DataFrame(page4_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6'])  # 6 colonnes pour la feuille Ecart
 
@@ -3271,7 +3233,16 @@ class QualityControlModule:
                 self._format_page1(writer.sheets[sheet1_name])
 
                 # Page 2: Controle Qualité CMS (avec structure)
-                df_page2.to_excel(writer, sheet_name=sheet2_name, index=False, header=False)
+                # S'assurer que toutes les lignes ont 5 colonnes (nouvelle structure CMS)
+                page2_data_fixed = []
+                for row in page2_data:
+                    row_copy = row.copy() if isinstance(row, list) else list(row)
+                    if len(row_copy) < 5:
+                        row_copy.extend([' '] * (5 - len(row_copy)))  # Ajouter des espaces si nécessaire
+                    page2_data_fixed.append(row_copy[:5])  # Limiter à 5 colonnes
+
+                df_page2_fixed = pd.DataFrame(page2_data_fixed, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5'])
+                df_page2_fixed.to_excel(writer, sheet_name=sheet2_name, index=False, header=False)
 
                 # Appliquer la mise en forme à la page 2
                 self._format_page2(writer.sheets[sheet2_name])
@@ -3330,29 +3301,40 @@ class QualityControlModule:
         return clean_name if clean_name else "Sheet"
 
     def _clean_excel_data(self, data: list) -> list:
-        """Nettoie les données pour éviter les erreurs Excel."""
+        """Nettoie les données pour éviter les erreurs Excel et normalise le nombre de colonnes."""
+        if not data:
+            return []
+
+        # Déterminer le nombre maximum de colonnes
+        max_cols = max(len(row) for row in data)
+
         cleaned_data = []
 
         for row in data:
             cleaned_row = []
-            for cell in row:
-                if cell is None:
-                    cleaned_row.append('')
-                elif isinstance(cell, str):
-                    # Nettoyer les caractères problématiques
-                    clean_cell = cell.replace('\x00', '').replace('\r', '').replace('\n', ' ')
-                    # Limiter la longueur des cellules (Excel limite à 32767 caractères)
-                    if len(clean_cell) > 32000:
-                        clean_cell = clean_cell[:32000] + "..."
-                    cleaned_row.append(clean_cell)
-                elif isinstance(cell, (int, float)):
-                    # Vérifier les valeurs numériques
-                    if str(cell).lower() in ['inf', '-inf', 'nan']:
-                        cleaned_row.append(0)
+            for i in range(max_cols):
+                if i < len(row):
+                    cell = row[i]
+                    if cell is None:
+                        cleaned_row.append('')
+                    elif isinstance(cell, str):
+                        # Nettoyer les caractères problématiques
+                        clean_cell = cell.replace('\x00', '').replace('\r', '').replace('\n', ' ')
+                        # Limiter la longueur des cellules (Excel limite à 32767 caractères)
+                        if len(clean_cell) > 32000:
+                            clean_cell = clean_cell[:32000] + "..."
+                        cleaned_row.append(clean_cell)
+                    elif isinstance(cell, (int, float)):
+                        # Vérifier les valeurs numériques
+                        if str(cell).lower() in ['inf', '-inf', 'nan']:
+                            cleaned_row.append(0)
+                        else:
+                            cleaned_row.append(cell)
                     else:
-                        cleaned_row.append(cell)
+                        cleaned_row.append(str(cell))
                 else:
-                    cleaned_row.append(str(cell))
+                    # Ajouter des cellules vides pour normaliser la longueur
+                    cleaned_row.append('')
 
             cleaned_data.append(cleaned_row)
 
@@ -3463,13 +3445,32 @@ class QualityControlModule:
                                 # Rouge pour les résumés d'attention
                                 cell.fill = manquant_fill
 
-            # Ajuster la largeur des colonnes
-            worksheet.column_dimensions['A'].width = 25  # Type d'Écart
-            worksheet.column_dimensions['B'].width = 15  # Fichier QGis
-            worksheet.column_dimensions['C'].width = 15  # Suivi Commune
-            worksheet.column_dimensions['D'].width = 12  # Différence
-            worksheet.column_dimensions['E'].width = 25  # Détails
-            worksheet.column_dimensions['F'].width = 15  # Statut
+            # Ajuster la largeur des colonnes automatiquement (auto-fit précis)
+            for column in worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+
+                for cell in column:
+                    try:
+                        if cell.value is not None and str(cell.value).strip():
+                            cell_value = str(cell.value)
+                            cell_length = len(cell_value)
+
+                            if cell.font and cell.font.bold:
+                                cell_length = int(cell_length * 1.1)
+
+                            if cell_length > max_length:
+                                max_length = cell_length
+                    except:
+                        pass
+
+                if max_length > 0:
+                    excel_width = (max_length * 1.2) + 1
+                    adjusted_width = min(max(excel_width, 5), 20)
+                else:
+                    adjusted_width = 5
+
+                worksheet.column_dimensions[column_letter].width = adjusted_width
 
             # Figer la première ligne et les en-têtes
             worksheet.freeze_panes = 'A4'
@@ -3480,12 +3481,12 @@ class QualityControlModule:
             self.logger.error(f"Erreur mise en forme feuille Ecart: {e}")
 
     def _format_page1(self, worksheet):
-        """Applique la mise en forme améliorée à la page 1 avec design professionnel."""
+        """Applique la mise en forme optimisée à la page 1 avec styling Module 1."""
         try:
             from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 
-            # Définir les couleurs améliorées
-            blue_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+            # Couleurs identiques au Module 1 (suivi commune)
+            header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")  # Bleu froid
             green_fill = PatternFill(start_color="70AD47", end_color="70AD47", fill_type="solid")
             orange_fill = PatternFill(start_color="C65911", end_color="C65911", fill_type="solid")
             purple_fill = PatternFill(start_color="7030A0", end_color="7030A0", fill_type="solid")
@@ -3493,18 +3494,17 @@ class QualityControlModule:
             light_green_fill = PatternFill(start_color="C6E0B4", end_color="C6E0B4", fill_type="solid")
             light_orange_fill = PatternFill(start_color="F2CC8F", end_color="F2CC8F", fill_type="solid")
 
-            # Polices améliorées
-            white_font = Font(color="FFFFFF", bold=True, size=11, name="Calibri")
+            # Polices identiques au Module 1
+            header_font = Font(color="FFFFFF", bold=True, size=11, name="Calibri")  # Blanc, gras pour en-têtes
             bold_font = Font(bold=True, size=11, name="Calibri")
             normal_font = Font(size=11, name="Calibri")
             title_font = Font(color="FFFFFF", bold=True, size=14, name="Calibri")
-            header_font = Font(color="FFFFFF", bold=True, size=12, name="Calibri")
 
-            # Alignements améliorés
-            center_alignment = Alignment(horizontal="center", vertical="center")
-            left_alignment = Alignment(horizontal="left", vertical="center")
+            # Alignement justifié (gauche) par défaut
+            left_alignment = Alignment(horizontal="left", vertical="center", wrap_text=False)
+            center_alignment = Alignment(horizontal="center", vertical="center", wrap_text=False)
 
-            # Définir les bordures
+            # Bordures fines
             thin_border = Border(
                 left=Side(style='thin'),
                 right=Side(style='thin'),
@@ -3512,177 +3512,168 @@ class QualityControlModule:
                 bottom=Side(style='thin')
             )
 
-            thick_border = Border(
-                left=Side(style='thick'),
-                right=Side(style='thick'),
-                top=Side(style='thick'),
-                bottom=Side(style='thick')
-            )
+            # APPLIQUER L'ALIGNEMENT JUSTIFIÉ À TOUTES LES CELLULES
+            for row in worksheet.iter_rows():
+                for cell in row:
+                    cell.alignment = left_alignment
+                    cell.font = normal_font
 
-            # NOUVELLE MISE EN FORME AMÉLIORÉE
+            # MISE EN FORME AVEC ESPACEMENT OPTIMISÉ (sans en-tête fusionné)
 
-            # En-tête principal du rapport (ligne 1) - Titre principal
-            for col in range(1, 11):  # A1:J1 - Titre sur toute la largeur
+            # Tableau 1: Informations Générales (lignes 1-3)
+            for col in range(1, 7):  # A1:F1 - Titre section (ajusté pour correspondre aux données)
                 cell = worksheet.cell(row=1, column=col)
-                cell.fill = purple_fill
-                cell.font = title_font
-                cell.alignment = center_alignment
-                cell.border = thick_border
-
-            # Métadonnées (ligne 2) - Informations contextuelles
-            for col in range(1, 11):  # A2:J2
-                cell = worksheet.cell(row=2, column=col)
-                cell.fill = light_blue_fill
-                cell.font = bold_font
-                cell.alignment = center_alignment
-                cell.border = thin_border
-
-            # Section Informations Générales (lignes 4-6)
-            for col in range(1, 11):  # A4:J4 - Titre section
-                cell = worksheet.cell(row=4, column=col)
-                cell.fill = blue_fill
+                cell.fill = header_fill
                 cell.font = header_font
                 cell.alignment = center_alignment
-                cell.border = thin_border
 
-            for row in range(5, 7):  # Lignes 5-6 - En-tête et données
-                for col in range(1, 7):  # A5:F6
+            for row in range(2, 4):  # Lignes 2-3 - En-tête et données
+                for col in range(1, 7):  # A2:F3
                     cell = worksheet.cell(row=row, column=col)
-                    if row == 5:  # En-tête
+                    if row == 2:  # En-tête
                         cell.fill = light_blue_fill
                         cell.font = bold_font
-                    else:  # Données
-                        cell.font = normal_font
                     cell.alignment = center_alignment
-                    cell.border = thin_border
 
-            # Section CMS (lignes 8-10) - Vert avec indicateurs
-            for col in range(1, 11):  # A8:J8 - Titre section
-                cell = worksheet.cell(row=8, column=col)
+            # Tableau 2: Section CMS (lignes 6-8) - Vert avec indicateurs
+            for col in range(1, 8):  # A6:G6 - Titre section (ajusté aux données réelles)
+                cell = worksheet.cell(row=6, column=col)
                 cell.fill = green_fill
                 cell.font = header_font
                 cell.alignment = center_alignment
-                cell.border = thin_border
 
-            for row in range(9, 11):  # Lignes 9-10
-                for col in range(1, 7):  # A9:F10
+            for row in range(7, 9):  # Lignes 7-8
+                for col in range(1, 8):  # A7:G8 (correspond aux données CMS)
                     cell = worksheet.cell(row=row, column=col)
-                    if row == 9:  # En-tête
+                    if row == 7:  # En-tête
                         cell.fill = light_green_fill
                         cell.font = bold_font
-                    else:  # Données
-                        cell.font = normal_font
                     cell.alignment = center_alignment
-                    cell.border = thin_border
 
-            # Section PA (lignes 12-14) - Orange avec indicateurs
-            for col in range(1, 11):  # A12:J12 - Titre section
-                cell = worksheet.cell(row=12, column=col)
+            # Tableau 3: Section PA (lignes 11-13) - Orange avec indicateurs
+            for col in range(1, 7):  # A11:F11 - Titre section (ajusté aux données réelles)
+                cell = worksheet.cell(row=11, column=col)
                 cell.fill = orange_fill
                 cell.font = header_font
                 cell.alignment = center_alignment
-                cell.border = thin_border
 
-            for row in range(13, 15):  # Lignes 13-14
-                for col in range(1, 7):  # A13:F14
+            for row in range(12, 14):  # Lignes 12-13
+                for col in range(1, 7):  # A12:F13 (correspond aux données PA)
                     cell = worksheet.cell(row=row, column=col)
-                    if row == 13:  # En-tête
+                    if row == 12:  # En-tête
                         cell.fill = light_orange_fill
                         cell.font = bold_font
-                    else:  # Données
-                        cell.font = normal_font
                     cell.alignment = center_alignment
-                    cell.border = thin_border
 
-            # Section Tickets (lignes 16-18) - Bleu avec statuts
-            for col in range(1, 11):  # A16:J16 - Titre section
+            # Tableau 4: Section Tickets (lignes 16-17) - Bleu avec statuts
+            for col in range(1, 6):  # A16:E16 - Titre section (ajusté aux 5 colonnes de données)
                 cell = worksheet.cell(row=16, column=col)
-                cell.fill = blue_fill
+                cell.fill = header_fill
                 cell.font = header_font
                 cell.alignment = center_alignment
-                cell.border = thin_border
 
             for row in range(17, 19):  # Lignes 17-18
-                for col in range(1, 7):  # A17:F18
+                for col in range(1, 6):  # A17:E18 (ajusté aux 5 colonnes de données)
                     cell = worksheet.cell(row=row, column=col)
                     if row == 17:  # En-tête
                         cell.fill = light_blue_fill
                         cell.font = bold_font
-                    else:  # Données
-                        cell.font = normal_font
                     cell.alignment = center_alignment
-                    cell.border = thin_border
 
-            # Section Analyse Détaillée (lignes 20-29) - Purple avec données
-            for col in range(1, 11):  # A20:J20 - Titre section
-                cell = worksheet.cell(row=20, column=col)
+            # Tableau 5: Section Analyse Détaillée (lignes 21-28) - Purple avec données
+            for col in range(1, 6):  # A21:E21 - Titre section (ajusté aux 5 colonnes de données)
+                cell = worksheet.cell(row=21, column=col)
                 cell.fill = purple_fill
                 cell.font = header_font
                 cell.alignment = center_alignment
-                cell.border = thick_border
 
-            # En-têtes de l'analyse détaillée (ligne 21)
-            for col in range(1, 11):  # A21:J21
-                cell = worksheet.cell(row=21, column=col)
-                cell.fill = blue_fill
-                cell.font = white_font
+            # En-têtes de l'analyse détaillée (ligne 22)
+            for col in range(1, 6):  # A22:E22 (seulement les colonnes de l'analyse détaillée)
+                cell = worksheet.cell(row=22, column=col)
+                cell.fill = header_fill
+                cell.font = header_font
                 cell.alignment = center_alignment
-                cell.border = thin_border
 
-            # Données de l'analyse détaillée (lignes 22-29)
-            for row in range(22, 30):  # Lignes 22-29
-                for col in range(1, 11):  # A22:J29
+            # Données de l'analyse détaillée (lignes 23-29)
+            for row in range(23, 30):  # Lignes 23-29
+                for col in range(1, 6):  # A23:E29 (seulement les colonnes de l'analyse détaillée)
                     cell = worksheet.cell(row=row, column=col)
-                    cell.font = normal_font
                     cell.alignment = center_alignment
-                    cell.border = thin_border
 
-                    # Coloration spéciale pour les colonnes de synthèse qualité (G-J)
-                    if col >= 7:  # Colonnes G, H, I, J
-                        cell.fill = light_blue_fill
+            # Tableau 6: Section Résumé Erreurs (lignes 8-14, colonnes K-P) - Nouvelle position
+            for col in range(11, 17):  # K8:P8 - Titre section "Résumé Erreurs"
+                cell = worksheet.cell(row=8, column=col)
+                cell.fill = header_fill
+                cell.font = header_font
+                cell.alignment = left_alignment
 
-            # Pas de section conclusion - supprimée sur demande
+            # En-têtes du résumé erreurs (ligne 9)
+            for col in range(11, 17):  # K9:P9
+                cell = worksheet.cell(row=9, column=col)
+                cell.fill = light_blue_fill
+                cell.font = bold_font
+                cell.alignment = left_alignment
 
-            # Ajuster les largeurs de colonnes pour le nouveau format
-            worksheet.column_dimensions['A'].width = 25  # Motifs/Informations principales
-            worksheet.column_dimensions['B'].width = 20  # Données Suivi/ID tâche
-            worksheet.column_dimensions['C'].width = 20  # Données QGis/INSEE
-            worksheet.column_dimensions['D'].width = 15  # Écart/Domaine
-            worksheet.column_dimensions['E'].width = 18  # Statut/Affectation
-            worksheet.column_dimensions['F'].width = 18  # Objectifs/Contrôleur
-            worksheet.column_dimensions['G'].width = 22  # Catégories d'erreur
-            worksheet.column_dimensions['H'].width = 12  # % Brut
-            worksheet.column_dimensions['I'].width = 14  # Pondération
-            worksheet.column_dimensions['J'].width = 12  # Score/Taux
-
-            # Fusionner les cellules pour les titres principaux
-            worksheet.merge_cells('A1:J1')  # Titre principal
-            worksheet.merge_cells('A2:J2')  # Métadonnées
-            worksheet.merge_cells('A4:J4')  # Section Informations Générales
-            worksheet.merge_cells('A8:J8')  # Section CMS
-            worksheet.merge_cells('A12:J12')  # Section PA
-            worksheet.merge_cells('A16:J16')  # Section Tickets
-            worksheet.merge_cells('A20:F20')  # Analyse Détaillée (gauche)
-            worksheet.merge_cells('G20:J20')  # Synthèse Qualité (droite)
-
-            # Appliquer l'alignement centré aux cellules de données
-            # Centrer toutes les cellules de données, y compris les motifs
-            for row in range(1, 25):  # Lignes 1 à 24 (pour couvrir tous les motifs)
-                for col in range(1, 11):  # Colonnes A à J
+            # Données du résumé erreurs (lignes 10-14)
+            for row in range(10, 15):  # Lignes 10-14
+                for col in range(11, 17):  # K10:P14
                     cell = worksheet.cell(row=row, column=col)
-                    # Appliquer l'alignement centré à toutes les cellules
-                    cell.alignment = center_alignment
-                    # Appliquer la police Calibri 11 à toutes les cellules
-                    if not cell.font.bold:  # Ne pas changer la police des en-têtes en gras
-                        cell.font = normal_font
+                    cell.alignment = left_alignment
+                    # Coloration spéciale pour les colonnes de statut commune (O-P)
+                    if col >= 15 and col <= 16:  # Colonnes O, P
+                        cell.fill = light_orange_fill
 
-            # Ajouter une validation des données pour la cellule Contrôleur (F2)
+            # Ajuster les largeurs de colonnes automatiquement (auto-fit précis)
+            for column in worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+
+                for cell in column:
+                    try:
+                        if cell.value is not None and str(cell.value).strip():
+                            # Calculer la largeur en tenant compte du formatage
+                            cell_value = str(cell.value)
+                            # Ajuster pour les caractères larges et le formatage
+                            cell_length = len(cell_value)
+
+                            # Facteur de correction pour Excel (approximation)
+                            if cell.font and cell.font.bold:
+                                cell_length = int(cell_length * 1.1)  # Texte gras plus large
+
+                            if cell_length > max_length:
+                                max_length = cell_length
+                    except:
+                        pass
+
+                # Calcul plus précis de la largeur Excel
+                if max_length > 0:
+                    # Formule Excel approximative : (largeur_caractères * 1.2) + 1
+                    excel_width = (max_length * 1.2) + 1
+                    # Limiter entre 5 et 20 pour éviter les colonnes trop larges/petites
+                    adjusted_width = min(max(excel_width, 5), 20)
+                else:
+                    adjusted_width = 5  # Largeur minimale pour colonnes vides
+
+                worksheet.column_dimensions[column_letter].width = adjusted_width
+
+            # Fusionner les cellules pour les titres principaux (ajustement des lignes)
+            worksheet.merge_cells('A1:F1')  # Section Informations Générales (ajusté pour correspondre aux données)
+            worksheet.merge_cells('A6:E6')  # Section CMS (ajusté aux nouvelles données - 5 colonnes)
+            worksheet.merge_cells('A10:F10')  # Section PA (ajusté aux données réelles)
+            worksheet.merge_cells('A15:E15')  # Section Tickets (ajusté aux 5 colonnes)
+            worksheet.merge_cells('A20:E20')  # Analyse Détaillée (ajusté aux 5 colonnes)
+            worksheet.merge_cells('K8:P8')  # Résumé Erreurs (nouvelle position K8:P8)
+
+            # Geler la première ligne (comme Module 1)
+            worksheet.freeze_panes = 'A2'
+
+            # Ajouter une validation des données pour la cellule Contrôleur (F3)
             self._add_controleur_validation(worksheet)
 
             # Appliquer le formatage des pourcentages aux cellules avec formules
             self._apply_percentage_formatting(worksheet)
 
-            self.logger.info("Mise en forme appliquée à la page 1 (avec bordures)")
+            self.logger.info("Mise en forme optimisée appliquée à la page 1 (styling Module 1)")
 
         except Exception as e:
             self.logger.warning(f"Erreur lors de la mise en forme: {e}")
@@ -3732,8 +3723,8 @@ class QualityControlModule:
             dv.prompt = "Sélectionnez un contrôleur dans la liste déroulante."
             dv.promptTitle = "Sélection du contrôleur"
 
-            # Appliquer la validation à la cellule F2 (Contrôleur)
-            dv.add('F2')
+            # Appliquer la validation à la cellule F3 (Contrôleur - nouvelle position)
+            dv.add('F3')
             worksheet.add_data_validation(dv)
 
             self.logger.info("Validation des données ajoutée pour le contrôleur")
@@ -3803,14 +3794,33 @@ class QualityControlModule:
                 cell.font = white_font
                 cell.alignment = center_alignment
 
-            # Ajuster la largeur des colonnes selon le contenu
-            worksheet.column_dimensions['A'].width = 18  # Num Dossier Site
-            worksheet.column_dimensions['B'].width = 25  # Adresse Optimum
-            worksheet.column_dimensions['C'].width = 25  # Adresse BAN
-            worksheet.column_dimensions['D'].width = 15  # Motif Initial
-            worksheet.column_dimensions['E'].width = 15  # Etat
-            worksheet.column_dimensions['F'].width = 20  # Commentaire Controleur
-            worksheet.column_dimensions['G'].width = 10  # Colonne supplémentaire
+            # Ajuster la largeur des colonnes automatiquement (auto-fit précis)
+            for column in worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+
+                for cell in column:
+                    try:
+                        if cell.value is not None and str(cell.value).strip():
+                            cell_value = str(cell.value)
+                            cell_length = len(cell_value)
+
+                            if cell.font and cell.font.bold:
+                                cell_length = int(cell_length * 1.1)
+
+                            if cell_length > max_length:
+                                max_length = cell_length
+                    except:
+                        pass
+
+                if max_length > 0:
+                    excel_width = (max_length * 1.2) + 1
+                    # Max 25 pour les adresses longues
+                    adjusted_width = min(max(excel_width, 5), 25)
+                else:
+                    adjusted_width = 5
+
+                worksheet.column_dimensions[column_letter].width = adjusted_width
 
             # Ajouter la validation de données pour la colonne E (Etat)
             from openpyxl.worksheet.datavalidation import DataValidation
@@ -3838,7 +3848,7 @@ class QualityControlModule:
             # Continue sans mise en forme si erreur
 
     def _format_page2(self, worksheet):
-        """Applique la mise en forme à la page 2 - Contrôle Qualité CMS améliorée."""
+        """Applique la mise en forme à la page 2 - Contrôle Qualité CMS avec validation des données."""
         try:
             from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
             from openpyxl.worksheet.datavalidation import DataValidation
@@ -3857,8 +3867,8 @@ class QualityControlModule:
                 bottom=Side(style='thin')
             )
 
-            # Mise en forme de l'en-tête (ligne 1) - 8 colonnes pour structure complète
-            header_columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+            # Mise en forme de l'en-tête (ligne 1) - 5 colonnes selon nouvelle structure
+            header_columns = ['A', 'B', 'C', 'D', 'E']
             for col_letter in header_columns:
                 cell = worksheet[f"{col_letter}1"]
                 cell.fill = header_fill
@@ -3866,72 +3876,90 @@ class QualityControlModule:
                 cell.alignment = center_alignment
                 cell.border = thin_border
 
-            # Ajuster la largeur des colonnes selon le nouveau contenu
-            worksheet.column_dimensions['A'].width = 12   # ID Tache
-            worksheet.column_dimensions['B'].width = 25   # Nom de la Voie
-            worksheet.column_dimensions['C'].width = 18   # Type Erreur CMS
-            worksheet.column_dimensions['D'].width = 20   # Localisation Erreur
-            worksheet.column_dimensions['E'].width = 30   # Description Erreur
-            worksheet.column_dimensions['F'].width = 15   # Statut Correction
-            worksheet.column_dimensions['G'].width = 25   # Commentaire Controleur
-            worksheet.column_dimensions['H'].width = 15   # Date Verification
+            # Ajuster la largeur des colonnes automatiquement (auto-fit précis)
+            for column in worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
 
-            # Ajouter les validations de données pour améliorer la saisie
+                for cell in column:
+                    try:
+                        if cell.value is not None and str(cell.value).strip():
+                            cell_value = str(cell.value)
+                            cell_length = len(cell_value)
 
-            # Validation pour Type Erreur CMS (colonne C)
-            type_erreur_options = '"Géométrie,Attributs,Topologie,Nomenclature,Complétude,Cohérence"'
-            dv_type = DataValidation(type="list", formula1=type_erreur_options, allow_blank=True)
-            dv_type.error = "Veuillez sélectionner un type d'erreur valide"
-            dv_type.errorTitle = "Type d'erreur incorrect"
-            dv_type.prompt = "Sélectionnez le type d'erreur CMS détectée"
-            dv_type.promptTitle = "Type Erreur CMS"
-            dv_type.add("C2:C26")  # 25 lignes de données
-            worksheet.add_data_validation(dv_type)
+                            if cell.font and cell.font.bold:
+                                cell_length = int(cell_length * 1.1)
 
-            # Validation pour Statut Correction (colonne F)
-            statut_options = '"À corriger,En cours,Corrigé,Validé,Rejeté"'
-            dv_statut = DataValidation(type="list", formula1=statut_options, allow_blank=True)
-            dv_statut.error = "Veuillez sélectionner un statut valide"
-            dv_statut.errorTitle = "Statut incorrect"
-            dv_statut.prompt = "Sélectionnez le statut de correction"
-            dv_statut.promptTitle = "Statut Correction"
-            dv_statut.add("F2:F26")  # 25 lignes de données
-            worksheet.add_data_validation(dv_statut)
+                            if cell_length > max_length:
+                                max_length = cell_length
+                    except:
+                        pass
+
+                if max_length > 0:
+                    excel_width = (max_length * 1.2) + 1
+                    # Max 30 pour les descriptions longues
+                    adjusted_width = min(max(excel_width, 5), 30)
+                else:
+                    adjusted_width = 5
+
+                worksheet.column_dimensions[column_letter].width = adjusted_width
+
+            # Ajouter les validations de données selon les spécifications
+
+            # Validation pour Motif Voie Initial (colonne C)
+            motif_voie_options = '"Rien à faire,Création Voie,Modification Voie"'
+            dv_motif_initial = DataValidation(type="list", formula1=motif_voie_options, allow_blank=True)
+            dv_motif_initial.error = "Veuillez sélectionner un motif valide"
+            dv_motif_initial.errorTitle = "Motif incorrect"
+            dv_motif_initial.prompt = "Sélectionnez le motif voie initial"
+            dv_motif_initial.promptTitle = "Motif Voie Initial"
+            dv_motif_initial.add("C2:C26")  # 25 lignes de données
+            worksheet.add_data_validation(dv_motif_initial)
+
+            # Validation pour Motif Voie Corrigé (colonne D)
+            dv_motif_corrige = DataValidation(type="list", formula1=motif_voie_options, allow_blank=True)
+            dv_motif_corrige.error = "Veuillez sélectionner un motif valide"
+            dv_motif_corrige.errorTitle = "Motif incorrect"
+            dv_motif_corrige.prompt = "Sélectionnez le motif voie corrigé"
+            dv_motif_corrige.promptTitle = "Motif Voie Corrigé"
+            dv_motif_corrige.add("D2:D26")  # 25 lignes de données
+            worksheet.add_data_validation(dv_motif_corrige)
 
             # Appliquer les styles et alignements aux cellules de données
             for row in range(1, 27):  # Lignes 1 à 26 (en-tête + 25 lignes de données)
-                for col in range(1, 9):  # Colonnes A à H (8 colonnes)
+                for col in range(1, 6):  # Colonnes A à E (5 colonnes)
                     cell = worksheet.cell(row=row, column=col)
                     cell.border = thin_border
 
                     if row == 1:  # En-tête déjà formaté
                         continue
-                    elif col in [1, 3, 4, 6]:  # Colonnes centrées (ID, Type, Localisation, Statut)
+                    elif col in [1, 3, 4]:  # Colonnes centrées (ID Tache, Motif Initial, Motif Corrigé)
                         cell.alignment = center_alignment
-                    else:  # Colonnes alignées à gauche (Nom, Description, Commentaire, Date)
+                    else:  # Colonnes alignées à gauche (Voie demandé, Commentaire)
                         cell.alignment = left_alignment
 
-            # Ajouter des couleurs conditionnelles pour le statut de correction
+            # Ajouter des couleurs conditionnelles pour les motifs
             from openpyxl.formatting.rule import CellIsRule
 
-            # Couleurs pour les statuts
-            red_fill = PatternFill(start_color="FFE6E6", end_color="FFE6E6", fill_type="solid")      # À corriger
-            yellow_fill = PatternFill(start_color="FFF2CC", end_color="FFF2CC", fill_type="solid")   # En cours
-            green_fill = PatternFill(start_color="E6F7E6", end_color="E6F7E6", fill_type="solid")    # Corrigé/Validé
-            gray_fill = PatternFill(start_color="F0F0F0", end_color="F0F0F0", fill_type="solid")     # Rejeté
+            # Couleurs pour les motifs
+            creation_fill = PatternFill(start_color="E6F7E6", end_color="E6F7E6", fill_type="solid")      # Création Voie
+            modification_fill = PatternFill(start_color="FFF2CC", end_color="FFF2CC", fill_type="solid")   # Modification Voie
+            rien_fill = PatternFill(start_color="F0F0F0", end_color="F0F0F0", fill_type="solid")          # Rien à faire
 
-            # Règles de formatage conditionnel pour la colonne Statut Correction (F)
-            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"À corriger"'], fill=red_fill))
-            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"En cours"'], fill=yellow_fill))
-            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"Corrigé"'], fill=green_fill))
-            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"Validé"'], fill=green_fill))
-            worksheet.conditional_formatting.add("F2:F26", CellIsRule(operator="equal", formula=['"Rejeté"'], fill=gray_fill))
+            # Règles de formatage conditionnel pour les colonnes Motif (C et D)
+            worksheet.conditional_formatting.add("C2:C26", CellIsRule(operator="equal", formula=['"Création Voie"'], fill=creation_fill))
+            worksheet.conditional_formatting.add("C2:C26", CellIsRule(operator="equal", formula=['"Modification Voie"'], fill=modification_fill))
+            worksheet.conditional_formatting.add("C2:C26", CellIsRule(operator="equal", formula=['"Rien à faire"'], fill=rien_fill))
+
+            worksheet.conditional_formatting.add("D2:D26", CellIsRule(operator="equal", formula=['"Création Voie"'], fill=creation_fill))
+            worksheet.conditional_formatting.add("D2:D26", CellIsRule(operator="equal", formula=['"Modification Voie"'], fill=modification_fill))
+            worksheet.conditional_formatting.add("D2:D26", CellIsRule(operator="equal", formula=['"Rien à faire"'], fill=rien_fill))
 
             # Figer la première ligne pour faciliter la navigation
             worksheet.freeze_panes = 'A2'
 
             # Ajouter un filtre automatique sur l'en-tête
-            worksheet.auto_filter.ref = "A1:H26"
+            worksheet.auto_filter.ref = "A1:E26"
 
             self.logger.info("Mise en forme avancée de la page 2 CMS appliquée avec succès")
 
