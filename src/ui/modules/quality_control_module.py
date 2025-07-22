@@ -2613,35 +2613,33 @@ class QualityControlModule:
 
             page1_data = [
                 # Tableau 1: Informations de base (commence directement ligne 1)
+                # Titre occupe uniquement la colonne A
                 ['INFORMATIONS GÉNÉRALES', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
                 ['Nom de commune', 'ID tâche Plan Adressage', 'Code INSEE', 'Domaine', 'AFFECTATION', 'Contrôleur', '', '', '', '', '', '', '', '', '', ''],
-                [commune, id_tache, insee, domaine, collaborateur, '', '', '', '', '', '', '', '', '', '', ''],  # Collaborateur depuis colonne U, Contrôleur vide
+                [commune, id_tache, insee, domaine, collaborateur, '', '', '', '', '', '', '', '', '', '', ''],  # Contrôleur sera rempli par validation
 
-                # Espacement de 2 lignes entre tableaux
+                # Espacement de 1 ligne entre tableaux
                 ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
 
-                # Tableau 2: Section CMS avec indicateurs visuels et calculs automatiques
-                ['Qualité CMS Adresse', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['Nbr voies CMS Total', 'Nbr erreurs CMS détectées', '% Erreur CMS', 'Objectif: <5%', 'Statut Global CMS', '', '', '', 'Résumé Erreurs', '', '', '', '', ''],
-                [cms_total, '=SUMPRODUCT(--(LEN(TRIM(Controle_Qualite_CMS!A2:A1000))>0))', '=IF(A8=0,0,B8/A8)', '< 5%', '=IF(C8<0.05,"CONFORME","NON CONFORME")', '', '', '', '', '', '', '', '', ''],  # Formule robuste qui ignore les espaces vides
+                # Tableau 2: Qualité CMS Adresse (ligne 5, titre colonne A uniquement, tableau A vers D)
+                ['Qualité CMS Adresse', '', '', '', '', '', '', '', 'Résumé Erreurs', '', '', '', ''],
+                ['Nbr voies CMS Total', 'Nbr erreurs CMS KO', '% Erreur CMS', 'Statut Global CMS', '', '', '', '', 'Catégorie d\'Erreur', '% Brut', 'Pondération', 'Score', 'Statut Commune'],
+                [cms_total, '=SUMPRODUCT(--(LEN(TRIM(Controle_Qualite_CMS!A2:A1000))>0))', '=IF(A7=0,0,B7/A7)', '=IF(C7>0,"NON CONFORME","CONFORME")', '', '', '', '', '% Erreur CMS', '=C7', resume_erreurs_data['ponderation_cms'], '=J7*K7', f'STATUT: {statut_commune}'],
 
-                # Espacement de 2 lignes entre tableaux + En-têtes Résumé Erreurs
-                ['', '', '', '', '', '', '', '', 'Catégorie d\'Erreur', '% Brut', 'Pondération', 'Score', 'Statut Commune', 'Conformité'],
-                ['', '', '', '', '', '', '', '', '% Erreur CMS', '=C8', resume_erreurs_data['ponderation_cms'], '=J9*K9', f'STATUT: {statut_commune}', f'{pourcentage_conformite:.1f}%'],
+                # Espacement de 1 ligne entre tableaux
+                ['', '', '', '', '', '', '', '', '', '', '', '', ''],
 
-                # Tableau 3: Section PA avec indicateurs visuels + Données Résumé Erreurs
-                ['CONTRÔLE QUALITÉ PA (Adresses)', '', '', '', '', '', '', '', '% Erreur PA', '=D12', resume_erreurs_data['ponderation_pa'], '=J10*K10', f'SEUIL: 90%', f'FAUTES: {len(fautes_majeures)}'],
-                ['Nbr IMB PA Total', 'Nbr IMB PA Contrôlé', 'Nbr IMB PA KO', '% Erreur PA', 'Indicateur Qualité', 'Objectif: <3%', '', '', '% Erreur Banbou', resume_erreurs_data['pourcentage_banbou_brut'], resume_erreurs_data['ponderation_banbou'], '=J11*K11', '', ''],
-                [pa_total, '', '=IFERROR(COUNTA(Controle_Qualite_PA!A2:A1000),0)', '=IF(A12=0,0,C12/A12)', '=IF(D12<0.03,"EXCELLENT",IF(D12<0.05,"ACCEPTABLE","À CORRIGER"))', '< 3%', '', '', '% Ecart Plan Adressage', resume_erreurs_data['pourcentage_ecart_brut'], resume_erreurs_data['ponderation_ecart'], '=J12*K12', '', ''],  # Formule avec indicateur visuel ajustée avec IFERROR et syntaxe correcte
+                # Tableau 3: Controle Plan Adressage (ligne 9, titre colonne A uniquement, tableau A vers D)
+                ['Controle Plan Adressage', '', '', '', '', '', '', '', '% Erreur PA', '=C10', resume_erreurs_data['ponderation_pa'], '=J9*K9', f'SEUIL: 90%'],
+                ['Nbr IMB PA Total', 'Nbr IMB PA KO', '% Erreur PA', 'Statut Global PA', '', '', '', '', '% Erreur Banbou', resume_erreurs_data['pourcentage_banbou_brut'], resume_erreurs_data['ponderation_banbou'], '=J10*K10', f'FAUTES: {len(fautes_majeures)}'],
+                [pa_total, '=SUMPRODUCT(--(LEN(TRIM(Controle_Qualite_PA!A2:A1000))>0))', '=IF(A11=0,0,B11/A11)', '=IF(C11>0,"NON CONFORME","CONFORME")', '', '', '', '', '% Ecart Plan Adressage', resume_erreurs_data['pourcentage_ecart_brut'], resume_erreurs_data['ponderation_ecart'], '=J11*K11', f'{pourcentage_conformite:.1f}%'],
 
-                # Espacement de 2 lignes entre tableaux + Fin Résumé Erreurs
-                ['', '', '', '', '', '', '', '', 'SCORE TOTAL', '', '', '=SUM(L9:L12)', '', ''],
-                ['', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+                # Espacement de 1 ligne + Fin Résumé Erreurs
+                ['', '', '', '', '', '', '', '', 'SCORE TOTAL', '', '', '=SUM(L7:L11)', ''],
 
-                # Tableau 4: Section Tickets avec statuts améliorés
-                ['STATUT DES TICKETS', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['Ticket 501/511', 'Ticket UPR', '% Erreur Banbou', 'Statut Global', 'Dernière MAJ', '', '', '', '', '', '', '', '', ''],
+                # Tableau 4: Contrôle Dépose Tickets (ligne 13, titre colonne A uniquement, tableau A vers D)
+                ['Contrôle Dépose Tickets', '', '', '', '', '', '', '', ''],
+                ['Ticket 501/511', 'Ticket UPR', '% Erreur Banbou', 'Statut Global Tickets', '', '', '', '', ''],
             ]
 
             # Remplir les statuts des tickets et calculer % Erreur Banbou avec métadonnées
@@ -2654,24 +2652,19 @@ class QualityControlModule:
                 erreur_banbou_percentage = self._calculate_erreur_banbou_percentage()
                 erreur_banbou_str = f"{erreur_banbou_percentage:.0f}%"
 
-                # Déterminer le statut global des tickets
-                if ticket_501_511_status == "OK" and ticket_upr_status == "OK":
-                    statut_global = "✅ CONFORME"
-                elif ticket_501_511_status == "NOK" or ticket_upr_status == "NOK":
-                    statut_global = "❌ NON CONFORME"
+                # Déterminer le statut global des tickets selon les nouvelles spécifications
+                # Statut Global Tickets (Conforme ou Non Conforme si le % Erreur Banbou dépasse 0%)
+                if erreur_banbou_percentage > 0:
+                    statut_global_tickets = "NON CONFORME"
                 else:
-                    statut_global = "⚠️ À VÉRIFIER"
+                    statut_global_tickets = "CONFORME"
 
-                page1_data.append([ticket_501_511_status, ticket_upr_status, erreur_banbou_str, statut_global, datetime.now().strftime("%d/%m/%Y"), '', '', '', '', '', '', '', '', '', '', ''])
+                page1_data.append([ticket_501_511_status, ticket_upr_status, erreur_banbou_str, statut_global_tickets, '', '', '', '', '', '', '', '', ''])
             else:
                 # Pas de données d'analyse, afficher vides
-                page1_data.append(['', '', '', 'EN ATTENTE', datetime.now().strftime("%d/%m/%Y"), '', '', '', '', '', '', '', '', '', '', ''])
+                page1_data.append(['', '', '', 'EN ATTENTE', '', '', '', '', '', '', '', '', ''])
 
-            # Espacement de 2 lignes avant le tableau d'analyse détaillée
-            page1_data.extend([
-                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
-            ])
+            # Pas d'espacement supplémentaire ici pour éviter le décalage
 
             # Préparer les données d'écart Plan Adressage
             motifs_data = []
@@ -2698,53 +2691,50 @@ class QualityControlModule:
                 for motif in motifs_ordre:
                     motifs_data.append([motif, '', ''])
 
-            # Tableau 5: Analyse Détaillée - Écart Plan Adressage (séparé)
+            # Espacement de 1 ligne avant le tableau Ecart Plan Adressage
             page1_data.extend([
-                ['ANALYSE DÉTAILLÉE - ÉCART PLAN ADRESSAGE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],  # Titre section (16 colonnes)
-                ['Motif', 'Suivi', 'QGis', 'Écart', 'Statut', '', '', '', '', '', '', '', '', '', '', ''],  # En-têtes (16 colonnes)
+                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],  # Ligne vide (ligne 16)
+            ])
 
-                # Données des motifs avec calculs d'écart et statuts (ajustement des numéros de ligne)
+            # Tableau 5: Ecart Plan Adressage (ligne 17, titre colonne A uniquement, tableau A vers D)
+            page1_data.extend([
+                ['Ecart Plan Adressage', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],  # Titre section (ligne 17, colonne A uniquement)
+                ['Motif', 'Suivi', 'QGis', 'Écart', '', '', '', '', '', '', '', '', '', '', '', ''],  # En-têtes (ligne 18, A vers D)
+
+                # Données des motifs avec calculs d'écart (tableau A vers D uniquement)
                 [motifs_data[0][0], motifs_data[0][1], motifs_data[0][2],
-                 f'=ABS(B23-C23)' if motifs_data[0][1] and motifs_data[0][2] else '',
-                 f'=IF(D23=0,"OK",IF(D23<=2,"MINEUR","MAJEUR"))' if motifs_data[0][1] and motifs_data[0][2] else '',
-                 '', '', '', '', '', '', '', '', '', '', ''],  # Ad Ras (16 colonnes)
+                 f'=ABS(B19-C19)' if motifs_data[0][1] and motifs_data[0][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', '', ''],  # Ad Ras (ligne 19)
 
                 [motifs_data[1][0], motifs_data[1][1], motifs_data[1][2],
-                 f'=ABS(B24-C24)' if motifs_data[1][1] and motifs_data[1][2] else '',
-                 f'=IF(D24=0,"OK",IF(D24<=2,"MINEUR","MAJEUR"))' if motifs_data[1][1] and motifs_data[1][2] else '',
-                 '', '', '', '', '', '', '', '', '', '', ''],  # Ok (16 colonnes)
+                 f'=ABS(B20-C20)' if motifs_data[1][1] and motifs_data[1][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', '', ''],  # Ok (ligne 20)
 
                 [motifs_data[2][0], motifs_data[2][1], motifs_data[2][2],
-                 f'=ABS(B25-C25)' if motifs_data[2][1] and motifs_data[2][2] else '',
-                 f'=IF(D25=0,"OK",IF(D25<=2,"MINEUR","MAJEUR"))' if motifs_data[2][1] and motifs_data[2][2] else '',
-                 '', '', '', '', '', '', '', '', '', '', ''],  # Nok (16 colonnes)
+                 f'=ABS(B21-C21)' if motifs_data[2][1] and motifs_data[2][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', '', ''],  # Nok (ligne 21)
 
                 [motifs_data[3][0], motifs_data[3][1], motifs_data[3][2],
-                 f'=ABS(B26-C26)' if motifs_data[3][1] and motifs_data[3][2] else '',
-                 f'=IF(D26=0,"OK",IF(D26<=2,"MINEUR","MAJEUR"))' if motifs_data[3][1] and motifs_data[3][2] else '',
-                 '', '', '', '', '', '', '', '', '', '', ''],  # Upr Ras (16 colonnes)
+                 f'=ABS(B22-C22)' if motifs_data[3][1] and motifs_data[3][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', '', ''],  # Upr Ras (ligne 22)
 
                 [motifs_data[4][0], motifs_data[4][1], motifs_data[4][2],
-                 f'=ABS(B27-C27)' if motifs_data[4][1] and motifs_data[4][2] else '',
-                 f'=IF(D27=0,"OK",IF(D27<=2,"MINEUR","MAJEUR"))' if motifs_data[4][1] and motifs_data[4][2] else '',
-                 '', '', '', '', '', '', '', '', '', '', ''],  # Upr Ok (16 colonnes)
+                 f'=ABS(B23-C23)' if motifs_data[4][1] and motifs_data[4][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', '', ''],  # Upr Ok (ligne 23)
 
                 [motifs_data[5][0], motifs_data[5][1], motifs_data[5][2],
-                 f'=ABS(B28-C28)' if motifs_data[5][1] and motifs_data[5][2] else '',
-                 f'=IF(D28=0,"OK",IF(D28<=2,"MINEUR","MAJEUR"))' if motifs_data[5][1] and motifs_data[5][2] else '',
-                 '', '', '', '', '', '', '', '', '', '', ''],  # Upr Nok (16 colonnes)
+                 f'=ABS(B24-C24)' if motifs_data[5][1] and motifs_data[5][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', '', ''],  # Upr Nok (ligne 24)
 
                 [motifs_data[6][0], motifs_data[6][1], motifs_data[6][2],
-                 f'=ABS(B29-C29)' if motifs_data[6][1] and motifs_data[6][2] else '',
-                 f'=IF(D29=0,"OK",IF(D29<=2,"MINEUR","MAJEUR"))' if motifs_data[6][1] and motifs_data[6][2] else '',
-                 '', '', '', '', '', '', '', '', '', '', ''],  # Hors Commune (16 colonnes)
+                 f'=ABS(B25-C25)' if motifs_data[6][1] and motifs_data[6][2] else '',
+                 '', '', '', '', '', '', '', '', '', '', '', ''],  # Hors Commune (ligne 25)
+
+                # Ligne de pourcentage d'écart Plan Adressage avec calcul total
+                ['% Ecart Plan Adressage', f'=IF(SUM(B19:B25)=0,0,SUM(D19:D25)/SUM(B19:B25))', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],  # ligne 26
             ])
 
-            # Espacement de 2 lignes entre tableaux
-            page1_data.extend([
-                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
-            ])
+            # Fin du tableau Ecart Plan Adressage - pas d'espacement supplémentaire
 
             # Fin des données de la page 1 - plus de commentaires indésirables
 
@@ -3093,6 +3083,23 @@ class QualityControlModule:
                         details = 'Motifs identiques'
                         action = 'Aucune'
                         matches += 1
+
+                        # Gérer les doublons pour les MATCH
+                        if len(qgis_motifs) > 1 or len(suivi_motifs) > 1:
+                            details += f' (QGis: {len(qgis_motifs)} entrées, Suivi: {len(suivi_motifs)} entrées)'
+                            statut = '⚠️ MATCH+DOUBLONS'
+                            action = 'Vérifier doublons'
+                            # Ajouter seulement les MATCH avec doublons (pas les MATCH simples)
+                            imb_analysis_data.append([
+                                imb_code,
+                                qgis_motif,
+                                suivi_motif,
+                                statut,
+                                details,
+                                action
+                            ])
+                        # Ne pas ajouter les MATCH simples (sans doublons) à la liste
+
                     else:
                         # Motifs différents
                         statut = '❌ MISMATCH'
@@ -3100,21 +3107,18 @@ class QualityControlModule:
                         action = 'Vérifier et corriger'
                         mismatches += 1
 
-                    # Gérer les doublons
-                    if len(qgis_motifs) > 1 or len(suivi_motifs) > 1:
-                        details += f' (QGis: {len(qgis_motifs)} entrées, Suivi: {len(suivi_motifs)} entrées)'
-                        if statut == '✅ MATCH':
-                            statut = '⚠️ MATCH+DOUBLONS'
-                            action = 'Vérifier doublons'
+                        # Gérer les doublons pour les MISMATCH
+                        if len(qgis_motifs) > 1 or len(suivi_motifs) > 1:
+                            details += f' (QGis: {len(qgis_motifs)} entrées, Suivi: {len(suivi_motifs)} entrées)'
 
-                    imb_analysis_data.append([
-                        imb_code,
-                        qgis_motif,
-                        suivi_motif,
-                        statut,
-                        details,
-                        action
-                    ])
+                        imb_analysis_data.append([
+                            imb_code,
+                            qgis_motif,
+                            suivi_motif,
+                            statut,
+                            details,
+                            action
+                        ])
 
                 # Cas 2: IMB présent seulement dans QGis
                 elif qgis_motifs and not suivi_motifs:
@@ -3153,15 +3157,16 @@ class QualityControlModule:
                     ['', '', '', '', '', ''],
                     ['=== RÉSUMÉ ANALYSE IMB ===', '', '', '', '', ''],
                     [f'Total IMB analysés: {len(all_imb_codes)}', '', '', '', '', ''],
-                    [f'✅ Matches: {matches}', '', '', '', '', ''],
+                    [f'✅ Matches parfaits: {matches} (non affichés)', '', '', '', '', ''],
                     [f'❌ Mismatches: {mismatches}', '', '', '', '', ''],
                     [f'⚠️ Manquants QGis: {missing_in_qgis}', '', '', '', '', ''],
                     [f'⚠️ Manquants Suivi: {missing_in_suivi}', '', '', '', '', ''],
                     ['', '', '', '', '', ''],
+                    [f'📊 ÉLÉMENTS AFFICHÉS: Seuls les problèmes sont listés ci-dessus', '', '', '', '', ''],
                     [f'📊 TOTAL ÉCARTS: {total_ecarts_reel} (Manquants: {nb_donnees_manquantes}, Différents: {nb_motifs_differents})', '', '', '', '', '']
                 ])
             else:
-                imb_analysis_data.append(['Aucun IMB trouvé pour l\'analyse', '', '', '', '', ''])
+                imb_analysis_data.append(['Aucun problème détecté - Tous les IMB sont en MATCH parfait', '', '', '', '', ''])
 
             # Préparer les statistiques pour le retour
             stats = {
@@ -3198,9 +3203,9 @@ class QualityControlModule:
             page4_data_clean = self._clean_excel_data(page4_data)
 
             # Créer les DataFrames avec colonnes appropriées et données nettoyées
-            # Déterminer le nombre maximum de colonnes pour page1 (minimum 14 pour le tableau Résumé Erreurs après suppression F et G)
-            max_cols_page1 = max(len(row) for row in page1_data_clean) if page1_data_clean else 14
-            max_cols_page1 = max(max_cols_page1, 14)  # S'assurer qu'on a au moins 14 colonnes
+            # Déterminer le nombre maximum de colonnes pour page1 (minimum 13 pour le décalage colonne I)
+            max_cols_page1 = max(len(row) for row in page1_data_clean) if page1_data_clean else 13
+            max_cols_page1 = max(max_cols_page1, 13)  # S'assurer qu'on a au moins 13 colonnes
             page1_columns = [f'Col{i+1}' for i in range(max_cols_page1)]
             df_page1 = pd.DataFrame(page1_data_clean, columns=page1_columns)
             df_page2 = pd.DataFrame(page2_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5'])  # 5 colonnes selon nouvelle structure CMS
@@ -3493,6 +3498,9 @@ class QualityControlModule:
             light_blue_fill = PatternFill(start_color="B4C6E7", end_color="B4C6E7", fill_type="solid")
             light_green_fill = PatternFill(start_color="C6E0B4", end_color="C6E0B4", fill_type="solid")
             light_orange_fill = PatternFill(start_color="F2CC8F", end_color="F2CC8F", fill_type="solid")
+            light_purple_fill = PatternFill(start_color="D5A6BD", end_color="D5A6BD", fill_type="solid")  # Violet clair
+            cyan_fill = PatternFill(start_color="4BACC6", end_color="4BACC6", fill_type="solid")  # Cyan/Turquoise
+            light_cyan_fill = PatternFill(start_color="B7DEE8", end_color="B7DEE8", fill_type="solid")  # Cyan clair
 
             # Polices identiques au Module 1
             header_font = Font(color="FFFFFF", bold=True, size=11, name="Calibri")  # Blanc, gras pour en-têtes
@@ -3519,150 +3527,241 @@ class QualityControlModule:
                     cell.font = normal_font
 
             # MISE EN FORME AVEC ESPACEMENT OPTIMISÉ (sans en-tête fusionné)
+            # Ne colorer que les cellules qui contiennent des données
 
             # Tableau 1: Informations Générales (lignes 1-3)
-            for col in range(1, 7):  # A1:F1 - Titre section (ajusté pour correspondre aux données)
-                cell = worksheet.cell(row=1, column=col)
-                cell.fill = header_fill
-                cell.font = header_font
-                cell.alignment = center_alignment
+            # Titre "INFORMATIONS GÉNÉRALES" - colonne A uniquement avec couleur bleue
+            cell_a1 = worksheet.cell(row=1, column=1)
+            if cell_a1.value is not None and str(cell_a1.value).strip():
+                cell_a1.fill = header_fill  # Bleu
+                cell_a1.font = header_font
+                cell_a1.alignment = center_alignment
 
-            for row in range(2, 4):  # Lignes 2-3 - En-tête et données
-                for col in range(1, 7):  # A2:F3
-                    cell = worksheet.cell(row=row, column=col)
-                    if row == 2:  # En-tête
-                        cell.fill = light_blue_fill
-                        cell.font = bold_font
+            # En-têtes du tableau (ligne 2) - colonnes A à F avec couleur bleue claire
+            for col in range(1, 7):  # A2:F2
+                cell = worksheet.cell(row=2, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    cell.fill = light_blue_fill  # Bleu clair
+                    cell.font = bold_font
                     cell.alignment = center_alignment
 
-            # Tableau 2: Section CMS (lignes 6-8) - Vert avec indicateurs
-            for col in range(1, 8):  # A6:G6 - Titre section (ajusté aux données réelles)
+            # Données du tableau (ligne 3) - colonnes A à F
+            for col in range(1, 7):  # A3:F3
+                cell = worksheet.cell(row=3, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    cell.alignment = center_alignment
+
+            # Tableau 2: Section CMS (lignes 5-7) - Vert avec indicateurs
+            # Titre "Qualité CMS Adresse" - colonne A uniquement avec couleur verte
+            cell_a5 = worksheet.cell(row=5, column=1)
+            if cell_a5.value is not None and str(cell_a5.value).strip():
+                cell_a5.fill = green_fill  # Vert
+                cell_a5.font = header_font
+                cell_a5.alignment = center_alignment
+
+            # En-têtes du tableau CMS (ligne 6) - colonnes A à D avec couleur verte claire
+            for col in range(1, 5):  # A6:D6 (tableau CMS limité à 4 colonnes)
                 cell = worksheet.cell(row=6, column=col)
-                cell.fill = green_fill
-                cell.font = header_font
-                cell.alignment = center_alignment
-
-            for row in range(7, 9):  # Lignes 7-8
-                for col in range(1, 8):  # A7:G8 (correspond aux données CMS)
-                    cell = worksheet.cell(row=row, column=col)
-                    if row == 7:  # En-tête
-                        cell.fill = light_green_fill
-                        cell.font = bold_font
+                if cell.value is not None and str(cell.value).strip():
+                    cell.fill = light_green_fill  # Vert clair
+                    cell.font = bold_font
                     cell.alignment = center_alignment
 
-            # Tableau 3: Section PA (lignes 11-13) - Orange avec indicateurs
-            for col in range(1, 7):  # A11:F11 - Titre section (ajusté aux données réelles)
+            # Données du tableau CMS (ligne 7) - colonnes A à D
+            for col in range(1, 5):  # A7:D7
+                cell = worksheet.cell(row=7, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    cell.alignment = center_alignment
+
+            # Tableau 3: Controle Plan Adressage (ligne 9) - Orange avec indicateurs
+            # Titre "Controle Plan Adressage" - colonne A uniquement avec couleur orange
+            cell_a9 = worksheet.cell(row=9, column=1)
+            if cell_a9.value is not None and str(cell_a9.value).strip():
+                cell_a9.fill = orange_fill  # Orange
+                cell_a9.font = header_font
+                cell_a9.alignment = center_alignment
+
+            # En-têtes du tableau PA (ligne 10) - colonnes A à D avec couleur orange claire
+            for col in range(1, 5):  # A10:D10 (tableau PA limité à 4 colonnes)
+                cell = worksheet.cell(row=10, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    cell.fill = light_orange_fill  # Orange clair
+                    cell.font = bold_font
+                    cell.alignment = center_alignment
+
+            # Données du tableau PA (ligne 11) - colonnes A à D
+            for col in range(1, 5):  # A11:D11
                 cell = worksheet.cell(row=11, column=col)
-                cell.fill = orange_fill
-                cell.font = header_font
-                cell.alignment = center_alignment
-
-            for row in range(12, 14):  # Lignes 12-13
-                for col in range(1, 7):  # A12:F13 (correspond aux données PA)
-                    cell = worksheet.cell(row=row, column=col)
-                    if row == 12:  # En-tête
-                        cell.fill = light_orange_fill
-                        cell.font = bold_font
+                if cell.value is not None and str(cell.value).strip():
                     cell.alignment = center_alignment
 
-            # Tableau 4: Section Tickets (lignes 16-17) - Bleu avec statuts
-            for col in range(1, 6):  # A16:E16 - Titre section (ajusté aux 5 colonnes de données)
-                cell = worksheet.cell(row=16, column=col)
-                cell.fill = header_fill
-                cell.font = header_font
-                cell.alignment = center_alignment
+            # Tableau 4: Contrôle Dépose Tickets (ligne 13) - Violet avec statuts
+            # Titre "Contrôle Dépose Tickets" - colonne A uniquement avec couleur violette
+            cell_a13 = worksheet.cell(row=13, column=1)
+            if cell_a13.value is not None and str(cell_a13.value).strip():
+                cell_a13.fill = purple_fill  # Violet
+                cell_a13.font = header_font
+                cell_a13.alignment = center_alignment
 
-            for row in range(17, 19):  # Lignes 17-18
-                for col in range(1, 6):  # A17:E18 (ajusté aux 5 colonnes de données)
-                    cell = worksheet.cell(row=row, column=col)
-                    if row == 17:  # En-tête
-                        cell.fill = light_blue_fill
-                        cell.font = bold_font
+            # En-têtes du tableau Tickets (ligne 14) - colonnes A à D avec couleur violette claire
+            for col in range(1, 5):  # A14:D14 (tableau Tickets limité à 4 colonnes)
+                cell = worksheet.cell(row=14, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    cell.fill = light_purple_fill  # Violet clair
+                    cell.font = bold_font
                     cell.alignment = center_alignment
 
-            # Tableau 5: Section Analyse Détaillée (lignes 21-28) - Purple avec données
-            for col in range(1, 6):  # A21:E21 - Titre section (ajusté aux 5 colonnes de données)
-                cell = worksheet.cell(row=21, column=col)
-                cell.fill = purple_fill
-                cell.font = header_font
-                cell.alignment = center_alignment
+            # Données du tableau Tickets (ligne 15) - colonnes A à D
+            for col in range(1, 5):  # A15:D15
+                cell = worksheet.cell(row=15, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    cell.alignment = center_alignment
 
-            # En-têtes de l'analyse détaillée (ligne 22)
-            for col in range(1, 6):  # A22:E22 (seulement les colonnes de l'analyse détaillée)
-                cell = worksheet.cell(row=22, column=col)
-                cell.fill = header_fill
-                cell.font = header_font
-                cell.alignment = center_alignment
+            # Tableau 5: Ecart Plan Adressage - Formatage dynamique
+            # Trouver automatiquement la ligne où commence "Ecart Plan Adressage"
+            ecart_title_row = None
+            for row in range(1, 50):  # Chercher dans les 50 premières lignes
+                cell = worksheet.cell(row=row, column=1)
+                if cell.value and 'Ecart Plan Adressage' in str(cell.value):
+                    ecart_title_row = row
+                    break
+
+            if ecart_title_row:
+                self.logger.info(f"Tableau 'Ecart Plan Adressage' trouvé ligne {ecart_title_row}")
+
+                # Titre "Ecart Plan Adressage" - colonne A uniquement avec couleur cyan
+                cell_title = worksheet.cell(row=ecart_title_row, column=1)
+                cell_title.fill = cyan_fill  # Cyan/Turquoise
+                cell_title.font = header_font
+                cell_title.alignment = center_alignment
+
+                # En-têtes du tableau Ecart (ligne suivante) - colonnes A à D avec couleur cyan claire
+                headers_row = ecart_title_row + 1
+                for col in range(1, 5):  # A:D (tableau Ecart limité à 4 colonnes)
+                    cell = worksheet.cell(row=headers_row, column=col)
+                    if cell.value is not None and str(cell.value).strip():
+                        cell.fill = light_cyan_fill  # Cyan clair
+                        cell.font = bold_font
+                        cell.alignment = center_alignment
+
+                # Données du tableau Ecart (7 lignes de motifs) - colonnes A à D
+                for row_offset in range(2, 9):  # 7 motifs (Ad Ras, Ok, Nok, Upr Ras, Upr Ok, Upr Nok, Hors Commune)
+                    data_row = ecart_title_row + row_offset
+                    for col in range(1, 5):  # A:D
+                        cell = worksheet.cell(row=data_row, column=col)
+                        if cell.value is not None and str(cell.value).strip():
+                            cell.alignment = center_alignment
+
+                # Ligne "% Ecart Plan Adressage" (après les 7 motifs) - même couleur cyan que le titre
+                percentage_row = ecart_title_row + 9  # Titre + En-têtes + 7 motifs = +9
+                cell_percentage = worksheet.cell(row=percentage_row, column=1)
+                if cell_percentage.value and '% Ecart Plan Adressage' in str(cell_percentage.value):
+                    cell_percentage.fill = cyan_fill  # Cyan/Turquoise (même couleur que le titre)
+                    cell_percentage.font = header_font
+                    cell_percentage.alignment = center_alignment
+
+                    # Formule du pourcentage avec formatage
+                    cell_formula = worksheet.cell(row=percentage_row, column=2)
+                    if cell_formula.value is not None and str(cell_formula.value).strip():
+                        cell_formula.fill = light_cyan_fill  # Cyan clair
+                        cell_formula.alignment = center_alignment
+
+                self.logger.info(f"Formatage du tableau Ecart Plan Adressage appliqué (lignes {ecart_title_row}-{percentage_row})")
+            else:
+                self.logger.warning("Tableau 'Ecart Plan Adressage' non trouvé pour le formatage")
 
             # Données de l'analyse détaillée (lignes 23-29)
             for row in range(23, 30):  # Lignes 23-29
-                for col in range(1, 6):  # A23:E29 (seulement les colonnes de l'analyse détaillée)
+                for col in range(1, 6):  # A23:E29
                     cell = worksheet.cell(row=row, column=col)
-                    cell.alignment = center_alignment
+                    if cell.value is not None and str(cell.value).strip():
+                        cell.alignment = center_alignment
 
-            # Tableau 6: Section Résumé Erreurs (lignes 8-14, colonnes K-P) - Nouvelle position
-            for col in range(11, 17):  # K8:P8 - Titre section "Résumé Erreurs"
-                cell = worksheet.cell(row=8, column=col)
-                cell.fill = header_fill
-                cell.font = header_font
-                cell.alignment = left_alignment
-
-            # En-têtes du résumé erreurs (ligne 9)
-            for col in range(11, 17):  # K9:P9
-                cell = worksheet.cell(row=9, column=col)
-                cell.fill = light_blue_fill
-                cell.font = bold_font
-                cell.alignment = left_alignment
-
-            # Données du résumé erreurs (lignes 10-14)
-            for row in range(10, 15):  # Lignes 10-14
-                for col in range(11, 17):  # K10:P14
-                    cell = worksheet.cell(row=row, column=col)
+            # Tableau 6: Section Résumé Erreurs (lignes 6-12, colonnes I-M)
+            for col in range(9, 14):  # I6:M6 - Titre section "Résumé Erreurs"
+                cell = worksheet.cell(row=6, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    cell.fill = header_fill
+                    cell.font = header_font
                     cell.alignment = left_alignment
-                    # Coloration spéciale pour les colonnes de statut commune (O-P)
-                    if col >= 15 and col <= 16:  # Colonnes O, P
-                        cell.fill = light_orange_fill
 
-            # Ajuster les largeurs de colonnes automatiquement (auto-fit précis)
-            for column in worksheet.columns:
+            # En-têtes du résumé erreurs (ligne 7)
+            for col in range(9, 14):  # I7:M7
+                cell = worksheet.cell(row=7, column=col)
+                if cell.value is not None and str(cell.value).strip():
+                    cell.fill = light_blue_fill
+                    cell.font = bold_font
+                    cell.alignment = left_alignment
+
+            # Données du résumé erreurs (lignes 8-12)
+            for row in range(8, 13):  # Lignes 8-12
+                for col in range(9, 14):  # I8:M12
+                    cell = worksheet.cell(row=row, column=col)
+                    if cell.value is not None and str(cell.value).strip():
+                        cell.alignment = left_alignment
+                        # Coloration spéciale pour les colonnes de statut commune (L-M)
+                        if col >= 12 and col <= 13:  # Colonnes L, M
+                            cell.fill = light_orange_fill
+
+            # Ajouter la validation de données pour la colonne Contrôleur (F3)
+            from openpyxl.worksheet.datavalidation import DataValidation
+
+            # Liste des collaborateurs pour la validation
+            collaborateurs_list = '"ELJ Wissem,AUTRE Collaborateur,NOUVEAU Collaborateur"'
+            dv_controleur = DataValidation(type="list", formula1=collaborateurs_list, allow_blank=True)
+            dv_controleur.error = "Veuillez sélectionner un collaborateur valide"
+            dv_controleur.errorTitle = "Contrôleur incorrect"
+            dv_controleur.prompt = "Sélectionnez le contrôleur responsable"
+            dv_controleur.promptTitle = "Contrôleur"
+
+            # Appliquer la validation à la cellule F3 (Contrôleur)
+            dv_controleur.add("F3")
+            worksheet.add_data_validation(dv_controleur)
+
+            # Ajuster les largeurs de colonnes automatiquement (auto-fit amélioré pour toute la page)
+            from openpyxl.utils import get_column_letter
+
+            # Parcourir toutes les colonnes utilisées (A à P pour couvrir toute la page)
+            for col_num in range(1, 17):  # Colonnes A à P
+                column_letter = get_column_letter(col_num)
                 max_length = 0
-                column_letter = column[0].column_letter
 
-                for cell in column:
+                # Parcourir toutes les lignes utilisées (jusqu'à ligne 30 pour couvrir tous les tableaux)
+                for row_num in range(1, 31):
                     try:
+                        cell = worksheet.cell(row=row_num, column=col_num)
                         if cell.value is not None and str(cell.value).strip():
                             # Calculer la largeur en tenant compte du formatage
                             cell_value = str(cell.value)
-                            # Ajuster pour les caractères larges et le formatage
                             cell_length = len(cell_value)
 
-                            # Facteur de correction pour Excel (approximation)
+                            # Facteur de correction pour Excel selon le formatage
                             if cell.font and cell.font.bold:
-                                cell_length = int(cell_length * 1.1)  # Texte gras plus large
+                                cell_length = int(cell_length * 1.15)  # Texte gras plus large
+
+                            # Facteur supplémentaire pour les en-têtes colorés
+                            if cell.fill and cell.fill.start_color and cell.fill.start_color.rgb != "00000000":
+                                cell_length = int(cell_length * 1.1)  # En-têtes colorés plus larges
 
                             if cell_length > max_length:
                                 max_length = cell_length
                     except:
                         pass
 
-                # Calcul plus précis de la largeur Excel
+                # Calcul optimisé de la largeur Excel
                 if max_length > 0:
-                    # Formule Excel approximative : (largeur_caractères * 1.2) + 1
-                    excel_width = (max_length * 1.2) + 1
-                    # Limiter entre 5 et 20 pour éviter les colonnes trop larges/petites
-                    adjusted_width = min(max(excel_width, 5), 20)
+                    # Formule Excel améliorée avec marge de sécurité
+                    excel_width = (max_length * 1.3) + 2
+                    # Limiter entre 8 et 25 pour un meilleur affichage
+                    adjusted_width = min(max(excel_width, 8), 25)
                 else:
-                    adjusted_width = 5  # Largeur minimale pour colonnes vides
+                    adjusted_width = 8  # Largeur minimale pour colonnes vides
 
                 worksheet.column_dimensions[column_letter].width = adjusted_width
 
-            # Fusionner les cellules pour les titres principaux (ajustement des lignes)
-            worksheet.merge_cells('A1:F1')  # Section Informations Générales (ajusté pour correspondre aux données)
-            worksheet.merge_cells('A6:E6')  # Section CMS (ajusté aux nouvelles données - 5 colonnes)
-            worksheet.merge_cells('A10:F10')  # Section PA (ajusté aux données réelles)
-            worksheet.merge_cells('A15:E15')  # Section Tickets (ajusté aux 5 colonnes)
-            worksheet.merge_cells('A20:E20')  # Analyse Détaillée (ajusté aux 5 colonnes)
-            worksheet.merge_cells('K8:P8')  # Résumé Erreurs (nouvelle position K8:P8)
+            # SUPPRESSION DES FUSIONS : Les titres occupent uniquement la colonne A
+            # Plus de fusion de cellules pour les titres des tableaux
+            # Chaque titre reste dans sa cellule A respective
 
             # Geler la première ligne (comme Module 1)
             worksheet.freeze_panes = 'A2'
@@ -3747,19 +3846,31 @@ class QualityControlModule:
 
             # Appliquer le formatage des pourcentages aux cellules avec formules de pourcentage
             percentage_cells = [
-                'D5',   # % Erreur CMS
-                'D8',   # % Erreur PA
-                'H13',  # % Brut CMS (Résumé Erreurs)
-                'H14',  # % Brut PA (Résumé Erreurs)
-                'H15',  # % Brut Banbou (Résumé Erreurs)
-                'H16',  # % Brut Ecart Plan Adressage (Résumé Erreurs)
-                'J13',  # Taux CMS (Résumé Erreurs)
-                'J14',  # Taux PA (Résumé Erreurs)
-                'J15',  # Taux Banbou (Résumé Erreurs)
-                'J16',  # Taux Ecart Plan Adressage (Résumé Erreurs)
-                'J17',  # % Total (Résumé Erreurs)
-                'B22'   # % Ecart Plan Adressage final
+                'C7',   # % Erreur CMS (nouvelle position ligne 7)
+                'C11',  # % Erreur PA (nouvelle position ligne 11)
+                'C15',  # % Erreur Banbou (nouvelle position ligne 15)
+                'J7',   # % Brut CMS (Résumé Erreurs - colonne I décalée)
+                'J10',  # % Brut PA (Résumé Erreurs - colonne I décalée)
+                'J11',  # % Brut Banbou (Résumé Erreurs - colonne I décalée)
+                'J12',  # % Brut Ecart Plan Adressage (Résumé Erreurs - colonne I décalée)
+                'L7',   # Score CMS (Résumé Erreurs - colonne I décalée)
+                'L10',  # Score PA (Résumé Erreurs - colonne I décalée)
+                'L11',  # Score Banbou (Résumé Erreurs - colonne I décalée)
+                'L12',  # Score Ecart Plan Adressage (Résumé Erreurs - colonne I décalée)
+                'L13',  # Score Total (Résumé Erreurs - colonne I décalée)
             ]
+
+            # Ajouter dynamiquement la cellule du pourcentage Ecart Plan Adressage
+            ecart_percentage_row = None
+            for row in range(1, 50):
+                cell = worksheet.cell(row=row, column=1)
+                if cell.value and '% Ecart Plan Adressage' in str(cell.value):
+                    ecart_percentage_row = row
+                    break
+
+            if ecart_percentage_row:
+                percentage_cells.append(f'B{ecart_percentage_row}')  # Formule du pourcentage
+                self.logger.info(f"Cellule pourcentage Ecart Plan Adressage trouvée: B{ecart_percentage_row}")
 
             for cell_ref in percentage_cells:
                 try:
@@ -3786,13 +3897,14 @@ class QualityControlModule:
             white_font = Font(color="FFFFFF", bold=True, size=11, name="Calibri")
             center_alignment = Alignment(horizontal="center", vertical="center")
 
-            # Mise en forme de l'en-tête (ligne 1)
+            # Mise en forme de l'en-tête (ligne 1) - seulement les cellules avec contenu
             header_columns = ['A', 'B', 'C', 'D', 'E', 'F']
             for col_letter in header_columns:
                 cell = worksheet[f"{col_letter}1"]
-                cell.fill = blue_fill
-                cell.font = white_font
-                cell.alignment = center_alignment
+                if cell.value is not None and str(cell.value).strip():
+                    cell.fill = blue_fill
+                    cell.font = white_font
+                    cell.alignment = center_alignment
 
             # Ajuster la largeur des colonnes automatiquement (auto-fit précis)
             for column in worksheet.columns:
@@ -3835,11 +3947,12 @@ class QualityControlModule:
             dv.add(f"E2:E22")
             worksheet.add_data_validation(dv)
 
-            # Appliquer l'alignement centré à toutes les cellules de données
+            # Appliquer l'alignement centré seulement aux cellules avec contenu
             for row in range(1, 22):  # Lignes 1 à 21 (en-tête + 20 lignes de données)
                 for col in range(1, 8):  # Colonnes A à G
                     cell = worksheet.cell(row=row, column=col)
-                    cell.alignment = center_alignment
+                    if cell.value is not None and str(cell.value).strip():
+                        cell.alignment = center_alignment
 
             self.logger.info("Mise en forme appliquée à la page 3 - Contrôle Qualité PA")
 
@@ -3867,14 +3980,15 @@ class QualityControlModule:
                 bottom=Side(style='thin')
             )
 
-            # Mise en forme de l'en-tête (ligne 1) - 5 colonnes selon nouvelle structure
+            # Mise en forme de l'en-tête (ligne 1) - seulement les cellules avec contenu
             header_columns = ['A', 'B', 'C', 'D', 'E']
             for col_letter in header_columns:
                 cell = worksheet[f"{col_letter}1"]
-                cell.fill = header_fill
-                cell.font = white_font
-                cell.alignment = center_alignment
-                cell.border = thin_border
+                if cell.value is not None and str(cell.value).strip():
+                    cell.fill = header_fill
+                    cell.font = white_font
+                    cell.alignment = center_alignment
+                    cell.border = thin_border
 
             # Ajuster la largeur des colonnes automatiquement (auto-fit précis)
             for column in worksheet.columns:
@@ -3925,18 +4039,20 @@ class QualityControlModule:
             dv_motif_corrige.add("D2:D26")  # 25 lignes de données
             worksheet.add_data_validation(dv_motif_corrige)
 
-            # Appliquer les styles et alignements aux cellules de données
+            # Appliquer les styles et alignements seulement aux cellules avec contenu
             for row in range(1, 27):  # Lignes 1 à 26 (en-tête + 25 lignes de données)
                 for col in range(1, 6):  # Colonnes A à E (5 colonnes)
                     cell = worksheet.cell(row=row, column=col)
-                    cell.border = thin_border
 
-                    if row == 1:  # En-tête déjà formaté
-                        continue
-                    elif col in [1, 3, 4]:  # Colonnes centrées (ID Tache, Motif Initial, Motif Corrigé)
-                        cell.alignment = center_alignment
-                    else:  # Colonnes alignées à gauche (Voie demandé, Commentaire)
-                        cell.alignment = left_alignment
+                    if cell.value is not None and str(cell.value).strip():
+                        cell.border = thin_border
+
+                        if row == 1:  # En-tête déjà formaté
+                            continue
+                        elif col in [1, 3, 4]:  # Colonnes centrées (ID Tache, Motif Initial, Motif Corrigé)
+                            cell.alignment = center_alignment
+                        else:  # Colonnes alignées à gauche (Voie demandé, Commentaire)
+                            cell.alignment = left_alignment
 
             # Ajouter des couleurs conditionnelles pour les motifs
             from openpyxl.formatting.rule import CellIsRule
