@@ -515,13 +515,13 @@ class DataViewerModule:
     
     def _create_data_table(self):
         """Create the data table."""
-        # Table frame - Reduced spacing
-        table_frame = create_card_frame(self.main_frame)
+        # Table frame - No shadow to eliminate spacing
+        table_frame = create_card_frame(self.main_frame, shadow=False)
         table_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 0))  # No top padding to reduce space
 
-        # Table header - Reduced padding
+        # Table header - No top padding
         table_header_frame = tk.Frame(table_frame, bg=COLORS['CARD'])
-        table_header_frame.pack(fill=tk.X, padx=15, pady=(10, 5))  # Reduced padding
+        table_header_frame.pack(fill=tk.X, padx=15, pady=(0, 5))  # Removed top padding
 
         table_header_label = tk.Label(
             table_header_frame,

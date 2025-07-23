@@ -1,0 +1,288 @@
+2025-07-22 10:26:15 - root - INFO - setup_logging:73 - Logging to file: logs\suivi_generator_20250722.log
+2025-07-22 10:26:15 - root - INFO - setup_logging:79 - ==================================================
+2025-07-22 10:26:15 - root - INFO - setup_logging:80 - Suivi Generator Application Started
+2025-07-22 10:26:15 - root - INFO - setup_logging:81 - Log level: INFO
+2025-07-22 10:26:15 - root - INFO - setup_logging:82 - File logging: Enabled
+2025-07-22 10:26:15 - root - INFO - setup_logging:83 - ==================================================
+2025-07-22 10:26:15 - ui.splash_screen - INFO - _init_environment:275 - ============================================================
+2025-07-22 10:26:15 - ui.splash_screen - INFO - _init_environment:276 - Starting Pladria - Solutions de traitement et génération de données
+2025-07-22 10:26:15 - ui.splash_screen - INFO - _init_environment:277 - Version: 2.5
+2025-07-22 10:26:15 - ui.splash_screen - INFO - _init_environment:278 - Author: Equipe BLI
+2025-07-22 10:26:15 - ui.splash_screen - INFO - _init_environment:279 - ============================================================
+2025-07-22 10:26:15 - main - INFO - start_main_application:80 - Creating main application...
+2025-07-22 10:26:15 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-22 10:26:15 - ui.main_window - INFO - _setup_window:81 - Window maximized using 'zoomed' state
+2025-07-22 10:26:15 - ui.styles - INFO - setup_styles:42 - UI styles configured successfully
+2025-07-22 10:26:15 - ui.main_window - INFO - _setup_window:106 - Main window configured
+2025-07-22 10:26:15 - ui.main_window - INFO - _setup_responsive_fonts:195 - Responsive fonts configured
+2025-07-22 10:26:15 - ui.navigation - INFO - _setup_navigation_bar:106 - Sofrecom logo loaded successfully from: C:\Users\wzaouga\Desktop\pladria git\logo_Sofrecom.png
+2025-07-22 10:26:15 - ui.navigation - INFO - register_module:195 - Registered module: Générateur Suivi (suivi_generator)
+2025-07-22 10:26:15 - ui.navigation - INFO - register_module:195 - Registered module: Suivi Global Tickets (suivi_global)
+2025-07-22 10:26:15 - ui.navigation - INFO - register_module:195 - Registered module: Statistiques Équipe (team_stats)
+2025-07-22 10:26:15 - ui.navigation - INFO - register_module:195 - Registered module: Visualiseur de Données (data_viewer)
+2025-07-22 10:26:15 - ui.navigation - INFO - register_module:195 - Registered module: Contrôle Qualité (quality_control)
+2025-07-22 10:26:15 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-22 10:26:15 - ui.main_window - INFO - _set_window_icon:288 - Window icon set with PNG multi-size: 7 sizes
+2025-07-22 10:26:15 - ui.main_window - INFO - _set_window_icon:295 - Additional ICO icon set for Windows compatibility
+2025-07-22 10:26:15 - ui.main_window - INFO - _set_windows_taskbar_icon:361 - Windows taskbar icon set via API
+2025-07-22 10:26:16 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-22 10:26:16 - ui.main_window - INFO - _setup_navigation:163 - Navigation system initialized
+2025-07-22 10:26:16 - main - INFO - start_main_application:83 - Application created successfully
+2025-07-22 10:26:16 - main - INFO - start_main_application:84 - Starting main loop...
+2025-07-22 10:26:16 - ui.main_window - INFO - run:371 - Starting application main loop
+2025-07-22 10:26:16 - ui.main_window - INFO - _post_init:181 - Window state after initialization: zoomed
+2025-07-22 10:26:16 - ui.main_window - INFO - _post_init:189 - Main window initialization complete
+2025-07-22 10:26:17 - ui.home_screen - INFO - _open_quality_control:423 - User clicked Quality Control button
+2025-07-22 10:26:17 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: quality_control
+2025-07-22 10:26:17 - ui.navigation - INFO - _load_module:274 - Loading module: quality_control (Contrôle Qualité)
+2025-07-22 10:26:17 - ui.modules.quality_control_module - INFO - _create_mode_selection_button:5252 - Bouton de sélection de mode créé avec succès
+2025-07-22 10:26:18 - ui.modules.quality_control_module - INFO - setup_ui:108 - Interface utilisateur modernisée créée avec succès
+2025-07-22 10:26:18 - ui.modules.quality_control_module - INFO - __init__:84 - Module Contrôle Qualité initialisé
+2025-07-22 10:26:18 - ui.navigation - INFO - _load_module:299 - Module quality_control created and loaded successfully
+2025-07-22 10:26:18 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: quality_control
+2025-07-22 10:26:33 - ui.modules.quality_control_module - INFO - on_success:1133 - Fichier QGis chargé: resultatsk.xlsx
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1311 - Domaine détecté ligne 1: RIP
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1353 - CMS Total détecté ligne 1: 14
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1422 - PA Total détecté ligne 1: 138
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1487 - Collaborateur détecté ligne 1: ZAOUGA Wissem
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1533 - === INFORMATIONS DÉTECTÉES ===
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1534 - Nom de commune (Col A): BALAISEAUX
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1535 - ID tâche (Col B): 2815265
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1536 - Code INSEE (Col C): 39034
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1537 - Domaine (Col D): RIP
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1538 - Collaborateur (Col U): ZAOUGA Wissem
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1539 - CMS Total (Col G): 14
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1540 - PA Total (Col H): 138
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1541 - ==============================
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1557 - === DEBUG LIGNE 2 (INDEX 1) ===
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1565 - ===============================
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - on_success:1230 - Fichier suivi chargé: Suivi_BALAISEAUX_2815265_39034.xlsx
+2025-07-22 10:26:37 - ui.modules.quality_control_module - INFO - on_success:1231 - Informations détectées: {'commune': 'BALAISEAUX', 'collaborateur': 'ZAOUGA Wissem', 'insee': '39034', 'id_tache': '2815265', 'domaine': 'RIP', 'cms_total': '14', 'pa_total': '138'}
+2025-07-22 10:26:39 - ui.modules.quality_control_module - INFO - _analyze_critere_0:1700 - Motifs extraits de la page 2, colonne I: 172 motifs trouvés
+2025-07-22 10:26:39 - ui.modules.quality_control_module - INFO - _analyze_critere_2:1815 - Pages 1, 2 et 3 du fichier suivi chargées pour analyse critère 2
+2025-07-22 10:26:39 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/006S, Motif: 'OOOK'
+2025-07-22 10:26:39 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/004R, Motif: 'AD RA'
+2025-07-22 10:26:39 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/004X, Motif: 'AD A ANALYSER'
+2025-07-22 10:26:39 - ui.modules.quality_control_module - INFO - on_success:1648 - Analyse qualité terminée
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _generate_excel_report:2520 - Début génération rapport Excel: C:/Users/wzaouga/Downloads/test/Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemtesttest.xlsx
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _generate_excel_report:2528 - Chemin absolu du fichier: C:\Users\wzaouga\Downloads\test\Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemtesttest.xlsx
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4010 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _calculate_conformite_percentage:4136 - Calcul conformité - CMS: 0.000, PA: 0.033, Banbou: 0.000, Écart: 0.031, Score pondéré: 0.021, Conformité: 97.9%
+2025-07-22 10:26:51 - ui.modules.quality_control_module - WARNING - _detect_fichiers_manquants:4451 - Fautes majeures fichiers détectées: 2
+2025-07-22 10:26:51 - ui.modules.quality_control_module - ERROR - _detect_fichiers_manquants:4453 - FICHIER MANQUANT/INVALIDE - STRUCTURE_QGIS_INVALIDE: Fichier QGis - Colonnes critiques manquantes: A, J, U
+2025-07-22 10:26:51 - ui.modules.quality_control_module - ERROR - _detect_fichiers_manquants:4453 - FICHIER MANQUANT/INVALIDE - STRUCTURE_SUIVI_INVALIDE: Fichier Suivi Commune - Structure invalide: 0 page(s) trouvée(s), minimum 2 requises
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _detect_fautes_majeures:4334 - Fautes majeures détectées: 2
+2025-07-22 10:26:51 - ui.modules.quality_control_module - WARNING - _detect_fautes_majeures:4336 - FAUTE MAJEURE - STRUCTURE_QGIS_INVALIDE: Fichier QGis - Colonnes critiques manquantes: A, J, U
+2025-07-22 10:26:51 - ui.modules.quality_control_module - WARNING - _detect_fautes_majeures:4336 - FAUTE MAJEURE - STRUCTURE_SUIVI_INVALIDE: Fichier Suivi Commune - Structure invalide: 0 page(s) trouvée(s), minimum 2 requises
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _evaluate_commune_status:4077 - Évaluation commune - Statut: KO, Conformité: 97.9%, Fautes majeures: 2
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4010 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4010 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2817 - Page 2 suivi commune chargée pour bâtiments: (172, 16)
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2829 - Mapping IMB->Batiment créé: 1 entrées
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2864 - Ajout de 7 erreurs à la page 3 (C3: 4 doublons + 0 motif OK, C4: 0 ad à analyser, C5: 3 motifs incorrects)
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _generate_excel_report:2538 - Données Excel préparées pour 4 feuilles
+2025-07-22 10:26:51 - ui.modules.quality_control_module - INFO - _write_excel_file:3248 - DataFrames créés pour 4 feuilles
+2025-07-22 10:26:52 - ui.modules.quality_control_module - INFO - _add_controleur_validation:3739 - Validation des données ajoutée pour le contrôleur
+2025-07-22 10:26:52 - ui.modules.quality_control_module - WARNING - _apply_percentage_formatting:3785 - Erreur lors du formatage des pourcentages: list indices must be integers or slices, not str
+2025-07-22 10:26:52 - ui.modules.quality_control_module - INFO - _format_page1:3685 - Mise en forme appliquée à la page 1 (avec bordures)
+2025-07-22 10:26:52 - ui.modules.quality_control_module - INFO - _format_page2:3936 - Mise en forme avancée de la page 2 CMS appliquée avec succès
+2025-07-22 10:26:52 - ui.modules.quality_control_module - INFO - _format_page3:3834 - Mise en forme appliquée à la page 3 - Contrôle Qualité PA
+2025-07-22 10:26:52 - ui.modules.quality_control_module - INFO - _format_page4_ecart:3477 - Mise en forme appliquée à la feuille Ecart
+2025-07-22 10:26:52 - ui.modules.quality_control_module - INFO - _write_excel_file:3300 - 4 feuilles Excel écrites: Etat_BALAISEA_ZAOUGA_W, Controle_Qualite_CMS, Controle_Qualite_PA, Ecart
+2025-07-22 10:26:52 - ui.modules.quality_control_module - INFO - _write_excel_file:3302 - Fichier Excel écrit avec succès avec mise en forme
+2025-07-22 10:26:52 - ui.modules.quality_control_module - INFO - _generate_excel_report:2547 - Fichier créé avec succès: C:\Users\wzaouga\Downloads\test\Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemtesttest.xlsx (18658 bytes)
+2025-07-22 10:26:53 - ui.modules.quality_control_module - INFO - on_success:2478 - Rapport exporté: C:/Users/wzaouga/Downloads/test/Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemtesttest.xlsx
+2025-07-22 14:52:24 - root - INFO - setup_logging:73 - Logging to file: logs\suivi_generator_20250722.log
+2025-07-22 14:52:24 - root - INFO - setup_logging:79 - ==================================================
+2025-07-22 14:52:24 - root - INFO - setup_logging:80 - Suivi Generator Application Started
+2025-07-22 14:52:24 - root - INFO - setup_logging:81 - Log level: INFO
+2025-07-22 14:52:24 - root - INFO - setup_logging:82 - File logging: Enabled
+2025-07-22 14:52:24 - root - INFO - setup_logging:83 - ==================================================
+2025-07-22 14:52:24 - ui.splash_screen - INFO - _init_environment:275 - ============================================================
+2025-07-22 14:52:24 - ui.splash_screen - INFO - _init_environment:276 - Starting Pladria - Solutions de traitement et génération de données
+2025-07-22 14:52:24 - ui.splash_screen - INFO - _init_environment:277 - Version: 2.5
+2025-07-22 14:52:24 - ui.splash_screen - INFO - _init_environment:278 - Author: Equipe BLI
+2025-07-22 14:52:24 - ui.splash_screen - INFO - _init_environment:279 - ============================================================
+2025-07-22 14:52:24 - main - INFO - start_main_application:80 - Creating main application...
+2025-07-22 14:52:25 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-22 14:52:25 - ui.main_window - INFO - _setup_window:81 - Window maximized using 'zoomed' state
+2025-07-22 14:52:25 - ui.styles - INFO - setup_styles:42 - UI styles configured successfully
+2025-07-22 14:52:25 - ui.main_window - INFO - _setup_window:106 - Main window configured
+2025-07-22 14:52:25 - ui.main_window - INFO - _setup_responsive_fonts:195 - Responsive fonts configured
+2025-07-22 14:52:25 - ui.navigation - INFO - _setup_navigation_bar:106 - Sofrecom logo loaded successfully from: C:\Users\wzaouga\Desktop\pladria git\logo_Sofrecom.png
+2025-07-22 14:52:25 - ui.navigation - INFO - register_module:195 - Registered module: Générateur Suivi (suivi_generator)
+2025-07-22 14:52:25 - ui.navigation - INFO - register_module:195 - Registered module: Suivi Global Tickets (suivi_global)
+2025-07-22 14:52:25 - ui.navigation - INFO - register_module:195 - Registered module: Statistiques Équipe (team_stats)
+2025-07-22 14:52:25 - ui.navigation - INFO - register_module:195 - Registered module: Visualiseur de Données (data_viewer)
+2025-07-22 14:52:25 - ui.navigation - INFO - register_module:195 - Registered module: Contrôle Qualité (quality_control)
+2025-07-22 14:52:25 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-22 14:52:25 - ui.main_window - INFO - _set_window_icon:288 - Window icon set with PNG multi-size: 7 sizes
+2025-07-22 14:52:25 - ui.main_window - INFO - _set_window_icon:295 - Additional ICO icon set for Windows compatibility
+2025-07-22 14:52:25 - ui.main_window - INFO - _set_windows_taskbar_icon:361 - Windows taskbar icon set via API
+2025-07-22 14:52:26 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-22 14:52:26 - ui.main_window - INFO - _setup_navigation:163 - Navigation system initialized
+2025-07-22 14:52:26 - main - INFO - start_main_application:83 - Application created successfully
+2025-07-22 14:52:26 - main - INFO - start_main_application:84 - Starting main loop...
+2025-07-22 14:52:26 - ui.main_window - INFO - run:371 - Starting application main loop
+2025-07-22 14:52:26 - ui.main_window - INFO - _post_init:181 - Window state after initialization: zoomed
+2025-07-22 14:52:26 - ui.main_window - INFO - _post_init:189 - Main window initialization complete
+2025-07-22 14:52:29 - ui.home_screen - INFO - _open_quality_control:423 - User clicked Quality Control button
+2025-07-22 14:52:29 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: quality_control
+2025-07-22 14:52:29 - ui.navigation - INFO - _load_module:274 - Loading module: quality_control (Contrôle Qualité)
+2025-07-22 14:52:29 - ui.modules.quality_control_module - INFO - _create_mode_selection_button:5252 - Bouton de sélection de mode créé avec succès
+2025-07-22 14:52:29 - ui.modules.quality_control_module - INFO - setup_ui:108 - Interface utilisateur modernisée créée avec succès
+2025-07-22 14:52:29 - ui.modules.quality_control_module - INFO - __init__:84 - Module Contrôle Qualité initialisé
+2025-07-22 14:52:29 - ui.navigation - INFO - _load_module:299 - Module quality_control created and loaded successfully
+2025-07-22 14:52:29 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: quality_control
+2025-07-22 14:52:35 - ui.modules.quality_control_module - INFO - on_success:1133 - Fichier QGis chargé: resultatsk.xlsx
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1311 - Domaine détecté ligne 1: RIP
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1353 - CMS Total détecté ligne 1: 14
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1422 - PA Total détecté ligne 1: 138
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1487 - Collaborateur détecté ligne 1: ZAOUGA Wissem
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1533 - === INFORMATIONS DÉTECTÉES ===
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1534 - Nom de commune (Col A): BALAISEAUX
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1535 - ID tâche (Col B): 2815265
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1536 - Code INSEE (Col C): 39034
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1537 - Domaine (Col D): RIP
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1538 - Collaborateur (Col U): ZAOUGA Wissem
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1539 - CMS Total (Col G): 14
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1540 - PA Total (Col H): 138
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1541 - ==============================
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1557 - === DEBUG LIGNE 2 (INDEX 1) ===
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1565 - ===============================
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - on_success:1230 - Fichier suivi chargé: Suivi_BALAISEAUX_2815265_39034.xlsx
+2025-07-22 14:52:45 - ui.modules.quality_control_module - INFO - on_success:1231 - Informations détectées: {'commune': 'BALAISEAUX', 'collaborateur': 'ZAOUGA Wissem', 'insee': '39034', 'id_tache': '2815265', 'domaine': 'RIP', 'cms_total': '14', 'pa_total': '138'}
+2025-07-22 14:53:19 - ui.modules.quality_control_module - INFO - _analyze_critere_0:1700 - Motifs extraits de la page 2, colonne I: 172 motifs trouvés
+2025-07-22 14:53:19 - ui.modules.quality_control_module - INFO - _analyze_critere_2:1815 - Pages 1, 2 et 3 du fichier suivi chargées pour analyse critère 2
+2025-07-22 14:53:19 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/006S, Motif: 'OOOK'
+2025-07-22 14:53:19 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/004R, Motif: 'AD RA'
+2025-07-22 14:53:19 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/004X, Motif: 'AD A ANALYSER'
+2025-07-22 14:53:19 - ui.modules.quality_control_module - INFO - on_success:1648 - Analyse qualité terminée
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _generate_excel_report:2520 - Début génération rapport Excel: C:/Users/wzaouga/Downloads/test/Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemhhhhhhhhhhhhhhhhhhhhhhhhh.xlsx
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _generate_excel_report:2528 - Chemin absolu du fichier: C:\Users\wzaouga\Downloads\test\Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemhhhhhhhhhhhhhhhhhhhhhhhhh.xlsx
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4010 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _calculate_conformite_percentage:4136 - Calcul conformité - CMS: 0.000, PA: 0.033, Banbou: 0.000, Écart: 0.031, Score pondéré: 0.021, Conformité: 97.9%
+2025-07-22 14:53:25 - ui.modules.quality_control_module - WARNING - _detect_fichiers_manquants:4451 - Fautes majeures fichiers détectées: 2
+2025-07-22 14:53:25 - ui.modules.quality_control_module - ERROR - _detect_fichiers_manquants:4453 - FICHIER MANQUANT/INVALIDE - STRUCTURE_QGIS_INVALIDE: Fichier QGis - Colonnes critiques manquantes: A, J, U
+2025-07-22 14:53:25 - ui.modules.quality_control_module - ERROR - _detect_fichiers_manquants:4453 - FICHIER MANQUANT/INVALIDE - STRUCTURE_SUIVI_INVALIDE: Fichier Suivi Commune - Structure invalide: 0 page(s) trouvée(s), minimum 2 requises
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _detect_fautes_majeures:4334 - Fautes majeures détectées: 2
+2025-07-22 14:53:25 - ui.modules.quality_control_module - WARNING - _detect_fautes_majeures:4336 - FAUTE MAJEURE - STRUCTURE_QGIS_INVALIDE: Fichier QGis - Colonnes critiques manquantes: A, J, U
+2025-07-22 14:53:25 - ui.modules.quality_control_module - WARNING - _detect_fautes_majeures:4336 - FAUTE MAJEURE - STRUCTURE_SUIVI_INVALIDE: Fichier Suivi Commune - Structure invalide: 0 page(s) trouvée(s), minimum 2 requises
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _evaluate_commune_status:4077 - Évaluation commune - Statut: KO, Conformité: 97.9%, Fautes majeures: 2
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4010 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4010 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2817 - Page 2 suivi commune chargée pour bâtiments: (172, 16)
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2829 - Mapping IMB->Batiment créé: 1 entrées
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2864 - Ajout de 7 erreurs à la page 3 (C3: 4 doublons + 0 motif OK, C4: 0 ad à analyser, C5: 3 motifs incorrects)
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _generate_excel_report:2538 - Données Excel préparées pour 4 feuilles
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _write_excel_file:3248 - DataFrames créés pour 4 feuilles
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _add_controleur_validation:3739 - Validation des données ajoutée pour le contrôleur
+2025-07-22 14:53:25 - ui.modules.quality_control_module - WARNING - _apply_percentage_formatting:3785 - Erreur lors du formatage des pourcentages: list indices must be integers or slices, not str
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _format_page1:3685 - Mise en forme appliquée à la page 1 (avec bordures)
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _format_page2:3936 - Mise en forme avancée de la page 2 CMS appliquée avec succès
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _format_page3:3834 - Mise en forme appliquée à la page 3 - Contrôle Qualité PA
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _format_page4_ecart:3477 - Mise en forme appliquée à la feuille Ecart
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _write_excel_file:3300 - 4 feuilles Excel écrites: Etat_BALAISEA_ZAOUGA_W, Controle_Qualite_CMS, Controle_Qualite_PA, Ecart
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _write_excel_file:3302 - Fichier Excel écrit avec succès avec mise en forme
+2025-07-22 14:53:25 - ui.modules.quality_control_module - INFO - _generate_excel_report:2547 - Fichier créé avec succès: C:\Users\wzaouga\Downloads\test\Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemhhhhhhhhhhhhhhhhhhhhhhhhh.xlsx (18655 bytes)
+2025-07-22 14:53:26 - ui.modules.quality_control_module - INFO - on_success:2478 - Rapport exporté: C:/Users/wzaouga/Downloads/test/Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemhhhhhhhhhhhhhhhhhhhhhhhhh.xlsx
+2025-07-22 14:57:47 - main - INFO - start_main_application:88 - Application closed normally
+2025-07-22 14:58:26 - root - INFO - setup_logging:73 - Logging to file: logs\suivi_generator_20250722.log
+2025-07-22 14:58:26 - root - INFO - setup_logging:79 - ==================================================
+2025-07-22 14:58:26 - root - INFO - setup_logging:80 - Suivi Generator Application Started
+2025-07-22 14:58:26 - root - INFO - setup_logging:81 - Log level: INFO
+2025-07-22 14:58:26 - root - INFO - setup_logging:82 - File logging: Enabled
+2025-07-22 14:58:26 - root - INFO - setup_logging:83 - ==================================================
+2025-07-22 14:58:26 - ui.splash_screen - INFO - _init_environment:275 - ============================================================
+2025-07-22 14:58:26 - ui.splash_screen - INFO - _init_environment:276 - Starting Pladria - Solutions de traitement et génération de données
+2025-07-22 14:58:26 - ui.splash_screen - INFO - _init_environment:277 - Version: 2.5
+2025-07-22 14:58:26 - ui.splash_screen - INFO - _init_environment:278 - Author: Equipe BLI
+2025-07-22 14:58:26 - ui.splash_screen - INFO - _init_environment:279 - ============================================================
+2025-07-22 14:58:26 - main - INFO - start_main_application:80 - Creating main application...
+2025-07-22 14:58:26 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-22 14:58:26 - ui.main_window - INFO - _setup_window:81 - Window maximized using 'zoomed' state
+2025-07-22 14:58:26 - ui.styles - INFO - setup_styles:42 - UI styles configured successfully
+2025-07-22 14:58:26 - ui.main_window - INFO - _setup_window:106 - Main window configured
+2025-07-22 14:58:26 - ui.main_window - INFO - _setup_responsive_fonts:195 - Responsive fonts configured
+2025-07-22 14:58:26 - ui.navigation - INFO - _setup_navigation_bar:106 - Sofrecom logo loaded successfully from: C:\Users\wzaouga\Desktop\pladria git\logo_Sofrecom.png
+2025-07-22 14:58:26 - ui.navigation - INFO - register_module:195 - Registered module: Générateur Suivi (suivi_generator)
+2025-07-22 14:58:26 - ui.navigation - INFO - register_module:195 - Registered module: Suivi Global Tickets (suivi_global)
+2025-07-22 14:58:26 - ui.navigation - INFO - register_module:195 - Registered module: Statistiques Équipe (team_stats)
+2025-07-22 14:58:26 - ui.navigation - INFO - register_module:195 - Registered module: Visualiseur de Données (data_viewer)
+2025-07-22 14:58:26 - ui.navigation - INFO - register_module:195 - Registered module: Contrôle Qualité (quality_control)
+2025-07-22 14:58:26 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-22 14:58:26 - ui.main_window - INFO - _set_window_icon:288 - Window icon set with PNG multi-size: 7 sizes
+2025-07-22 14:58:26 - ui.main_window - INFO - _set_window_icon:295 - Additional ICO icon set for Windows compatibility
+2025-07-22 14:58:26 - ui.main_window - INFO - _set_windows_taskbar_icon:361 - Windows taskbar icon set via API
+2025-07-22 14:58:27 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-22 14:58:27 - ui.main_window - INFO - _setup_navigation:163 - Navigation system initialized
+2025-07-22 14:58:27 - main - INFO - start_main_application:83 - Application created successfully
+2025-07-22 14:58:27 - main - INFO - start_main_application:84 - Starting main loop...
+2025-07-22 14:58:27 - ui.main_window - INFO - run:371 - Starting application main loop
+2025-07-22 14:58:27 - ui.main_window - INFO - _post_init:181 - Window state after initialization: zoomed
+2025-07-22 14:58:27 - ui.main_window - INFO - _post_init:189 - Main window initialization complete
+2025-07-22 14:58:29 - ui.home_screen - INFO - _open_quality_control:423 - User clicked Quality Control button
+2025-07-22 14:58:29 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: quality_control
+2025-07-22 14:58:29 - ui.navigation - INFO - _load_module:274 - Loading module: quality_control (Contrôle Qualité)
+2025-07-22 14:58:29 - ui.modules.quality_control_module - INFO - _create_mode_selection_button:5396 - Bouton de sélection de mode créé avec succès
+2025-07-22 14:58:29 - ui.modules.quality_control_module - INFO - setup_ui:108 - Interface utilisateur modernisée créée avec succès
+2025-07-22 14:58:29 - ui.modules.quality_control_module - INFO - __init__:84 - Module Contrôle Qualité initialisé
+2025-07-22 14:58:29 - ui.navigation - INFO - _load_module:299 - Module quality_control created and loaded successfully
+2025-07-22 14:58:30 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: quality_control
+2025-07-22 14:58:38 - ui.modules.quality_control_module - INFO - on_success:1133 - Fichier QGis chargé: resultatsk.xlsx
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1311 - Domaine détecté ligne 1: RIP
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1353 - CMS Total détecté ligne 1: 14
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1422 - PA Total détecté ligne 1: 138
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1487 - Collaborateur détecté ligne 1: ZAOUGA Wissem
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1533 - === INFORMATIONS DÉTECTÉES ===
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1534 - Nom de commune (Col A): BALAISEAUX
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1535 - ID tâche (Col B): 2815265
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1536 - Code INSEE (Col C): 39034
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1537 - Domaine (Col D): RIP
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1538 - Collaborateur (Col U): ZAOUGA Wissem
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1539 - CMS Total (Col G): 14
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1540 - PA Total (Col H): 138
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1541 - ==============================
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1557 - === DEBUG LIGNE 2 (INDEX 1) ===
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - _detect_info_from_suivi:1565 - ===============================
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - on_success:1230 - Fichier suivi chargé: Suivi_BALAISEAUX_2815265_39034.xlsx
+2025-07-22 14:58:49 - ui.modules.quality_control_module - INFO - on_success:1231 - Informations détectées: {'commune': 'BALAISEAUX', 'collaborateur': 'ZAOUGA Wissem', 'insee': '39034', 'id_tache': '2815265', 'domaine': 'RIP', 'cms_total': '14', 'pa_total': '138'}
+2025-07-22 14:58:53 - ui.modules.quality_control_module - INFO - _analyze_critere_0:1700 - Motifs extraits de la page 2, colonne I: 172 motifs trouvés
+2025-07-22 14:58:53 - ui.modules.quality_control_module - INFO - _analyze_critere_2:1815 - Pages 1, 2 et 3 du fichier suivi chargées pour analyse critère 2
+2025-07-22 14:58:53 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/006S, Motif: 'OOOK'
+2025-07-22 14:58:53 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/004R, Motif: 'AD RA'
+2025-07-22 14:58:53 - ui.modules.quality_control_module - INFO - _analyze_critere_5:2361 - MOTIF INCORRECT DÉTECTÉ - IMB: IMB/39034/X/004X, Motif: 'AD A ANALYSER'
+2025-07-22 14:58:53 - ui.modules.quality_control_module - INFO - on_success:1648 - Analyse qualité terminée
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _generate_excel_report:2520 - Début génération rapport Excel: C:/Users/wzaouga/Downloads/test/Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemtttttttttttttttttttttttt.xlsx
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _generate_excel_report:2528 - Chemin absolu du fichier: C:\Users\wzaouga\Downloads\test\Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemtttttttttttttttttttttttt.xlsx
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4154 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _calculate_conformite_percentage:4280 - Calcul conformité - CMS: 0.000, PA: 0.033, Banbou: 0.000, Écart: 0.031, Score pondéré: 0.021, Conformité: 97.9%
+2025-07-22 14:59:01 - ui.modules.quality_control_module - WARNING - _detect_fichiers_manquants:4595 - Fautes majeures fichiers détectées: 2
+2025-07-22 14:59:01 - ui.modules.quality_control_module - ERROR - _detect_fichiers_manquants:4597 - FICHIER MANQUANT/INVALIDE - STRUCTURE_QGIS_INVALIDE: Fichier QGis - Colonnes critiques manquantes: A, J, U
+2025-07-22 14:59:01 - ui.modules.quality_control_module - ERROR - _detect_fichiers_manquants:4597 - FICHIER MANQUANT/INVALIDE - STRUCTURE_SUIVI_INVALIDE: Fichier Suivi Commune - Structure invalide: 0 page(s) trouvée(s), minimum 2 requises
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _detect_fautes_majeures:4478 - Fautes majeures détectées: 2
+2025-07-22 14:59:01 - ui.modules.quality_control_module - WARNING - _detect_fautes_majeures:4480 - FAUTE MAJEURE - STRUCTURE_QGIS_INVALIDE: Fichier QGis - Colonnes critiques manquantes: A, J, U
+2025-07-22 14:59:01 - ui.modules.quality_control_module - WARNING - _detect_fautes_majeures:4480 - FAUTE MAJEURE - STRUCTURE_SUIVI_INVALIDE: Fichier Suivi Commune - Structure invalide: 0 page(s) trouvée(s), minimum 2 requises
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _evaluate_commune_status:4221 - Évaluation commune - Statut: KO, Conformité: 97.9%, Fautes majeures: 2
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4154 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _calculate_erreur_banbou_percentage:4154 - Calcul % Erreur Banbou: UPR=N/A, 501/511=OK, NOK=0/1, Résultat=0.0%
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2765 - Page 2 suivi commune chargée pour bâtiments: (172, 16)
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2777 - Mapping IMB->Batiment créé: 1 entrées
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _prepare_excel_data:2812 - Ajout de 7 erreurs à la page 3 (C3: 4 doublons + 0 motif OK, C4: 0 ad à analyser, C5: 3 motifs incorrects)
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _generate_excel_report:2538 - Données Excel préparées pour 4 feuilles
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _write_excel_file:3215 - DataFrames créés pour 4 feuilles
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _format_page1:3630 - Tableau 'Ecart Plan Adressage' trouvé ligne 17
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _format_page1:3669 - Formatage du tableau Ecart Plan Adressage appliqué (lignes 17-26)
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _add_controleur_validation:3829 - Validation des données ajoutée pour le contrôleur
+2025-07-22 14:59:01 - ui.modules.quality_control_module - WARNING - _apply_percentage_formatting:3887 - Erreur lors du formatage des pourcentages: list indices must be integers or slices, not str
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _format_page1:3775 - Mise en forme optimisée appliquée à la page 1 (styling Module 1)
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _format_page2:4080 - Mise en forme avancée de la page 2 CMS appliquée avec succès
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _format_page3:3957 - Mise en forme appliquée à la page 3 - Contrôle Qualité PA
+2025-07-22 14:59:01 - ui.modules.quality_control_module - ERROR - _format_page4_ecart:3486 - Erreur mise en forme feuille Ecart: 'MergedCell' object has no attribute 'column_letter'
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _write_excel_file:3276 - 4 feuilles Excel écrites: Etat_BALAISEA_ZAOUGA_W, Controle_Qualite_CMS, Controle_Qualite_PA, Ecart
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _write_excel_file:3278 - Fichier Excel écrit avec succès avec mise en forme
+2025-07-22 14:59:01 - ui.modules.quality_control_module - INFO - _generate_excel_report:2547 - Fichier créé avec succès: C:\Users\wzaouga\Downloads\test\Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemtttttttttttttttttttttttt.xlsx (14455 bytes)
+2025-07-22 14:59:03 - ui.modules.quality_control_module - INFO - on_success:2478 - Rapport exporté: C:/Users/wzaouga/Downloads/test/Etat_De_Lieu_BALAISEAUX_39034_ZAOUGA Wissemtttttttttttttttttttttttt.xlsx
+2025-07-22 15:00:29 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-22 15:00:30 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-22 15:33:36 - main - INFO - start_main_application:88 - Application closed normally

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques de Présentation</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tableau de Bord - Statistiques</h1>
+            <p class="subtitle">Analyse des données de traitement - 2025-05-01 à 2025-07-23</p>
+        </header>
+
+        <div class="stats-grid">
+            <!-- Communes livrées -->
+            <div class="card">
+                <h2>Communes Livrées (99)</h2>
+                <div class="chart-container">
+                    <canvas id="communesChart"></canvas>
+                </div>
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-value orange">87</span>
+                        <span class="stat-label">Orange</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value rip">12</span>
+                        <span class="stat-label">RIP</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CM -->
+            <div class="card">
+                <h2>CM (1721)</h2>
+                <div class="chart-container">
+                    <canvas id="cmChart"></canvas>
+                </div>
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-value raf">1573</span>
+                        <span class="stat-label">RAF</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value modif">24</span>
+                        <span class="stat-label">Modification</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value crea">124</span>
+                        <span class="stat-label">Creation</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contrôle Qualité -->
+            <div class="card">
+                <h2>Contrôle Qualité</h2>
+                <div class="chart-container">
+                    <canvas id="qualityChart"></canvas>
+                </div>
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-value verified">62</span>
+                        <span class="stat-label">Communes vérifiées</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value error-rate">97%</span>
+                        <span class="stat-label">Taux de conformité global entre communes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acts traitement PA -->
+            <div class="card full-width">
+                <h2>Acts Traitement PA (24,031)</h2>
+                <div class="chart-container large">
+                    <canvas id="actsChart"></canvas>
+                </div>
+                <div class="acts-summary">
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-value">13,247</span>
+                            <span class="summary-label">AD RAS sans temps (55.1%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">4,862</span>
+                            <span class="summary-label">AD RAS avec temps (20.2%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">2,388</span>
+                            <span class="summary-label">OK (9.9%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">1,740</span>
+                            <span class="summary-label">NOK (7.2%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">893</span>
+                            <span class="summary-label">AD Non jointe (3.7%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">498</span>
+                            <span class="summary-label">UPR RAS (2.1%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">285</span>
+                            <span class="summary-label">AD Non trouvée (1.2%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">39</span>
+                            <span class="summary-label">Hors commune (0.2%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">45</span>
+                            <span class="summary-label">UPR NOK (0.2%)</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-value">34</span>
+                            <span class="summary-label">UPR OK (0.1%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Tickets UPR, 501/511, and RIP Sections - Side by Side -->
+        <div class="tickets-row">
+            <!-- Tickets UPR Section -->
+            <div class="card third-width">
+                <h2>Tickets UPR</h2>
+                <div class="upr-display">
+                    <div class="primary-metric">
+                        <span class="metric-value upr-cree">16</span>
+                        <span class="metric-label">📋Tickets UPR deposés dans la période</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets 501/511 Section -->
+            <div class="card third-width">
+                <h2>Tickets 501/511</h2>
+                <div class="tickets-501511-display">
+                    <div class="primary-metric">
+                        <span class="metric-value tickets-501511">98</span>
+                        <span class="metric-label">📋 Tickets deposés dans la période</span>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- RIP (P0 P1) Section -->
+            <div class="card third-width">
+                <h2>RIP (P0 P1) (0)</h2>
+                <div class="chart-container">
+                    <canvas id="ripChart"></canvas>
+                </div>
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-value rip-rien">0</span>
+                        <span class="stat-label">Rien à faire</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value rip-modification">0</span>
+                        <span class="stat-label">Modification</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value rip-creation">0</span>
+                        <span class="stat-label">Création</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Facturation Section -->
+        <div class="facturation-section">
+            <div class="card full-width">
+                <h2>💰 Facturation Détaillée par Motif</h2>
+                <div class="billing-container">
+
+                    <!-- PA (Acts) Pricing Section -->
+                    <div class="motif-pricing-section">
+                        <h3 class="section-title">📋 Prix PA (Acts) par Motif</h3>
+                        <div class="motif-pricing-grid">
+                            <div class="motif-price-item">
+                                <label>AD RAS sans temps (<span id="count-ad-ras-sans">0</span>)</label>
+                                <input type="number" id="price-ad-ras-sans" class="motif-price-input" value="1.00" min="0" step="0.01">
+                                <span class="motif-total" id="total-ad-ras-sans">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>AD RAS avec temps (<span id="count-ad-ras-avec">0</span>)</label>
+                                <input type="number" id="price-ad-ras-avec" class="motif-price-input" value="1.50" min="0" step="0.01">
+                                <span class="motif-total" id="total-ad-ras-avec">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>OK (<span id="count-ok">0</span>)</label>
+                                <input type="number" id="price-ok" class="motif-price-input" value="0.80" min="0" step="0.01">
+                                <span class="motif-total" id="total-ok">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>NOK (<span id="count-nok">0</span>)</label>
+                                <input type="number" id="price-nok" class="motif-price-input" value="1.20" min="0" step="0.01">
+                                <span class="motif-total" id="total-nok">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>AD Non jointe (<span id="count-ad-non-jointe">0</span>)</label>
+                                <input type="number" id="price-ad-non-jointe" class="motif-price-input" value="0.90" min="0" step="0.01">
+                                <span class="motif-total" id="total-ad-non-jointe">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>UPR RAS (<span id="count-upr-ras">0</span>)</label>
+                                <input type="number" id="price-upr-ras" class="motif-price-input" value="1.10" min="0" step="0.01">
+                                <span class="motif-total" id="total-upr-ras">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>AD Non trouvée (<span id="count-ad-non-trouvee">0</span>)</label>
+                                <input type="number" id="price-ad-non-trouvee" class="motif-price-input" value="1.30" min="0" step="0.01">
+                                <span class="motif-total" id="total-ad-non-trouvee">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>Hors commune (<span id="count-hors-commune">0</span>)</label>
+                                <input type="number" id="price-hors-commune" class="motif-price-input" value="1.40" min="0" step="0.01">
+                                <span class="motif-total" id="total-hors-commune">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>UPR NOK (<span id="count-upr-nok">0</span>)</label>
+                                <input type="number" id="price-upr-nok" class="motif-price-input" value="1.60" min="0" step="0.01">
+                                <span class="motif-total" id="total-upr-nok">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>UPR OK (<span id="count-upr-ok">0</span>)</label>
+                                <input type="number" id="price-upr-ok" class="motif-price-input" value="1.00" min="0" step="0.01">
+                                <span class="motif-total" id="total-upr-ok">€0.00</span>
+                            </div>
+                        </div>
+                        <div class="section-total pa-section-total">
+                            <span class="section-total-label">� Total PA:</span>
+                            <span class="section-total-value" id="totalPA">€0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- CM Pricing Section -->
+                    <div class="motif-pricing-section">
+                        <h3 class="section-title">📊 Prix CM par Motif</h3>
+                        <div class="motif-pricing-grid cm-grid">
+                            <div class="motif-price-item">
+                                <label>RAF (<span id="count-raf">0</span>)</label>
+                                <input type="number" id="price-raf" class="motif-price-input" value="2.00" min="0" step="0.01">
+                                <span class="motif-total" id="total-raf">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>Modification (<span id="count-modification">0</span>)</label>
+                                <input type="number" id="price-modification" class="motif-price-input" value="3.00" min="0" step="0.01">
+                                <span class="motif-total" id="total-modification">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>Création (<span id="count-creation">0</span>)</label>
+                                <input type="number" id="price-creation" class="motif-price-input" value="4.00" min="0" step="0.01">
+                                <span class="motif-total" id="total-creation">€0.00</span>
+                            </div>
+                        </div>
+                        <div class="section-total cm-section-total">
+                            <span class="section-total-label">📊 Total CM:</span>
+                            <span class="section-total-value" id="totalCM">€0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- UPR Pricing Section -->
+                    <div class="motif-pricing-section">
+                        <h3 class="section-title">🎫 Prix Tickets UPR par Motif</h3>
+                        <div class="motif-pricing-grid upr-grid">
+                            <div class="motif-price-item">
+                                <label>UPR Créé (<span id="count-upr-cree">0</span>)</label>
+                                <input type="number" id="price-upr-cree" class="motif-price-input" value="5.00" min="0" step="0.01">
+                                <span class="motif-total" id="total-upr-cree">€0.00</span>
+                            </div>
+                            <div class="motif-price-item">
+                                <label>UPR Non (<span id="count-upr-non">0</span>)</label>
+                                <input type="number" id="price-upr-non" class="motif-price-input" value="2.00" min="0" step="0.01">
+                                <span class="motif-total" id="total-upr-non">€0.00</span>
+                            </div>
+                        </div>
+                        <div class="section-total upr-section-total">
+                            <span class="section-total-label">🎫 Total UPR:</span>
+                            <span class="section-total-value" id="totalUPR">€0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- 501/511 Pricing Section -->
+                    <div class="motif-pricing-section">
+                        <h3 class="section-title">📋 Prix Tickets 501/511</h3>
+                        <div class="motif-pricing-grid tickets-501511-grid">
+                            <div class="motif-price-item">
+                                <label>Tickets 501/511 (<span id="count-tickets-501511">0</span>)</label>
+                                <input type="number" id="price-tickets-501511" class="motif-price-input" value="3.50" min="0" step="0.01">
+                                <span class="motif-total" id="total-tickets-501511">€0.00</span>
+                            </div>
+                        </div>
+                        <div class="section-total tickets-501511-section-total">
+                            <span class="section-total-label">📋 Total 501/511:</span>
+                            <span class="section-total-value" id="total501511">€0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Grand Total -->
+                    <div class="grand-total-section">
+                        <div class="grand-total-item">
+                            <span class="grand-total-label">💰 Total Général</span>
+                            <span class="grand-total-value" id="grandTotal">€0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+<!-- Pladria Statistics Updated: 2025-07-23 11:55:15 | Period: 2025-07-01 to 2025-07-16 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 11:55:29 | Period: 2025-07-01 to 2025-07-16 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 11:55:38 | Period: 2025-07-01 to 2025-07-16 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 11:55:48 | Period: 2025-07-01 to 2025-07-15 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 11:56:27 | Period: 2025-07-01 to 2025-07-11 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 12:09:52 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 12:22:42 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 12:29:38 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 12:40:46 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 12:44:45 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 12:46:42 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 12:56:49 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 13:11:16 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 13:18:43 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 13:30:59 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 14:01:31 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 14:09:34 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 14:13:56 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 14:28:57 | Period: 2025-07-01 to 2025-07-10 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 14:38:04 | Period: 2025-05-01 to 2025-07-23 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 15:01:14 | Period: 2025-05-01 to 2025-07-23 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 15:08:49 | Period: 2025-05-01 to 2025-07-23 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 15:26:52 | Period: 2025-05-01 to 2025-07-23 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 15:46:43 | Period: 2025-05-01 to 2025-07-23 | Records: 0 -->
+
+<!-- Pladria Statistics Updated: 2025-07-23 16:15:08 | Period: 2025-05-01 to 2025-07-23 | Records: 0 -->
+</body>
+</html>
