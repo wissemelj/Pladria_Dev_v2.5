@@ -54,7 +54,6 @@ VALIDATION_LISTS = {
         "DAKHLI Shady",
         "ELJ Wissem",
         "FRIGUI Rayene",
-        "KHADRAOUI Oussama",
         "KHCHIMI Ghada",
         "KORBI Zaineb",
         "MADHBOUH Roua",
@@ -77,7 +76,7 @@ class UIConfig:
     """UI configuration constants with responsive font support"""
 
     # Window settings - Ultra minimal for maximum compatibility
-    WINDOW_TITLE = "Pladria - Solutions de traitement et génération de données"
+    WINDOW_TITLE = "Pladria - Activité Plan Adressage"
     WINDOW_MIN_SIZE = "550x400"  # Further reduced for ultra minimal fit
     WINDOW_DEFAULT_SIZE = "600x450"  # Further reduced for ultra minimal default
 
@@ -158,9 +157,9 @@ class AppInfo:
     """Application information"""
 
     VERSION = "2.5"
-    AUTHOR = "Equipe BLI"
+    AUTHOR = "Equipe Plan Adressage - BLI"
     COPYRIGHT = "© 2025 Sofrecom Tunisie"
-    DESCRIPTION = "Pladria - Solutions de traitement et génération de données"
+    DESCRIPTION = "Pladria - Activité CMS Adresse & Plan Adressae"
     FULL_DESCRIPTION = "Pladria : Une Initiative pour automatiser la génération des suivis pour l'activité CMS Adresse & Plan Adressage"
 
 # Logging configuration
@@ -218,6 +217,25 @@ class TeamsConfig:
         global_path = rf"{teams_base}\Suivis CMS Adresse_Plan Adressage\Suivis Global Tickets CMS Adresse_Plan Adressage"
 
         return global_path
+
+    @staticmethod
+    def get_quality_control_teams_path():
+        """
+        Get the Teams path for Quality Control module.
+
+        Returns:
+            str: Teams quality control path for current user
+        """
+        import getpass
+
+        # Get current username
+        username = getpass.getuser()
+
+        # Use AccessControl to get the correct Teams path
+        teams_base = AccessControl.get_teams_path_for_user(username)
+        quality_control_path = rf"{teams_base}\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité"
+
+        return quality_control_path
 
     # Legacy property for backward compatibility
     @property

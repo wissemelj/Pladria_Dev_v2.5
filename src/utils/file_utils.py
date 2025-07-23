@@ -563,3 +563,99 @@ def get_teams_file_path(nom_commune: str, id_tache: str, filename: str) -> str:
 
     logger.info(f"Generated Teams file path: {file_path}")
     return file_path
+
+
+def generate_quality_control_folder_path(nom_commune: str, id_tache: str, insee: str, collaborateur: str) -> str:
+    """
+    Generate the Teams folder path for Quality Control module with specific hierarchy:
+    Contrôle Qualité > Nom_Collaborateur > NomCommune_IdTache_Insee
+
+    Args:
+        nom_commune: Name of the commune
+        id_tache: Task ID
+        insee: INSEE code
+        collaborateur: Collaborator name
+
+    Returns:
+        Full path to the Quality Control Teams folder
+    """
+    from config.constants import TeamsConfig
+
+    # Create safe folder names
+    collaborateur_folder = get_safe_filename(collaborateur)
+    commune_folder = f"{get_safe_filename(nom_commune)}_{get_safe_filename(id_tache)}_{get_safe_filename(insee)}"
+
+    # Build the path: Base > Contrôle Qualité > Nom_Collaborateur > NomCommune_IdTache_Insee
+    quality_control_base = TeamsConfig.get_quality_control_teams_path()
+    full_folder_path = os.path.join(quality_control_base, collaborateur_folder, commune_folder)
+
+    logger.info(f"Generated Quality Control folder path: {full_folder_path}")
+    return full_folder_path
+
+
+def create_quality_control_folder(nom_commune: str, id_tache: str, insee: str, collaborateur: str) -> Dict[str, Any]:
+    """
+    Create the Quality Control Teams folder structure.
+
+    Args:
+        nom_commune: Name of the commune
+        id_tache: Task ID
+        insee: INSEE code
+        collaborateur: Collaborator name
+
+    Returns:
+        Dictionary with creation result
+    """
+    result = {
+        'success': False,
+        'created': False,
+        'path': '',
+        'error': ''
+    }
+
+    try:
+        # Generate folder path
+        folder_path = generate_quality_control_folder_path(nom_commune, id_tache, insee, collaborateur)
+        result['path'] = folder_path
+
+        # Check if folder already exists
+        if os.path.exists(folder_path):
+            result['success'] = True
+            result['created'] = False
+            logger.info(f"Quality Control folder already exists: {folder_path}")
+            return result
+
+        # Create the folder structure (including parent folders)
+        if ensure_directory_exists(folder_path):
+            result['success'] = True
+            result['created'] = True
+            logger.info(f"Quality Control folder created successfully: {folder_path}")
+        else:
+            result['error'] = f"Failed to create Quality Control folder: {folder_path}"
+
+    except Exception as e:
+        result['error'] = f"Error creating Quality Control folder: {str(e)}"
+        logger.error(f"Quality Control folder creation error: {e}")
+
+    return result
+
+
+def get_quality_control_file_path(nom_commune: str, id_tache: str, insee: str, collaborateur: str, filename: str) -> str:
+    """
+    Generate the complete file path for saving Quality Control files to Teams channel.
+
+    Args:
+        nom_commune: Name of the commune
+        id_tache: Task ID
+        insee: INSEE code
+        collaborateur: Collaborator name
+        filename: Name of the file to save
+
+    Returns:
+        Complete file path in Quality Control Teams channel
+    """
+    folder_path = generate_quality_control_folder_path(nom_commune, id_tache, insee, collaborateur)
+    file_path = os.path.join(folder_path, filename)
+
+    logger.info(f"Generated Quality Control file path: {file_path}")
+    return file_path
