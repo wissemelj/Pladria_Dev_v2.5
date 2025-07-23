@@ -7,6 +7,7 @@ from tkinter import messagebox, filedialog, ttk
 import logging
 import os
 import getpass
+import re
 from typing import Optional, List, Dict, Any
 from pathlib import Path
 import sys
@@ -126,6 +127,17 @@ class TeamStatsModule:
         self.collab_combo = None
         self.month_combo = None
         self.year_combo = None
+
+        # Date range selection variables
+        self.date_from_var = tk.StringVar()
+        self.date_to_var = tk.StringVar()
+        self.date_from_selected = None
+        self.date_to_selected = None
+
+        # Stats folder data
+        self.stats_folder_data = {}
+        self.filtered_statistics = {}
+        self.dashboard_data = {}
 
         # Keyboard shortcuts (optional)
         self.keyboard_manager = None
@@ -1008,15 +1020,282 @@ class TeamStatsModule:
             except Exception as fallback_error:
                 self.logger.error(f"Failed to create fallback archive section: {fallback_error}")
 
+    def _create_date_range_section(self, parent: tk.Widget):
+        """Create the date range selection section for filtered statistics."""
+        try:
+            self.logger.info("Creating date range selection section...")
+
+            # Date range card
+            date_card = create_card_frame(parent)
+            date_card.pack(fill=tk.X, padx=0, pady=(0, 10))
+
+            # Section header
+            header_frame = tk.Frame(date_card, bg=COLORS['CARD'])
+            header_frame.pack(fill=tk.X, padx=15, pady=(8, 5))
+
+            # Header icon and title
+            header_icon = tk.Label(
+                header_frame,
+                text="📅",
+                font=("Segoe UI", 12),
+                fg=COLORS['PRIMARY'],
+                bg=COLORS['CARD']
+            )
+            header_icon.pack(side=tk.LEFT, padx=(0, 8))
+
+            header_label = tk.Label(
+                header_frame,
+                text="Filtrage par période",
+                font=UIConfig.FONT_HEADER,
+                fg=COLORS['PRIMARY'],
+                bg=COLORS['CARD']
+            )
+            header_label.pack(side=tk.LEFT)
+
+            # Content frame
+            content_frame = tk.Frame(date_card, bg=COLORS['CARD'])
+            content_frame.pack(fill=tk.X, padx=15, pady=(0, 15))
+
+            # Date from section
+            from_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+            from_frame.pack(fill=tk.X, pady=(0, 8))
+
+            from_label = tk.Label(
+                from_frame,
+                text="Date de début:",
+                font=("Segoe UI", 8, "bold"),
+                fg=COLORS['PRIMARY'],
+                bg=COLORS['CARD']
+            )
+            from_label.pack(anchor=tk.W, pady=(0, 2))
+
+            from_input_frame = tk.Frame(from_frame, bg=COLORS['CARD'])
+            from_input_frame.pack(fill=tk.X)
+
+            self.date_from_entry = tk.Entry(
+                from_input_frame,
+                textvariable=self.date_from_var,
+                font=("Segoe UI", 8),
+                width=12,
+                state='readonly'
+            )
+            self.date_from_entry.pack(side=tk.LEFT, padx=(0, 5))
+
+            from_button = tk.Button(
+                from_input_frame,
+                text="📅",
+                font=("Segoe UI", 8),
+                command=self._show_date_from_picker,
+                bg=COLORS['ACCENT'],
+                fg=COLORS['PRIMARY'],
+                relief='flat',
+                padx=8,
+                pady=2,
+                cursor='hand2'
+            )
+            from_button.pack(side=tk.LEFT)
+
+            # Date to section
+            to_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+            to_frame.pack(fill=tk.X, pady=(0, 8))
+
+            to_label = tk.Label(
+                to_frame,
+                text="Date de fin:",
+                font=("Segoe UI", 8, "bold"),
+                fg=COLORS['PRIMARY'],
+                bg=COLORS['CARD']
+            )
+            to_label.pack(anchor=tk.W, pady=(0, 2))
+
+            to_input_frame = tk.Frame(to_frame, bg=COLORS['CARD'])
+            to_input_frame.pack(fill=tk.X)
+
+            self.date_to_entry = tk.Entry(
+                to_input_frame,
+                textvariable=self.date_to_var,
+                font=("Segoe UI", 8),
+                width=12,
+                state='readonly'
+            )
+            self.date_to_entry.pack(side=tk.LEFT, padx=(0, 5))
+
+            to_button = tk.Button(
+                to_input_frame,
+                text="📅",
+                font=("Segoe UI", 8),
+                command=self._show_date_to_picker,
+                bg=COLORS['ACCENT'],
+                fg=COLORS['PRIMARY'],
+                relief='flat',
+                padx=8,
+                pady=2,
+                cursor='hand2'
+            )
+            to_button.pack(side=tk.LEFT)
+
+            # Action buttons
+            button_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+            button_frame.pack(fill=tk.X, pady=(8, 0))
+
+            # Generate filtered stats button
+            self.generate_stats_button = tk.Button(
+                button_frame,
+                text="📊 Générer et ouvrir index",
+                font=("Segoe UI", 8, "bold"),
+                bg=COLORS['PRIMARY'],
+                fg='white',
+                relief='flat',
+                padx=12,
+                pady=6,
+                cursor='hand2',
+                command=self._generate_filtered_statistics,
+                state=tk.DISABLED
+            )
+            self.generate_stats_button.pack(side=tk.LEFT, padx=(0, 5))
+
+            # Clear dates button
+            clear_button = tk.Button(
+                button_frame,
+                text="🗑️ Effacer",
+                font=("Segoe UI", 8),
+                bg=COLORS['SECONDARY'],
+                fg='white',
+                relief='flat',
+                padx=8,
+                pady=6,
+                cursor='hand2',
+                command=self._clear_date_range
+            )
+            clear_button.pack(side=tk.LEFT)
+
+            # Status label
+            self.date_range_status = tk.Label(
+                content_frame,
+                text="Sélectionnez une période pour générer et ouvrir l'index stats",
+                font=UIConfig.FONT_SMALL,
+                fg=COLORS['INFO'],
+                bg=COLORS['CARD']
+            )
+            self.date_range_status.pack(anchor=tk.W, pady=(5, 0))
+
+            self.logger.info("Date range selection section created successfully")
+
+        except Exception as e:
+            self.logger.error(f"Error creating date range section: {e}")
+
+    def _show_date_from_picker(self):
+        """Show date picker for start date."""
+        try:
+            from tkinter import simpledialog
+            import datetime
+
+            # Create a simple date input dialog
+            date_str = simpledialog.askstring(
+                "Date de début",
+                "Entrez la date de début (YYYY-MM-DD):",
+                initialvalue=datetime.date.today().strftime("%Y-%m-%d")
+            )
+
+            if date_str:
+                try:
+                    # Validate date format
+                    date_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+                    self.date_from_selected = date_obj
+                    self.date_from_var.set(date_str)
+                    self._update_date_range_status()
+                    self.logger.info(f"Start date selected: {date_str}")
+                except ValueError:
+                    messagebox.showerror("Erreur", "Format de date invalide. Utilisez YYYY-MM-DD")
+
+        except Exception as e:
+            self.logger.error(f"Error showing date from picker: {e}")
+            messagebox.showerror("Erreur", f"Erreur lors de la sélection de date: {e}")
+
+    def _show_date_to_picker(self):
+        """Show date picker for end date."""
+        try:
+            from tkinter import simpledialog
+            import datetime
+
+            # Create a simple date input dialog
+            date_str = simpledialog.askstring(
+                "Date de fin",
+                "Entrez la date de fin (YYYY-MM-DD):",
+                initialvalue=datetime.date.today().strftime("%Y-%m-%d")
+            )
+
+            if date_str:
+                try:
+                    # Validate date format
+                    date_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+                    self.date_to_selected = date_obj
+                    self.date_to_var.set(date_str)
+                    self._update_date_range_status()
+                    self.logger.info(f"End date selected: {date_str}")
+                except ValueError:
+                    messagebox.showerror("Erreur", "Format de date invalide. Utilisez YYYY-MM-DD")
+
+        except Exception as e:
+            self.logger.error(f"Error showing date to picker: {e}")
+            messagebox.showerror("Erreur", f"Erreur lors de la sélection de date: {e}")
+
+    def _clear_date_range(self):
+        """Clear the selected date range."""
+        try:
+            self.date_from_var.set("")
+            self.date_to_var.set("")
+            self.date_from_selected = None
+            self.date_to_selected = None
+            self._update_date_range_status()
+            self.logger.info("Date range cleared")
+
+        except Exception as e:
+            self.logger.error(f"Error clearing date range: {e}")
+
+    def _update_date_range_status(self):
+        """Update the status label for date range selection."""
+        try:
+            if self.date_from_selected and self.date_to_selected:
+                if self.date_from_selected <= self.date_to_selected:
+                    days_diff = (self.date_to_selected - self.date_from_selected).days + 1
+                    status_text = f"✅ Période sélectionnée: {days_diff} jour(s)"
+                    self.date_range_status.config(text=status_text, fg=COLORS['SUCCESS'])
+
+                    # Enable generate button if data is loaded
+                    if hasattr(self, 'data') and self.data is not None:
+                        self.generate_stats_button.config(state=tk.NORMAL)
+                else:
+                    self.date_range_status.config(
+                        text="❌ La date de début doit être antérieure à la date de fin",
+                        fg=COLORS['ERROR']
+                    )
+                    self.generate_stats_button.config(state=tk.DISABLED)
+            elif self.date_from_selected or self.date_to_selected:
+                self.date_range_status.config(
+                    text="⚠️ Sélectionnez les deux dates pour filtrer",
+                    fg=COLORS['WARNING']
+                )
+                self.generate_stats_button.config(state=tk.DISABLED)
+            else:
+                self.date_range_status.config(
+                    text="Sélectionnez une période pour générer et ouvrir l'index stats",
+                    fg=COLORS['INFO']
+                )
+                self.generate_stats_button.config(state=tk.DISABLED)
+
+        except Exception as e:
+            self.logger.error(f"Error updating date range status: {e}")
+
     def _create_statistics_section(self, parent: tk.Widget):
         """Create the detailed statistics section."""
-        # Statistics card - balanced sizing
-        stats_card = create_card_frame(parent)
+        # Statistics card - balanced sizing with no shadow to eliminate spacing
+        stats_card = create_card_frame(parent, shadow=False)
         stats_card.pack(fill=tk.BOTH, expand=True, padx=0, pady=0)  # Fill available space but controlled
 
-        # Section header with refresh button
+        # Section header with refresh button - no padding at all
         header_frame = tk.Frame(stats_card, bg=COLORS['CARD'])
-        header_frame.pack(fill=tk.X, padx=15, pady=(8, 5))  # Reduced padding
+        header_frame.pack(fill=tk.X, padx=15, pady=0)  # Completely removed all padding
 
         # Header icon and title
         header_icon = tk.Label(
@@ -1111,21 +1390,179 @@ class TeamStatsModule:
         initial_stats_label.pack(anchor=tk.W, pady=8)  # Reduced padding
 
     def _create_export_section(self, parent: tk.Widget):
-        """Create the export statistics section."""
+        """Create the export statistics section with integrated period filtering."""
         # Export card - compact and top-aligned
         export_card = create_card_frame(parent)
         export_card.pack(anchor=tk.N, fill=tk.X, padx=0, pady=(0, 5))  # Compact, top-aligned
 
         # Section header
-        header_frame = create_section_header(export_card, "📤", "Export Stat")
+        header_frame = create_section_header(export_card, "📤", "Export Stat & Période")
         header_frame.pack(fill=tk.X, padx=15, pady=(15, 10))
 
         # Content frame
         export_content = tk.Frame(export_card, bg=COLORS['CARD'])
         export_content.pack(fill=tk.X, padx=15, pady=(0, 15))
 
+        # Period filtering controls (integrated from date range section)
+        self._create_period_filtering_in_export(export_content)
+
+        # Separator
+        separator = tk.Frame(export_content, height=1, bg=COLORS['BORDER'])
+        separator.pack(fill=tk.X, pady=(15, 10))
+
         # Export buttons
         self._create_export_buttons(export_content)
+
+    def _create_period_filtering_in_export(self, parent: tk.Widget):
+        """Create period filtering controls integrated within the export section."""
+        try:
+            # Period filtering subsection
+            period_frame = tk.Frame(parent, bg=COLORS['CARD'])
+            period_frame.pack(fill=tk.X, pady=(0, 10))
+
+            # Period subsection header
+            period_header = tk.Label(
+                period_frame,
+                text="📅 Filtrage par période",
+                font=("Segoe UI", 9, "bold"),
+                fg=COLORS['PRIMARY'],
+                bg=COLORS['CARD']
+            )
+            period_header.pack(anchor=tk.W, pady=(0, 8))
+
+            # Date selection frame
+            dates_frame = tk.Frame(period_frame, bg=COLORS['CARD'])
+            dates_frame.pack(fill=tk.X, pady=(0, 8))
+
+            # Date from section
+            from_frame = tk.Frame(dates_frame, bg=COLORS['CARD'])
+            from_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
+
+            from_label = tk.Label(
+                from_frame,
+                text="Date de début:",
+                font=("Segoe UI", 8, "bold"),
+                fg=COLORS['PRIMARY'],
+                bg=COLORS['CARD']
+            )
+            from_label.pack(anchor=tk.W, pady=(0, 2))
+
+            from_input_frame = tk.Frame(from_frame, bg=COLORS['CARD'])
+            from_input_frame.pack(fill=tk.X)
+
+            self.date_from_entry = tk.Entry(
+                from_input_frame,
+                textvariable=self.date_from_var,
+                font=("Segoe UI", 8),
+                width=12,
+                state='readonly'
+            )
+            self.date_from_entry.pack(side=tk.LEFT, padx=(0, 5))
+
+            from_button = tk.Button(
+                from_input_frame,
+                text="📅",
+                font=("Segoe UI", 8),
+                command=self._show_date_from_picker,
+                bg=COLORS['ACCENT'],
+                fg=COLORS['PRIMARY'],
+                relief='flat',
+                padx=8,
+                pady=2,
+                cursor='hand2'
+            )
+            from_button.pack(side=tk.LEFT)
+
+            # Date to section
+            to_frame = tk.Frame(dates_frame, bg=COLORS['CARD'])
+            to_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+            to_label = tk.Label(
+                to_frame,
+                text="Date de fin:",
+                font=("Segoe UI", 8, "bold"),
+                fg=COLORS['PRIMARY'],
+                bg=COLORS['CARD']
+            )
+            to_label.pack(anchor=tk.W, pady=(0, 2))
+
+            to_input_frame = tk.Frame(to_frame, bg=COLORS['CARD'])
+            to_input_frame.pack(fill=tk.X)
+
+            self.date_to_entry = tk.Entry(
+                to_input_frame,
+                textvariable=self.date_to_var,
+                font=("Segoe UI", 8),
+                width=12,
+                state='readonly'
+            )
+            self.date_to_entry.pack(side=tk.LEFT, padx=(0, 5))
+
+            to_button = tk.Button(
+                to_input_frame,
+                text="📅",
+                font=("Segoe UI", 8),
+                command=self._show_date_to_picker,
+                bg=COLORS['ACCENT'],
+                fg=COLORS['PRIMARY'],
+                relief='flat',
+                padx=8,
+                pady=2,
+                cursor='hand2'
+            )
+            to_button.pack(side=tk.LEFT)
+
+            # Action buttons frame
+            action_frame = tk.Frame(period_frame, bg=COLORS['CARD'])
+            action_frame.pack(fill=tk.X, pady=(8, 0))
+
+            # Generate filtered stats button
+            self.generate_stats_button = tk.Button(
+                action_frame,
+                text="📊 Générer et ouvrir index",
+                font=("Segoe UI", 8, "bold"),
+                bg=COLORS['PRIMARY'],
+                fg='white',
+                relief='flat',
+                padx=12,
+                pady=6,
+                cursor='hand2',
+                command=self._generate_filtered_statistics,
+                state=tk.DISABLED
+            )
+            self.generate_stats_button.pack(side=tk.LEFT, padx=(0, 5))
+
+            # Clear dates button
+            clear_button = tk.Button(
+                action_frame,
+                text="🗑️ Effacer",
+                font=("Segoe UI", 8),
+                bg=COLORS['SECONDARY'],
+                fg='white',
+                relief='flat',
+                padx=8,
+                pady=6,
+                cursor='hand2',
+                command=self._clear_date_range
+            )
+            clear_button.pack(side=tk.LEFT)
+
+            # Status label
+            self.date_range_status = tk.Label(
+                period_frame,
+                text="Sélectionnez une période pour générer et ouvrir l'index stats",
+                font=UIConfig.FONT_SMALL,
+                fg=COLORS['INFO'],
+                bg=COLORS['CARD'],
+                wraplength=300,
+                justify=tk.LEFT
+            )
+            self.date_range_status.pack(anchor=tk.W, pady=(8, 0))
+
+            self.logger.info("Period filtering controls integrated into export section")
+
+        except Exception as e:
+            self.logger.error(f"Error creating period filtering in export section: {e}")
 
     def _create_export_buttons(self, parent: tk.Widget):
         """Create export filters and buttons."""
@@ -1274,6 +1711,9 @@ class TeamStatsModule:
             # Construct path to global file
             global_file_path = os.path.join(self.teams_folder_path, self.global_excel_filename)
 
+            # Store the excel path for stats injection functionality
+            self.excel_path = global_file_path
+
             if not os.path.exists(global_file_path):
                 messagebox.showerror(
                     "Fichier non trouvé",
@@ -1369,6 +1809,9 @@ class TeamStatsModule:
             # Update file status indicator
             self._update_file_status_indicator()
 
+            # Enable date range functionality
+            self._enable_date_range_functionality()
+
             # Calculate DMT automatically after loading data
             self._calculate_dmt_automatically()
 
@@ -1386,6 +1829,31 @@ class TeamStatsModule:
             self.logger.error(f"Error loading global data: {e}")
             messagebox.showerror("Erreur", f"Erreur lors du chargement des données:\n{e}")
             self._reset_loading_state()
+
+    def _enable_date_range_functionality(self):
+        """Enable date range functionality after data is loaded."""
+        try:
+            # Convert loaded data to a format suitable for date filtering
+            self.data = []
+
+            if hasattr(self, 'global_suivi_data') and self.global_suivi_data:
+                # Process each sheet
+                for sheet_name, df in self.global_suivi_data.items():
+                    if df is not None and not df.empty:
+                        # Convert DataFrame rows to dictionaries
+                        for index, row in df.iterrows():
+                            record = row.to_dict()
+                            record['sheet_name'] = sheet_name
+                            record['row_index'] = index
+                            self.data.append(record)
+
+            # Update date range status
+            self._update_date_range_status()
+
+            self.logger.info(f"Date range functionality enabled with {len(self.data)} records")
+
+        except Exception as e:
+            self.logger.error(f"Error enabling date range functionality: {e}")
 
     def _enable_archive_button(self):
         """Enable the archive button and update status."""
@@ -1471,18 +1939,17 @@ class TeamStatsModule:
                 'dmt_cm': overall_dmt_cm
             }
 
-            # Calculate DMT for each collaborator
+            # Calculate DMT for each collaborator using individual calculation methods
             for collab in collaborators:
                 if pd.notna(collab) and collab.strip():
-                    collab_data = main_sheet[main_sheet['Collaborateur'] == collab]
-                    if not collab_data.empty:
-                        dmt_pa = self._calculate_dmt_pa(collab_data)
-                        dmt_cm = self._calculate_dmt_cm(collab_data)
+                    # Calculate individual DMT PA and CM for this collaborator
+                    dmt_pa = self._calculate_individual_dmt_pa(collab)
+                    dmt_cm = self._calculate_individual_dmt_cm(collab)
 
-                        self.dmt_data[collab] = {
-                            'dmt_pa': dmt_pa,
-                            'dmt_cm': dmt_cm
-                        }
+                    self.dmt_data[collab] = {
+                        'dmt_pa': dmt_pa,
+                        'dmt_cm': dmt_cm
+                    }
 
             # Update the detailed statistics display to show DMT values
             self._update_statistics_display()
@@ -1511,59 +1978,293 @@ class TeamStatsModule:
             self.logger.error(f"Error updating statistics display: {e}")
 
     def _calculate_dmt_pa(self, data):
-        """Calculate DMT PA (somme col L / somme col H)."""
+        """Calculate DMT PA par collaborateur - Feuille 3, Colonne F (collaborateur), Colonne H (durée)."""
         try:
             pd = get_pandas()
 
-            # Find columns L and H (index 11 and 7)
-            columns = list(data.columns)
+            # Vérifier si nous avons les données de la feuille 3 (Traitement PA)
+            if 'Traitement PA' not in self.global_suivi_data:
+                self.logger.warning("Traitement PA sheet data not found for DMT calculation")
+                return 0
 
-            if len(columns) > 11:
-                col_l = columns[11]  # Column L (index 11)
-                col_h = columns[7]   # Column H (index 7)
+            df_pa = self.global_suivi_data['Traitement PA']
+            if df_pa.empty:
+                self.logger.warning("Traitement PA sheet is empty")
+                return 0
 
-                # Convert to numeric, handling errors
-                sum_l = pd.to_numeric(data[col_l], errors='coerce').sum()
-                sum_h = pd.to_numeric(data[col_h], errors='coerce').sum()
+            columns = list(df_pa.columns)
+            if len(columns) <= 7:  # Need at least 8 columns (index 0-7)
+                self.logger.warning(f"Not enough columns in PA sheet for DMT calculation. Found {len(columns)} columns")
+                return 0
 
-                if sum_h > 0:
-                    return round(sum_l / sum_h, 2)
+            # Colonne F (index 5) = Collaborateur, Colonne H (index 7) = Durée
+            collaborateur_col = columns[5]  # Column F (index 5)
+            duree_col = columns[7]          # Column H (index 7)
+
+            self.logger.debug(f"DMT PA: Using collaborateur column '{collaborateur_col}' and durée column '{duree_col}'")
+
+            # Calculer DMT par collaborateur en excluant les valeurs 0 et vides
+            collaborateur_dmts = {}
+
+            for index, row in df_pa.iterrows():
+                collaborateur = row.get(collaborateur_col, None)
+                duree_value = row.get(duree_col, None)
+
+                # Vérifier que le collaborateur et la durée sont valides
+                if (pd.notna(collaborateur) and pd.notna(duree_value) and
+                    str(collaborateur).strip() != '' and str(duree_value).strip() != ''):
+
+                    try:
+                        duree_numeric = float(duree_value)
+                        # Exclure les valeurs 0 et vides comme spécifié
+                        if duree_numeric > 0:
+                            collaborateur_name = str(collaborateur).strip()
+                            if collaborateur_name not in collaborateur_dmts:
+                                collaborateur_dmts[collaborateur_name] = []
+                            collaborateur_dmts[collaborateur_name].append(duree_numeric)
+                    except (ValueError, TypeError):
+                        continue
+
+            # Calculer la moyenne globale de tous les collaborateurs
+            if collaborateur_dmts:
+                all_durees = []
+                for collab, durees in collaborateur_dmts.items():
+                    if durees:  # S'assurer que la liste n'est pas vide
+                        collab_moyenne = sum(durees) / len(durees)
+                        all_durees.append(collab_moyenne)
+                        self.logger.debug(f"DMT PA - {collab}: {collab_moyenne:.2f} (basé sur {len(durees)} valeurs non-nulles)")
+
+                if all_durees:
+                    dmt_global = sum(all_durees) / len(all_durees)
+                    self.logger.info(f"DMT PA calculé: {dmt_global:.2f} (moyenne de {len(all_durees)} collaborateurs)")
+                    return round(dmt_global, 2)
                 else:
+                    self.logger.warning("No valid collaborateur averages calculated for DMT PA")
                     return 0
             else:
-                self.logger.warning("Not enough columns for DMT PA calculation")
+                self.logger.warning("No valid duration data found for DMT PA calculation (all values were 0 or invalid)")
                 return 0
 
         except Exception as e:
             self.logger.error(f"Error calculating DMT PA: {e}")
+            import traceback
+            self.logger.error(f"Traceback: {traceback.format_exc()}")
             return 0
 
     def _calculate_dmt_cm(self, data):
-        """Calculate DMT CM (somme col K / somme col G)."""
+        """Calculate DMT CM par collaborateur - Feuille 2, Colonne E (collaborateur), Colonne J (durée)."""
         try:
             pd = get_pandas()
 
-            # Find columns K and G (now index 11 and 7 due to new Motif Voie column in D)
-            columns = list(data.columns)
+            # Vérifier si nous avons les données de la feuille 2 (CM)
+            if 'CM' not in self.global_suivi_data:
+                self.logger.warning("CM sheet data not found for DMT calculation")
+                return 0
 
-            if len(columns) > 11:
-                col_k = columns[11]  # Column K (now index 11) - shifted due to Motif Voie in D
-                col_g = columns[7]   # Column G (now index 7) - shifted due to Motif Voie in D
+            df_cm = self.global_suivi_data['CM']
+            if df_cm.empty:
+                self.logger.warning("CM sheet is empty")
+                return 0
 
-                # Convert to numeric, handling errors
-                sum_k = pd.to_numeric(data[col_k], errors='coerce').sum()
-                sum_g = pd.to_numeric(data[col_g], errors='coerce').sum()
+            columns = list(df_cm.columns)
+            if len(columns) <= 9:  # Need at least 10 columns (index 0-9)
+                self.logger.warning(f"Not enough columns in CM sheet for DMT calculation. Found {len(columns)} columns")
+                return 0
 
-                if sum_g > 0:
-                    return round(sum_k / sum_g, 2)
+            # Colonne E (index 4) = Collaborateur, Colonne J (index 9) = Durée
+            collaborateur_col = columns[4]  # Column E (index 4) - CORRIGÉ
+            duree_col = columns[9]          # Column J (index 9)
+
+            self.logger.debug(f"DMT CM: Using collaborateur column '{collaborateur_col}' and durée column '{duree_col}'")
+
+            # Calculer DMT par collaborateur en excluant les valeurs 0 et vides
+            collaborateur_dmts = {}
+
+            for index, row in df_cm.iterrows():
+                collaborateur = row.get(collaborateur_col, None)
+                duree_value = row.get(duree_col, None)
+
+                # Vérifier que le collaborateur et la durée sont valides
+                if (pd.notna(collaborateur) and pd.notna(duree_value) and
+                    str(collaborateur).strip() != '' and str(duree_value).strip() != ''):
+
+                    try:
+                        duree_numeric = float(duree_value)
+                        # Exclure les valeurs 0 et vides comme spécifié
+                        if duree_numeric > 0:
+                            collaborateur_name = str(collaborateur).strip()
+                            if collaborateur_name not in collaborateur_dmts:
+                                collaborateur_dmts[collaborateur_name] = []
+                            collaborateur_dmts[collaborateur_name].append(duree_numeric)
+                    except (ValueError, TypeError):
+                        continue
+
+            # Calculer la moyenne globale de tous les collaborateurs
+            if collaborateur_dmts:
+                all_durees = []
+                for collab, durees in collaborateur_dmts.items():
+                    if durees:  # S'assurer que la liste n'est pas vide
+                        collab_moyenne = sum(durees) / len(durees)
+                        all_durees.append(collab_moyenne)
+                        self.logger.debug(f"DMT CM - {collab}: {collab_moyenne:.2f} (basé sur {len(durees)} valeurs non-nulles)")
+
+                if all_durees:
+                    dmt_global = sum(all_durees) / len(all_durees)
+                    self.logger.info(f"DMT CM calculé: {dmt_global:.2f} (moyenne de {len(all_durees)} collaborateurs)")
+                    return round(dmt_global, 2)
                 else:
+                    self.logger.warning("No valid collaborateur averages calculated for DMT CM")
                     return 0
             else:
-                self.logger.warning("Not enough columns for DMT CM calculation")
+                self.logger.warning("No valid duration data found for DMT CM calculation (all values were 0 or invalid)")
                 return 0
 
         except Exception as e:
             self.logger.error(f"Error calculating DMT CM: {e}")
+            import traceback
+            self.logger.error(f"Traceback: {traceback.format_exc()}")
+            return 0
+
+    def _calculate_individual_dmt_pa(self, collaborateur):
+        """Calculate DMT PA for a specific collaborator - Feuille 3, Colonne F (collaborateur), Colonne H (durée)."""
+        try:
+            pd = get_pandas()
+
+            # Vérifier si nous avons les données de la feuille 3 (Traitement PA)
+            if 'Traitement PA' not in self.global_suivi_data:
+                self.logger.debug(f"Traitement PA sheet data not found for DMT PA calculation for {collaborateur}")
+                return 0
+
+            df_pa = self.global_suivi_data['Traitement PA']
+            if df_pa.empty:
+                self.logger.debug(f"Traitement PA sheet is empty for {collaborateur}")
+                return 0
+
+            columns = list(df_pa.columns)
+            if len(columns) <= 7:  # Need at least 8 columns (index 0-7)
+                self.logger.debug(f"Not enough columns in PA sheet for DMT calculation for {collaborateur}. Found {len(columns)} columns")
+                return 0
+
+            # Colonne F (index 5) = Collaborateur, Colonne H (index 7) = Durée
+            collaborateur_col = columns[5]  # Column F (index 5)
+            duree_col = columns[7]          # Column H (index 7)
+
+            # Filtrer les données pour ce collaborateur spécifique
+            collaborateur_durees = []
+
+            for index, row in df_pa.iterrows():
+                row_collaborateur = row.get(collaborateur_col, None)
+                duree_value = row.get(duree_col, None)
+
+                # Vérifier que c'est le bon collaborateur et que la durée est valide
+                if (pd.notna(row_collaborateur) and pd.notna(duree_value) and
+                    str(row_collaborateur).strip() == str(collaborateur).strip() and
+                    str(duree_value).strip() != ''):
+
+                    try:
+                        duree_numeric = float(duree_value)
+                        # Exclure les valeurs 0 et vides comme spécifié
+                        if duree_numeric > 0:
+                            collaborateur_durees.append(duree_numeric)
+                    except (ValueError, TypeError):
+                        continue
+
+            # Calculer la moyenne individuelle pour ce collaborateur
+            if collaborateur_durees:
+                dmt_individuel = sum(collaborateur_durees) / len(collaborateur_durees)
+                self.logger.debug(f"DMT PA individuel - {collaborateur}: {dmt_individuel:.2f} (basé sur {len(collaborateur_durees)} valeurs non-nulles)")
+                return round(dmt_individuel, 2)
+            else:
+                self.logger.debug(f"No valid duration data found for DMT PA calculation for {collaborateur}")
+                return 0
+
+        except Exception as e:
+            self.logger.error(f"Error calculating individual DMT PA for {collaborateur}: {e}")
+            import traceback
+            self.logger.error(f"Traceback: {traceback.format_exc()}")
+            return 0
+
+    def _calculate_individual_dmt_cm(self, collaborateur):
+        """Calculate DMT CM for a specific collaborator - Feuille 2, Colonne E (collaborateur), Colonne J (durée)."""
+        try:
+            pd = get_pandas()
+
+            # Chercher la feuille CM avec différents noms possibles
+            df_cm = None
+            cm_sheet_names = ['CM', 'Traitement CMS Adr', 'Traitement CM', 'Sheet2', 'Feuille2']
+
+            for sheet_name in cm_sheet_names:
+                if sheet_name in self.global_suivi_data:
+                    df_cm = self.global_suivi_data[sheet_name]
+                    self.logger.debug(f"Found CM sheet with name: {sheet_name}")
+                    break
+
+            if df_cm is None:
+                available_sheets = list(self.global_suivi_data.keys())
+                self.logger.warning(f"CM sheet not found for {collaborateur}. Available sheets: {available_sheets}")
+                return 0
+            if df_cm.empty:
+                self.logger.debug(f"CM sheet is empty for {collaborateur}")
+                return 0
+
+            columns = list(df_cm.columns)
+            if len(columns) <= 9:  # Need at least 10 columns (index 0-9)
+                self.logger.debug(f"Not enough columns in CM sheet for DMT calculation for {collaborateur}. Found {len(columns)} columns")
+                return 0
+
+            # Colonne E (index 4) = Collaborateur, Colonne J (index 9) = Durée
+            collaborateur_col = columns[4]  # Column E (index 4) - CORRIGÉ
+            duree_col = columns[9]          # Column J (index 9)
+
+            self.logger.debug(f"DMT CM individuel pour {collaborateur}: colonnes '{collaborateur_col}' et '{duree_col}'")
+
+            # Filtrer les données pour ce collaborateur spécifique
+            collaborateur_durees = []
+            total_rows_checked = 0
+            matching_collaborateur_rows = 0
+            valid_duree_rows = 0
+
+            for index, row in df_cm.iterrows():
+                total_rows_checked += 1
+                row_collaborateur = row.get(collaborateur_col, None)
+                duree_value = row.get(duree_col, None)
+
+                # Debug: log first few rows
+                if total_rows_checked <= 3:
+                    self.logger.debug(f"Row {total_rows_checked}: collaborateur='{row_collaborateur}', duree='{duree_value}'")
+
+                # Vérifier que c'est le bon collaborateur
+                if (pd.notna(row_collaborateur) and
+                    str(row_collaborateur).strip() == str(collaborateur).strip()):
+                    matching_collaborateur_rows += 1
+
+                    # Vérifier que la durée est valide
+                    if (pd.notna(duree_value) and str(duree_value).strip() != ''):
+                        try:
+                            duree_numeric = float(duree_value)
+                            # Exclure les valeurs 0 et vides comme spécifié
+                            if duree_numeric > 0:
+                                collaborateur_durees.append(duree_numeric)
+                                valid_duree_rows += 1
+                        except (ValueError, TypeError):
+                            self.logger.debug(f"Invalid duree value for {collaborateur}: '{duree_value}'")
+                            continue
+
+            self.logger.debug(f"DMT CM {collaborateur}: {total_rows_checked} rows checked, {matching_collaborateur_rows} matching collaborateur, {valid_duree_rows} valid durees")
+
+            # Calculer la moyenne individuelle pour ce collaborateur
+            if collaborateur_durees:
+                dmt_individuel = sum(collaborateur_durees) / len(collaborateur_durees)
+                self.logger.debug(f"DMT CM individuel - {collaborateur}: {dmt_individuel:.2f} (basé sur {len(collaborateur_durees)} valeurs non-nulles)")
+                return round(dmt_individuel, 2)
+            else:
+                self.logger.debug(f"No valid duration data found for DMT CM calculation for {collaborateur}")
+                return 0
+
+        except Exception as e:
+            self.logger.error(f"Error calculating individual DMT CM for {collaborateur}: {e}")
+            import traceback
+            self.logger.error(f"Traceback: {traceback.format_exc()}")
             return 0
 
     def _reset_loading_state(self):
@@ -8286,6 +8987,3456 @@ class TeamStatsModule:
                 'file_types': set(),
                 'subdirs': []
             }
+
+    def _generate_filtered_statistics(self):
+        """Generate statistics filtered by the selected date range."""
+        try:
+            if not self.date_from_selected or not self.date_to_selected:
+                messagebox.showwarning("Attention", "Veuillez sélectionner une période complète")
+                return
+
+            if not hasattr(self, 'data') or self.data is None:
+                messagebox.showwarning("Attention", "Veuillez d'abord charger les données")
+                return
+
+            self.logger.info(f"Generating filtered statistics from {self.date_from_selected} to {self.date_to_selected}")
+
+            # Update status
+            self.date_range_status.config(
+                text="🔄 Génération des statistiques en cours...",
+                fg=COLORS['INFO']
+            )
+            self.generate_stats_button.config(state=tk.DISABLED)
+
+            # Use async task for heavy computation
+            def generate_stats():
+                try:
+                    # Filter data by date range
+                    filtered_data = self._filter_data_by_date_range()
+
+                    # Load stats folder data
+                    stats_folder_data = self._load_stats_folder_data()
+
+                    # Generate comprehensive statistics
+                    statistics = self._compute_filtered_statistics(filtered_data, stats_folder_data)
+
+                    # Prepare dashboard data
+                    dashboard_data = self._prepare_dashboard_data(statistics)
+
+                    return {
+                        'filtered_data': filtered_data,
+                        'statistics': statistics,
+                        'dashboard_data': dashboard_data,
+                        'stats_folder_data': stats_folder_data
+                    }
+
+                except Exception as e:
+                    self.logger.error(f"Error in generate_stats: {e}")
+                    raise
+
+            def on_success(result):
+                try:
+                    # Store results
+                    self.filtered_statistics = result['statistics']
+                    self.dashboard_data = result['dashboard_data']
+                    self.stats_folder_data = result['stats_folder_data']
+
+                    # Update UI
+                    self.date_range_status.config(
+                        text=f"✅ Statistiques générées ({len(result['filtered_data'])} enregistrements)",
+                        fg=COLORS['SUCCESS']
+                    )
+                    self.generate_stats_button.config(state=tk.NORMAL)
+
+                    # Update statistics display
+                    self._update_statistics_display_with_filtered_data()
+
+                    # Inject statistics into stats folder index and open it
+                    stats_index_path = self._inject_statistics_to_stats_index()
+
+                    # Open stats index file directly - NO dashboard modal
+                    if stats_index_path:
+                        self._open_stats_index_file(stats_index_path)
+                    else:
+                        # If no stats index found, show error message
+                        messagebox.showwarning(
+                            "Index non trouvé",
+                            "Aucun fichier index trouvé dans le dossier stats.\n\n"
+                            "Veuillez créer un fichier index.html ou index.xlsx dans le dossier stats."
+                        )
+
+                    self.logger.info("Filtered statistics generated successfully")
+
+                except Exception as e:
+                    self.logger.error(f"Error in on_success: {e}")
+                    messagebox.showerror("Erreur", f"Erreur lors de la mise à jour: {e}")
+
+            def on_error(error):
+                self.logger.error(f"Error generating filtered statistics: {error}")
+                self.date_range_status.config(
+                    text="❌ Erreur lors de la génération",
+                    fg=COLORS['ERROR']
+                )
+                self.generate_stats_button.config(state=tk.NORMAL)
+                messagebox.showerror("Erreur", f"Erreur lors de la génération des statistiques:\n{error}")
+
+            # Run async task
+            run_async_task(
+                generate_stats,
+                callback=on_success,
+                error_callback=on_error,
+                task_name="Génération des statistiques filtrées"
+            )
+
+        except Exception as e:
+            self.logger.error(f"Error in _generate_filtered_statistics: {e}")
+            messagebox.showerror("Erreur", f"Erreur lors du lancement de la génération: {e}")
+
+    def _filter_data_by_date_range(self):
+        """Filter the loaded data by the selected date range."""
+        try:
+            if not hasattr(self, 'data') or self.data is None:
+                return []
+
+            filtered_data = []
+
+            for record in self.data:
+                try:
+                    # Extract date from record - adapt based on your data structure
+                    record_date = None
+
+                    # Try different date field names that might exist
+                    date_fields = ['date', 'Date', 'DATE', 'date_creation', 'timestamp', 'created_at']
+
+                    for field in date_fields:
+                        if field in record and record[field]:
+                            date_value = record[field]
+
+                            # Handle different date formats
+                            if isinstance(date_value, str):
+                                # Try parsing common date formats
+                                for date_format in ['%Y-%m-%d', '%d/%m/%Y', '%Y-%m-%d %H:%M:%S']:
+                                    try:
+                                        record_date = datetime.datetime.strptime(date_value, date_format).date()
+                                        break
+                                    except ValueError:
+                                        continue
+                            elif hasattr(date_value, 'date'):
+                                # Handle datetime objects
+                                record_date = date_value.date()
+                            elif hasattr(date_value, 'year'):
+                                # Handle date objects
+                                record_date = date_value
+
+                            if record_date:
+                                break
+
+                    # If no date found, try to extract from filename or other fields
+                    if not record_date and 'filename' in record:
+                        record_date = self._extract_date_from_filename(record['filename'])
+
+                    # Check if record falls within date range
+                    if record_date and self.date_from_selected <= record_date <= self.date_to_selected:
+                        filtered_data.append(record)
+
+                except Exception as e:
+                    self.logger.debug(f"Error processing record for date filtering: {e}")
+                    continue
+
+            self.logger.info(f"Filtered {len(filtered_data)} records from {len(self.data)} total records")
+            return filtered_data
+
+        except Exception as e:
+            self.logger.error(f"Error filtering data by date range: {e}")
+            return []
+
+    def _load_stats_folder_data(self):
+        """Load data from the stats folder if it exists."""
+        try:
+            stats_folder_data = {}
+
+            # Use the same search logic as other methods
+            search_locations = []
+
+            # Location 1: Relative to Excel file (original logic)
+            if hasattr(self, 'excel_path') and self.excel_path:
+                base_dir = os.path.dirname(self.excel_path)
+                search_locations.append(base_dir)
+
+            # Location 2: In the application's src directory
+            import sys
+            if hasattr(sys, '_MEIPASS'):
+                app_dir = sys._MEIPASS
+                search_locations.append(app_dir)
+            else:
+                current_file = os.path.abspath(__file__)
+                src_dir = os.path.dirname(os.path.dirname(current_file))
+                search_locations.append(src_dir)
+
+            # Location 3: Current working directory
+            search_locations.append(os.getcwd())
+
+            # Try different possible folder names
+            possible_folders = ['pres stats', 'stats', 'Stats', 'STATS']
+            stats_folder = None
+
+            for base_dir in search_locations:
+                if not base_dir or not os.path.exists(base_dir):
+                    continue
+
+                for folder_name in possible_folders:
+                    test_folder = os.path.join(base_dir, folder_name)
+                    if os.path.exists(test_folder) and os.path.isdir(test_folder):
+                        stats_folder = test_folder
+                        self.logger.info(f"Found stats folder for data loading: {folder_name} at {test_folder}")
+                        break
+
+                if stats_folder:
+                    break
+
+                if stats_folder and os.path.exists(stats_folder) and os.path.isdir(stats_folder):
+                    self.logger.info(f"Loading data from stats folder: {stats_folder}")
+
+                    # Load all files in stats folder
+                    for root, dirs, files in os.walk(stats_folder):
+                        for file in files:
+                            if file.endswith(('.xlsx', '.xls', '.csv')):
+                                file_path = os.path.join(root, file)
+                                try:
+                                    # Load file data
+                                    if file.endswith('.csv'):
+                                        import pandas as pd
+                                        data = pd.read_csv(file_path)
+                                    else:
+                                        import pandas as pd
+                                        data = pd.read_excel(file_path)
+
+                                    stats_folder_data[file] = {
+                                        'path': file_path,
+                                        'data': data,
+                                        'rows': len(data),
+                                        'columns': list(data.columns)
+                                    }
+
+                                    self.logger.info(f"Loaded stats file: {file} ({len(data)} rows)")
+
+                                except Exception as e:
+                                    self.logger.warning(f"Could not load stats file {file}: {e}")
+                else:
+                    self.logger.info("No stats folder found")
+
+            return stats_folder_data
+
+        except Exception as e:
+            self.logger.error(f"Error loading stats folder data: {e}")
+            return {}
+
+    def _compute_filtered_statistics(self, filtered_data, stats_folder_data):
+        """Compute comprehensive statistics from filtered data and stats folder."""
+        try:
+            statistics = {
+                'period': {
+                    'start_date': self.date_from_selected,
+                    'end_date': self.date_to_selected,
+                    'total_days': (self.date_to_selected - self.date_from_selected).days + 1
+                },
+                'data_summary': {
+                    'total_records': len(filtered_data),
+                    'stats_files': len(stats_folder_data)
+                },
+                'motifs': {},
+                'processing_times': {},
+                'collaborateurs': {},
+                'communes': {},
+                'daily_stats': {}
+            }
+
+            # Analyze motifs using existing methods
+            motifs_analysis = self._analyze_motifs_in_filtered_data(filtered_data)
+            statistics['motifs'] = motifs_analysis
+
+            # Analyze processing times using existing methods
+            processing_analysis = self._analyze_processing_times_in_filtered_data(filtered_data)
+            statistics['processing_times'] = processing_analysis
+
+            # Analyze by collaborateur
+            collab_analysis = self._analyze_by_collaborateur(filtered_data)
+            statistics['collaborateurs'] = collab_analysis
+
+            # Analyze by commune
+            commune_analysis = self._analyze_by_commune(filtered_data)
+            statistics['communes'] = commune_analysis
+
+            # Daily statistics
+            daily_analysis = self._analyze_daily_statistics(filtered_data)
+            statistics['daily_stats'] = daily_analysis
+
+            # Integrate stats folder data
+            if stats_folder_data:
+                statistics['stats_folder_analysis'] = self._analyze_stats_folder_data(stats_folder_data)
+
+            self.logger.info(f"Computed statistics for {len(filtered_data)} records")
+            return statistics
+
+        except Exception as e:
+            self.logger.error(f"Error computing filtered statistics: {e}")
+            return {}
+
+    def _analyze_motifs_in_filtered_data(self, filtered_data):
+        """Analyze motifs in the filtered data using existing methods."""
+        try:
+            motifs_count = {}
+            motifs_details = {}
+
+            for record in filtered_data:
+                # Extract motif from record - adapt based on your data structure
+                motif = None
+
+                # Try different motif field names
+                motif_fields = ['motif', 'Motif', 'MOTIF', 'reason', 'type']
+
+                for field in motif_fields:
+                    if field in record and record[field]:
+                        motif = str(record[field]).strip()
+                        break
+
+                if motif:
+                    # Count motifs
+                    if motif not in motifs_count:
+                        motifs_count[motif] = 0
+                        motifs_details[motif] = []
+
+                    motifs_count[motif] += 1
+                    motifs_details[motif].append(record)
+
+            # Sort by frequency
+            sorted_motifs = sorted(motifs_count.items(), key=lambda x: x[1], reverse=True)
+
+            return {
+                'count': motifs_count,
+                'details': motifs_details,
+                'sorted': sorted_motifs,
+                'total_unique': len(motifs_count)
+            }
+
+        except Exception as e:
+            self.logger.error(f"Error analyzing motifs: {e}")
+            return {}
+
+    def _analyze_processing_times_in_filtered_data(self, filtered_data):
+        """Analyze processing times in the filtered data."""
+        try:
+            processing_times = []
+
+            for record in filtered_data:
+                # Extract processing time - adapt based on your data structure
+                processing_time = None
+
+                # Try different time field names
+                time_fields = ['processing_time', 'duration', 'temps_traitement', 'time']
+
+                for field in time_fields:
+                    if field in record and record[field]:
+                        try:
+                            processing_time = float(record[field])
+                            break
+                        except (ValueError, TypeError):
+                            continue
+
+                if processing_time is not None:
+                    processing_times.append(processing_time)
+
+            if processing_times:
+                import statistics as stats
+                return {
+                    'count': len(processing_times),
+                    'average': stats.mean(processing_times),
+                    'median': stats.median(processing_times),
+                    'min': min(processing_times),
+                    'max': max(processing_times),
+                    'total': sum(processing_times)
+                }
+            else:
+                return {'count': 0}
+
+        except Exception as e:
+            self.logger.error(f"Error analyzing processing times: {e}")
+            return {}
+
+    def _analyze_by_collaborateur(self, filtered_data):
+        """Analyze data by collaborateur."""
+        try:
+            collab_stats = {}
+
+            for record in filtered_data:
+                # Extract collaborateur
+                collaborateur = None
+
+                collab_fields = ['collaborateur', 'Collaborateur', 'user', 'operator']
+
+                for field in collab_fields:
+                    if field in record and record[field]:
+                        collaborateur = str(record[field]).strip()
+                        break
+
+                if collaborateur:
+                    if collaborateur not in collab_stats:
+                        collab_stats[collaborateur] = {
+                            'count': 0,
+                            'records': []
+                        }
+
+                    collab_stats[collaborateur]['count'] += 1
+                    collab_stats[collaborateur]['records'].append(record)
+
+            return collab_stats
+
+        except Exception as e:
+            self.logger.error(f"Error analyzing by collaborateur: {e}")
+            return {}
+
+    def _analyze_by_commune(self, filtered_data):
+        """Analyze data by commune."""
+        try:
+            commune_stats = {}
+
+            for record in filtered_data:
+                # Extract commune
+                commune = None
+
+                commune_fields = ['commune', 'Commune', 'city', 'municipality']
+
+                for field in commune_fields:
+                    if field in record and record[field]:
+                        commune = str(record[field]).strip()
+                        break
+
+                if commune:
+                    if commune not in commune_stats:
+                        commune_stats[commune] = {
+                            'count': 0,
+                            'records': []
+                        }
+
+                    commune_stats[commune]['count'] += 1
+                    commune_stats[commune]['records'].append(record)
+
+            return commune_stats
+
+        except Exception as e:
+            self.logger.error(f"Error analyzing by commune: {e}")
+            return {}
+
+    def _analyze_daily_statistics(self, filtered_data):
+        """Analyze daily statistics for the filtered period."""
+        try:
+            daily_stats = {}
+
+            # Initialize all days in the range
+            current_date = self.date_from_selected
+            while current_date <= self.date_to_selected:
+                daily_stats[current_date.strftime('%Y-%m-%d')] = {
+                    'count': 0,
+                    'records': []
+                }
+                current_date += datetime.timedelta(days=1)
+
+            # Populate with actual data
+            for record in filtered_data:
+                record_date = self._extract_date_from_record(record)
+                if record_date:
+                    date_str = record_date.strftime('%Y-%m-%d')
+                    if date_str in daily_stats:
+                        daily_stats[date_str]['count'] += 1
+                        daily_stats[date_str]['records'].append(record)
+
+            return daily_stats
+
+        except Exception as e:
+            self.logger.error(f"Error analyzing daily statistics: {e}")
+            return {}
+
+    def _analyze_stats_folder_data(self, stats_folder_data):
+        """Analyze data from the stats folder."""
+        try:
+            analysis = {
+                'files_summary': {},
+                'combined_metrics': {},
+                'data_quality': {}
+            }
+
+            for filename, file_info in stats_folder_data.items():
+                data = file_info['data']
+
+                # Basic file analysis
+                analysis['files_summary'][filename] = {
+                    'rows': len(data),
+                    'columns': len(data.columns),
+                    'column_names': list(data.columns),
+                    'data_types': data.dtypes.to_dict() if hasattr(data, 'dtypes') else {}
+                }
+
+                # Look for key metrics in the data
+                if hasattr(data, 'columns'):
+                    for col in data.columns:
+                        col_lower = col.lower()
+                        if any(keyword in col_lower for keyword in ['count', 'total', 'sum', 'average']):
+                            try:
+                                if filename not in analysis['combined_metrics']:
+                                    analysis['combined_metrics'][filename] = {}
+                                analysis['combined_metrics'][filename][col] = {
+                                    'sum': data[col].sum() if data[col].dtype in ['int64', 'float64'] else None,
+                                    'mean': data[col].mean() if data[col].dtype in ['int64', 'float64'] else None,
+                                    'count': data[col].count()
+                                }
+                            except Exception as e:
+                                self.logger.debug(f"Could not analyze column {col}: {e}")
+
+            return analysis
+
+        except Exception as e:
+            self.logger.error(f"Error analyzing stats folder data: {e}")
+            return {}
+
+    def _extract_date_from_record(self, record):
+        """Extract date from a record."""
+        try:
+            # Try different date field names
+            date_fields = ['date', 'Date', 'DATE', 'date_creation', 'timestamp', 'created_at']
+
+            for field in date_fields:
+                if field in record and record[field]:
+                    date_value = record[field]
+
+                    if isinstance(date_value, str):
+                        # Try parsing common date formats
+                        for date_format in ['%Y-%m-%d', '%d/%m/%Y', '%Y-%m-%d %H:%M:%S']:
+                            try:
+                                return datetime.datetime.strptime(date_value, date_format).date()
+                            except ValueError:
+                                continue
+                    elif hasattr(date_value, 'date'):
+                        return date_value.date()
+                    elif hasattr(date_value, 'year'):
+                        return date_value
+
+            return None
+
+        except Exception as e:
+            self.logger.debug(f"Error extracting date from record: {e}")
+            return None
+
+    def _extract_date_from_filename(self, filename):
+        """Extract date from filename if possible."""
+        try:
+            import re
+
+            # Look for date patterns in filename
+            date_patterns = [
+                r'(\d{4}-\d{2}-\d{2})',  # YYYY-MM-DD
+                r'(\d{2}/\d{2}/\d{4})',  # DD/MM/YYYY
+                r'(\d{4}\d{2}\d{2})',    # YYYYMMDD
+            ]
+
+            for pattern in date_patterns:
+                match = re.search(pattern, filename)
+                if match:
+                    date_str = match.group(1)
+
+                    # Try to parse the found date
+                    for date_format in ['%Y-%m-%d', '%d/%m/%Y', '%Y%m%d']:
+                        try:
+                            return datetime.datetime.strptime(date_str, date_format).date()
+                        except ValueError:
+                            continue
+
+            return None
+
+        except Exception as e:
+            self.logger.debug(f"Error extracting date from filename: {e}")
+            return None
+
+    def _inject_statistics_to_stats_index(self):
+        """Inject the generated statistics into the stats folder index file.
+
+        Returns:
+            str: Path to the stats index file if successful, None otherwise
+        """
+        try:
+            self.logger.info("Starting statistics injection process...")
+
+            if not hasattr(self, 'filtered_statistics') or not self.filtered_statistics:
+                self.logger.warning("No filtered statistics available for injection")
+                return None
+
+            self.logger.info("Filtered statistics available, analyzing pres stats folder...")
+
+            # First, analyze the pres stats folder to understand its structure
+            folder_analysis = self._analyze_pres_stats_folder()
+            if not folder_analysis:
+                self.logger.warning("No pres stats folder found or analysis failed")
+                return None
+
+            # Find the best index file to use
+            stats_index_path = self._find_stats_index_file()
+            if not stats_index_path:
+                self.logger.warning("No stats index file found for injection")
+                self.logger.info(f"Excel path: {getattr(self, 'excel_path', 'NOT SET')}")
+
+                # Show detailed information about what was found
+                if folder_analysis:
+                    self.logger.info(f"Folder analysis results:")
+                    self.logger.info(f"  Folder: {folder_analysis['folder_name']}")
+                    self.logger.info(f"  Total files: {folder_analysis['total_files']}")
+                    self.logger.info(f"  HTML files: {len(folder_analysis['html_files'])}")
+                    self.logger.info(f"  Excel files: {len(folder_analysis['excel_files'])}")
+                    self.logger.info(f"  Potential index files: {len(folder_analysis['potential_index_files'])}")
+
+                    # If we have potential index files, try to use the first one
+                    if folder_analysis['potential_index_files']:
+                        stats_index_path = folder_analysis['potential_index_files'][0]['path']
+                        self.logger.info(f"Using potential index file: {stats_index_path}")
+                    elif folder_analysis['html_files']:
+                        stats_index_path = folder_analysis['html_files'][0]['path']
+                        self.logger.info(f"Using first HTML file as index: {stats_index_path}")
+                    elif folder_analysis['excel_files']:
+                        stats_index_path = folder_analysis['excel_files'][0]['path']
+                        self.logger.info(f"Using first Excel file as index: {stats_index_path}")
+
+                if not stats_index_path:
+                    return None
+
+            self.logger.info(f"Injecting statistics into: {stats_index_path}")
+
+            # Examine the structure of the index file
+            file_structure = self._examine_index_file_structure(stats_index_path)
+            if file_structure:
+                self.logger.info(f"File structure analysis completed for {file_structure['file_type']} file")
+                self.logger.info(f"Available injection strategies: {file_structure['injection_strategies']}")
+
+            # Prepare statistics data for injection
+            stats_data = self._prepare_statistics_for_injection()
+
+            # Inject into the index file using the analyzed structure
+            success = self._write_statistics_to_index(stats_index_path, stats_data, file_structure)
+
+            if success:
+                self.logger.info("Statistics successfully injected into stats index")
+                # Update status
+                if hasattr(self, 'date_range_status'):
+                    current_text = self.date_range_status.cget('text')
+                    self.date_range_status.config(
+                        text=f"{current_text} | 📝 Injecté et ouvert",
+                        fg=COLORS['SUCCESS']
+                    )
+                return stats_index_path
+            else:
+                self.logger.error("Failed to inject statistics into stats index")
+                return None
+
+        except Exception as e:
+            self.logger.error(f"Error injecting statistics to stats index: {e}")
+            return None
+
+    def _open_stats_index_file(self, stats_index_path):
+        """Open the stats index file with the injected statistics."""
+        try:
+            import os
+            import subprocess
+            import platform
+
+            if not os.path.exists(stats_index_path):
+                self.logger.error(f"Stats index file not found: {stats_index_path}")
+                messagebox.showerror("Erreur", f"Fichier index introuvable: {stats_index_path}")
+                return False
+
+            self.logger.info(f"Opening stats index file: {stats_index_path}")
+
+            # Determine the system and open the file with the default application
+            system = platform.system()
+
+            try:
+                if system == "Windows":
+                    # Windows - use os.startfile
+                    os.startfile(stats_index_path)
+                elif system == "Darwin":
+                    # macOS - use open command
+                    subprocess.run(["open", stats_index_path], check=True)
+                elif system == "Linux":
+                    # Linux - use xdg-open
+                    subprocess.run(["xdg-open", stats_index_path], check=True)
+                else:
+                    # Fallback - try to use webbrowser for HTML files
+                    file_ext = os.path.splitext(stats_index_path)[1].lower()
+                    if file_ext in ['.html', '.htm']:
+                        import webbrowser
+                        webbrowser.open(f"file://{os.path.abspath(stats_index_path)}")
+                    else:
+                        raise OSError(f"Unsupported system: {system}")
+
+                # Show success message
+                filename = os.path.basename(stats_index_path)
+                messagebox.showinfo(
+                    "Succès",
+                    f"📊 Statistiques injectées et fichier ouvert:\n\n{filename}\n\nLes statistiques de la période sélectionnée ont été intégrées dans votre index."
+                )
+
+                self.logger.info(f"Successfully opened stats index: {filename}")
+                return True
+
+            except subprocess.CalledProcessError as e:
+                self.logger.error(f"Failed to open file with system command: {e}")
+                raise
+            except Exception as e:
+                self.logger.error(f"Failed to open file: {e}")
+                raise
+
+        except Exception as e:
+            self.logger.error(f"Error opening stats index file: {e}")
+
+            # Show error message with fallback option
+            filename = os.path.basename(stats_index_path) if stats_index_path else "fichier"
+            result = messagebox.askyesno(
+                "Erreur d'ouverture",
+                f"Impossible d'ouvrir automatiquement le fichier {filename}.\n\n"
+                f"Les statistiques ont été injectées avec succès.\n\n"
+                f"Voulez-vous ouvrir le dossier contenant le fichier?"
+            )
+
+            if result:
+                try:
+                    # Open the containing folder
+                    folder_path = os.path.dirname(stats_index_path)
+                    if platform.system() == "Windows":
+                        os.startfile(folder_path)
+                    elif platform.system() == "Darwin":
+                        subprocess.run(["open", folder_path], check=True)
+                    elif platform.system() == "Linux":
+                        subprocess.run(["xdg-open", folder_path], check=True)
+
+                    self.logger.info(f"Opened containing folder: {folder_path}")
+
+                except Exception as folder_error:
+                    self.logger.error(f"Failed to open containing folder: {folder_error}")
+                    messagebox.showerror(
+                        "Erreur",
+                        f"Impossible d'ouvrir le dossier.\n\nChemin: {folder_path}"
+                    )
+
+            return False
+
+    def _find_stats_index_file(self):
+        """Find the index file in the stats folder."""
+        try:
+            if not hasattr(self, 'excel_path') or not self.excel_path:
+                return None
+
+            # Try multiple search locations for the pres stats folder
+            search_locations = []
+
+            # Location 1: Relative to Excel file (original logic)
+            if hasattr(self, 'excel_path') and self.excel_path:
+                base_dir = os.path.dirname(self.excel_path)
+                search_locations.append(base_dir)
+
+            # Location 2: In the application's src directory
+            import sys
+            if hasattr(sys, '_MEIPASS'):
+                # Running as PyInstaller bundle
+                app_dir = sys._MEIPASS
+                search_locations.append(app_dir)
+            else:
+                # Running as script - get src directory
+                current_file = os.path.abspath(__file__)
+                src_dir = os.path.dirname(os.path.dirname(current_file))  # Go up from ui/modules to src
+                search_locations.append(src_dir)
+
+            # Location 3: Current working directory
+            search_locations.append(os.getcwd())
+
+            # Location 4: Application root directory (parent of src)
+            if len(search_locations) > 1 and search_locations[1]:
+                app_root = os.path.dirname(search_locations[1])  # Parent of src
+                search_locations.append(app_root)
+
+            # Try different possible folder names
+            possible_stats_folders = [
+                'pres stats',  # The actual folder name
+                'stats',       # Fallback
+                'Stats',       # Case variation
+                'STATS'        # Case variation
+            ]
+
+            stats_folder = None
+            for base_dir in search_locations:
+                if not base_dir or not os.path.exists(base_dir):
+                    continue
+
+                self.logger.info(f"Searching for pres stats folder in: {base_dir}")
+
+                for folder_name in possible_stats_folders:
+                    test_folder = os.path.join(base_dir, folder_name)
+                    if os.path.exists(test_folder) and os.path.isdir(test_folder):
+                        stats_folder = test_folder
+                        self.logger.info(f"Found pres stats folder: {folder_name} at {test_folder}")
+                        break
+
+                if stats_folder:
+                    break
+
+            if not stats_folder:
+                self.logger.warning(f"No pres stats folder found in any search location")
+                self.logger.info(f"Searched locations: {search_locations}")
+                self.logger.info(f"Searched folder names: {possible_stats_folders}")
+                return None
+
+            # Look for index files (common names)
+            index_names = [
+                'index.html',
+                'index.htm',
+                'dashboard.html',
+                'main.html',
+                'stats.html',
+                'rapport.html',
+                'index.xlsx',
+                'index.xls',
+                'dashboard.xlsx',
+                'stats.xlsx'
+            ]
+
+            for index_name in index_names:
+                index_path = os.path.join(stats_folder, index_name)
+                if os.path.exists(index_path):
+                    self.logger.info(f"Found stats index file: {index_name}")
+                    return index_path
+
+            # If no specific index file found, look for any HTML or Excel file
+            for root, dirs, files in os.walk(stats_folder):
+                for file in files:
+                    if file.lower().endswith(('.html', '.htm', '.xlsx', '.xls')):
+                        file_path = os.path.join(root, file)
+                        self.logger.info(f"Using stats file as index: {file}")
+                        return file_path
+
+            return None
+
+        except Exception as e:
+            self.logger.error(f"Error finding stats index file: {e}")
+            return None
+
+    def _analyze_pres_stats_folder(self):
+        """Analyze the contents of the 'pres stats' folder to understand its structure."""
+        try:
+            # Try multiple search locations for the pres stats folder
+            search_locations = []
+
+            # Location 1: Relative to Excel file (original logic)
+            if hasattr(self, 'excel_path') and self.excel_path:
+                base_dir = os.path.dirname(self.excel_path)
+                search_locations.append(base_dir)
+
+            # Location 2: In the application's src directory
+            import sys
+            if hasattr(sys, '_MEIPASS'):
+                # Running as PyInstaller bundle
+                app_dir = sys._MEIPASS
+            else:
+                # Running as script - get src directory
+                current_file = os.path.abspath(__file__)
+                src_dir = os.path.dirname(os.path.dirname(current_file))  # Go up from ui/modules to src
+                search_locations.append(src_dir)
+
+            # Location 3: Current working directory
+            search_locations.append(os.getcwd())
+
+            # Location 4: Application root directory (parent of src)
+            if len(search_locations) > 1:
+                app_root = os.path.dirname(search_locations[1])  # Parent of src
+                search_locations.append(app_root)
+
+            # Try to find the pres stats folder in all locations
+            possible_folders = ['pres stats', 'stats', 'Stats', 'STATS']
+            stats_folder = None
+
+            for base_dir in search_locations:
+                if not base_dir or not os.path.exists(base_dir):
+                    continue
+
+                for folder_name in possible_folders:
+                    test_folder = os.path.join(base_dir, folder_name)
+                    if os.path.exists(test_folder) and os.path.isdir(test_folder):
+                        stats_folder = test_folder
+                        self.logger.info(f"Found pres stats folder: {folder_name} at {test_folder}")
+                        break
+
+                if stats_folder:
+                    break
+
+            if not stats_folder:
+                self.logger.info("No pres stats folder found for analysis")
+                return None
+
+            # Analyze folder contents
+            analysis = {
+                'folder_path': stats_folder,
+                'folder_name': os.path.basename(stats_folder),
+                'files': [],
+                'html_files': [],
+                'excel_files': [],
+                'other_files': [],
+                'total_files': 0,
+                'potential_index_files': []
+            }
+
+            # Walk through the folder
+            for root, dirs, files in os.walk(stats_folder):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    relative_path = os.path.relpath(file_path, stats_folder)
+                    file_size = os.path.getsize(file_path)
+
+                    file_info = {
+                        'name': file,
+                        'path': file_path,
+                        'relative_path': relative_path,
+                        'size': file_size,
+                        'extension': os.path.splitext(file)[1].lower()
+                    }
+
+                    analysis['files'].append(file_info)
+                    analysis['total_files'] += 1
+
+                    # Categorize files
+                    ext = file_info['extension']
+                    if ext in ['.html', '.htm']:
+                        analysis['html_files'].append(file_info)
+                        # Check if it might be an index file
+                        if any(keyword in file.lower() for keyword in ['index', 'main', 'dashboard', 'home']):
+                            analysis['potential_index_files'].append(file_info)
+                    elif ext in ['.xlsx', '.xls']:
+                        analysis['excel_files'].append(file_info)
+                        if any(keyword in file.lower() for keyword in ['index', 'main', 'dashboard', 'stats']):
+                            analysis['potential_index_files'].append(file_info)
+                    else:
+                        analysis['other_files'].append(file_info)
+
+            # Log the analysis
+            self.logger.info(f"Pres stats folder analysis:")
+            self.logger.info(f"  Total files: {analysis['total_files']}")
+            self.logger.info(f"  HTML files: {len(analysis['html_files'])}")
+            self.logger.info(f"  Excel files: {len(analysis['excel_files'])}")
+            self.logger.info(f"  Other files: {len(analysis['other_files'])}")
+            self.logger.info(f"  Potential index files: {len(analysis['potential_index_files'])}")
+
+            # List all files found
+            for file_info in analysis['files']:
+                self.logger.info(f"    {file_info['relative_path']} ({file_info['size']} bytes)")
+
+            return analysis
+
+        except Exception as e:
+            self.logger.error(f"Error analyzing pres stats folder: {e}")
+            return None
+
+    def _examine_index_file_structure(self, file_path):
+        """Examine the structure of an index file to understand injection points."""
+        try:
+            self.logger.info(f"Examining index file structure: {file_path}")
+
+            file_ext = os.path.splitext(file_path)[1].lower()
+
+            if file_ext in ['.html', '.htm']:
+                return self._examine_html_structure(file_path)
+            elif file_ext in ['.xlsx', '.xls']:
+                return self._examine_excel_structure(file_path)
+            else:
+                self.logger.warning(f"Unsupported file type for examination: {file_ext}")
+                return None
+
+        except Exception as e:
+            self.logger.error(f"Error examining index file structure: {e}")
+            return None
+
+    def _examine_html_structure(self, html_path):
+        """Examine HTML file structure for injection points."""
+        try:
+            with open(html_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            structure = {
+                'file_path': html_path,
+                'file_type': 'html',
+                'content_length': len(content),
+                'has_pladria_injection_point': False,
+                'has_body_tag': False,
+                'has_head_tag': False,
+                'injection_strategies': []
+            }
+
+            # Check for existing Pladria injection points
+            if '<!-- PLADRIA_STATS_INJECTION -->' in content:
+                structure['has_pladria_injection_point'] = True
+                structure['injection_strategies'].append('existing_pladria_marker')
+                self.logger.info("Found existing Pladria injection marker")
+
+            # Check for HTML structure
+            if '<body' in content.lower():
+                structure['has_body_tag'] = True
+                structure['injection_strategies'].append('before_body_close')
+
+            if '<head' in content.lower():
+                structure['has_head_tag'] = True
+
+            # Look for other potential injection points
+            potential_points = [
+                ('<!-- stats -->', 'stats_comment'),
+                ('<!-- statistics -->', 'statistics_comment'),
+                ('<div id="stats"', 'stats_div'),
+                ('<div class="stats"', 'stats_class_div'),
+                ('<main', 'main_tag'),
+                ('<section', 'section_tag')
+            ]
+
+            for marker, strategy in potential_points:
+                if marker.lower() in content.lower():
+                    structure['injection_strategies'].append(strategy)
+                    self.logger.info(f"Found potential injection point: {marker}")
+
+            # If no specific points found, use body fallback
+            if not structure['injection_strategies'] and structure['has_body_tag']:
+                structure['injection_strategies'].append('body_fallback')
+
+            self.logger.info(f"HTML structure analysis: {len(structure['injection_strategies'])} injection strategies available")
+
+            return structure
+
+        except Exception as e:
+            self.logger.error(f"Error examining HTML structure: {e}")
+            return None
+
+    def _examine_excel_structure(self, excel_path):
+        """Examine Excel file structure for injection points."""
+        try:
+            pd = get_pandas()
+
+            # Read Excel file to understand its structure
+            excel_file = pd.ExcelFile(excel_path)
+            sheet_names = excel_file.sheet_names
+
+            structure = {
+                'file_path': excel_path,
+                'file_type': 'excel',
+                'sheet_names': sheet_names,
+                'sheet_count': len(sheet_names),
+                'injection_strategies': []
+            }
+
+            # Check for existing Pladria sheets
+            pladria_sheets = [name for name in sheet_names if 'pladria' in name.lower()]
+            if pladria_sheets:
+                structure['existing_pladria_sheets'] = pladria_sheets
+                structure['injection_strategies'].append('update_existing_pladria_sheets')
+                self.logger.info(f"Found existing Pladria sheets: {pladria_sheets}")
+
+            # Always allow adding new sheets
+            structure['injection_strategies'].append('add_new_sheets')
+
+            self.logger.info(f"Excel structure analysis: {structure['sheet_count']} sheets, {len(structure['injection_strategies'])} injection strategies")
+
+            return structure
+
+        except Exception as e:
+            self.logger.error(f"Error examining Excel structure: {e}")
+            return None
+
+    def _prepare_statistics_for_injection(self):
+        """Prepare statistics data in a format suitable for injection."""
+        try:
+            stats = self.filtered_statistics
+
+            # Create structured data for injection
+            injection_data = {
+                'metadata': {
+                    'generated_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'period_start': str(stats['period']['start_date']),
+                    'period_end': str(stats['period']['end_date']),
+                    'total_days': stats['period']['total_days'],
+                    'total_records': stats['data_summary']['total_records']
+                },
+                'summary': {
+                    'total_records': stats['data_summary']['total_records'],
+                    'unique_motifs': stats['motifs'].get('total_unique', 0),
+                    'stats_files': stats['data_summary']['stats_files']
+                },
+                'top_motifs': [],
+                'collaborateurs': [],
+                'communes': [],
+                'processing_times': {},
+                'daily_stats': []
+            }
+
+            # Top motifs
+            if stats['motifs'].get('sorted'):
+                for motif, count in stats['motifs']['sorted'][:10]:
+                    percentage = round((count / stats['data_summary']['total_records']) * 100, 1)
+                    injection_data['top_motifs'].append({
+                        'motif': motif,
+                        'count': count,
+                        'percentage': percentage
+                    })
+
+            # Collaborateurs
+            if stats['collaborateurs']:
+                sorted_collabs = sorted(stats['collaborateurs'].items(),
+                                      key=lambda x: x[1]['count'], reverse=True)
+                for collab, data in sorted_collabs[:10]:
+                    percentage = round((data['count'] / stats['data_summary']['total_records']) * 100, 1)
+                    injection_data['collaborateurs'].append({
+                        'name': collab,
+                        'count': data['count'],
+                        'percentage': percentage
+                    })
+
+            # Communes
+            if stats['communes']:
+                sorted_communes = sorted(stats['communes'].items(),
+                                       key=lambda x: x[1]['count'], reverse=True)
+                for commune, data in sorted_communes[:10]:
+                    percentage = round((data['count'] / stats['data_summary']['total_records']) * 100, 1)
+                    injection_data['communes'].append({
+                        'name': commune,
+                        'count': data['count'],
+                        'percentage': percentage
+                    })
+
+            # Processing times
+            if stats['processing_times'].get('count', 0) > 0:
+                pt = stats['processing_times']
+                injection_data['processing_times'] = {
+                    'average': round(pt['average'], 2),
+                    'median': round(pt['median'], 2),
+                    'min': round(pt['min'], 2),
+                    'max': round(pt['max'], 2),
+                    'total_processed': pt['count']
+                }
+
+            # Daily stats (last 7 days)
+            if stats['daily_stats']:
+                sorted_days = sorted(stats['daily_stats'].items())[-7:]
+                for date_str, data in sorted_days:
+                    injection_data['daily_stats'].append({
+                        'date': date_str,
+                        'count': data['count']
+                    })
+
+            return injection_data
+
+        except Exception as e:
+            self.logger.error(f"Error preparing statistics for injection: {e}")
+            return {}
+
+    def _write_statistics_to_index(self, index_path, stats_data, file_structure=None):
+        """Write statistics data to the index file using analyzed structure."""
+        try:
+            file_ext = os.path.splitext(index_path)[1].lower()
+
+            if file_ext in ['.html', '.htm']:
+                return self._inject_to_html_index(index_path, stats_data, file_structure)
+            elif file_ext in ['.xlsx', '.xls']:
+                return self._inject_to_excel_index(index_path, stats_data, file_structure)
+            else:
+                self.logger.warning(f"Unsupported index file format: {file_ext}")
+                return False
+
+        except Exception as e:
+            self.logger.error(f"Error writing statistics to index: {e}")
+            return False
+
+    def _inject_to_html_index(self, html_path, stats_data, file_structure=None):
+        """Inject statistics into HTML index file using analyzed structure."""
+        try:
+            # Read existing HTML content
+            with open(html_path, 'r', encoding='utf-8') as f:
+                html_content = f.read()
+
+            self.logger.info(f"Original HTML content length: {len(html_content)} characters")
+
+            # Check if this is the pres stats dashboard (has stats-grid and Chart.js)
+            if 'stats-grid' in html_content and 'script.js' in html_content:
+                self.logger.info("Detected pres stats dashboard - using value update strategy")
+
+                # Use the new value update strategy for pres stats dashboard
+                updated_content = self._update_existing_dashboard_values(html_content, html_path)
+                if updated_content:
+                    # Write updated content
+                    with open(html_path, 'w', encoding='utf-8') as f:
+                        f.write(updated_content)
+
+                    self.logger.info("Successfully updated pres stats dashboard with filtered data")
+                    return True
+                else:
+                    self.logger.warning("Failed to update dashboard values, falling back to HTML generation")
+
+            # Fallback to original HTML generation method
+            self.logger.info("Using HTML generation strategy")
+
+            # Generate HTML statistics section
+            stats_html = self._generate_html_statistics(stats_data)
+
+            # Use file structure analysis to determine best injection strategy
+            injection_successful = False
+
+            if file_structure and file_structure.get('has_pladria_injection_point'):
+                # Use existing Pladria injection point
+                injection_successful = self._inject_at_pladria_marker(html_content, stats_html, html_path)
+                if injection_successful:
+                    self.logger.info("Successfully injected at existing Pladria marker")
+
+            if not injection_successful:
+                # Try alternative injection strategies based on file structure
+                injection_successful = self._try_alternative_html_injection(html_content, stats_html, html_path, file_structure)
+
+            return injection_successful
+
+        except Exception as e:
+            self.logger.error(f"Error injecting to HTML index: {e}")
+            return False
+
+    def _inject_at_pladria_marker(self, html_content, stats_html, html_path):
+        """Inject statistics at existing Pladria marker."""
+        try:
+            injection_point = '<!-- PLADRIA_STATS_INJECTION -->'
+            end_marker = '<!-- END_PLADRIA_STATS -->'
+
+            start_idx = html_content.find(injection_point)
+            end_idx = html_content.find(end_marker)
+
+            if start_idx != -1 and end_idx != -1:
+                # Replace existing content between markers
+                new_content = (html_content[:start_idx] +
+                             injection_point + '\n' + stats_html + '\n' +
+                             html_content[end_idx:])
+            elif start_idx != -1:
+                # Add end marker and content
+                new_content = html_content.replace(injection_point,
+                                                 injection_point + '\n' + stats_html + '\n<!-- END_PLADRIA_STATS -->')
+            else:
+                return False
+
+            # Write updated content
+            with open(html_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+
+            self.logger.info("Successfully injected at Pladria marker")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Error injecting at Pladria marker: {e}")
+            return False
+
+    def _try_alternative_html_injection(self, html_content, stats_html, html_path, file_structure):
+        """Try alternative injection strategies for HTML files - Update existing values without changing structure."""
+        try:
+            new_content = None
+            strategy_used = None
+
+            # Strategy 1: Update existing values in place (for pres stats dashboard)
+            if 'stats-grid' in html_content and 'script.js' in html_content:
+                new_content = self._update_existing_dashboard_values(html_content, html_path)
+                if new_content:
+                    strategy_used = "update_existing_values"
+
+            # Strategy 2: Inject before closing body tag (fallback)
+            if not new_content and '</body>' in html_content.lower():
+                body_close_idx = html_content.lower().rfind('</body>')
+                if body_close_idx != -1:
+                    new_content = (html_content[:body_close_idx] +
+                                 '\n<!-- PLADRIA_STATS_INJECTION -->\n' + stats_html + '\n<!-- END_PLADRIA_STATS -->\n' +
+                                 html_content[body_close_idx:])
+                    strategy_used = "before_body_close"
+
+            # Strategy 3: Append to end of file if no body tag
+            if not new_content:
+                new_content = html_content + '\n<!-- PLADRIA_STATS_INJECTION -->\n' + stats_html + '\n<!-- END_PLADRIA_STATS -->'
+                strategy_used = "append_to_end"
+
+            # Write the updated content
+            if new_content:
+                with open(html_path, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+
+                self.logger.info(f"Successfully injected using strategy: {strategy_used}")
+                return True
+
+            return False
+
+        except Exception as e:
+            self.logger.error(f"Error in alternative HTML injection: {e}")
+            return False
+
+            self.logger.info(f"Statistics injected into HTML index: {html_path}")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Error injecting to HTML index: {e}")
+            return False
+
+    def _inject_to_excel_index(self, excel_path, stats_data, file_structure=None):
+        """Inject statistics into Excel index file using analyzed structure."""
+        try:
+            pd = get_pandas()
+
+            self.logger.info(f"Injecting statistics into Excel file: {excel_path}")
+
+            # Create a new sheet with statistics
+            with pd.ExcelWriter(excel_path, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
+                # Summary sheet
+                summary_df = pd.DataFrame([
+                    ['Période', f"{stats_data['metadata']['period_start']} à {stats_data['metadata']['period_end']}"],
+                    ['Durée (jours)', stats_data['metadata']['total_days']],
+                    ['Total enregistrements', stats_data['summary']['total_records']],
+                    ['Motifs uniques', stats_data['summary']['unique_motifs']],
+                    ['Fichiers stats', stats_data['summary']['stats_files']],
+                    ['Généré le', stats_data['metadata']['generated_at']]
+                ], columns=['Métrique', 'Valeur'])
+
+                summary_df.to_excel(writer, sheet_name='Pladria_Stats_Summary', index=False)
+
+                # Top motifs sheet
+                if stats_data['top_motifs']:
+                    motifs_df = pd.DataFrame(stats_data['top_motifs'])
+                    motifs_df.to_excel(writer, sheet_name='Pladria_Top_Motifs', index=False)
+
+                # Collaborateurs sheet
+                if stats_data['collaborateurs']:
+                    collabs_df = pd.DataFrame(stats_data['collaborateurs'])
+                    collabs_df.to_excel(writer, sheet_name='Pladria_Collaborateurs', index=False)
+
+                # Communes sheet
+                if stats_data['communes']:
+                    communes_df = pd.DataFrame(stats_data['communes'])
+                    communes_df.to_excel(writer, sheet_name='Pladria_Communes', index=False)
+
+                # Daily stats sheet
+                if stats_data['daily_stats']:
+                    daily_df = pd.DataFrame(stats_data['daily_stats'])
+                    daily_df.to_excel(writer, sheet_name='Pladria_Daily_Stats', index=False)
+
+            self.logger.info(f"Statistics injected into Excel index: {excel_path}")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Error injecting to Excel index: {e}")
+            return False
+
+    def _update_existing_dashboard_values(self, html_content, html_path):
+        """Update existing values in the pres stats dashboard without changing structure."""
+        try:
+            if not hasattr(self, 'filtered_statistics') or not self.filtered_statistics:
+                self.logger.warning("No filtered statistics available for value updates")
+                return None
+
+            stats = self.filtered_statistics
+            updated_html = html_content
+
+            # Update the subtitle with the filtered period
+            period_text = f"Analyse des données de traitement - {stats['period']['start_date']} à {stats['period']['end_date']}"
+            updated_html = self._update_html_text(updated_html,
+                r'<p class="subtitle">.*?</p>',
+                f'<p class="subtitle">{period_text}</p>')
+
+            # Update total records count in various places if we can map them
+            total_records = stats['data_summary']['total_records']
+
+            # Update HTML elements with new data
+            self.logger.info("Updating HTML elements with filtered data...")
+            updated_html = self._update_html_elements_with_data(updated_html, stats)
+
+            # Update JavaScript file with new data
+            script_path = os.path.join(os.path.dirname(html_path), 'script.js')
+            if os.path.exists(script_path):
+                self._update_script_js_values(script_path, stats)
+
+            # Add a comment to track when this was last updated
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            comment = f'\n<!-- Pladria Statistics Updated: {timestamp} | Period: {stats["period"]["start_date"]} to {stats["period"]["end_date"]} | Records: {total_records} -->\n'
+
+            # Insert comment before closing body tag
+            body_close_idx = updated_html.lower().rfind('</body>')
+            if body_close_idx != -1:
+                updated_html = updated_html[:body_close_idx] + comment + updated_html[body_close_idx:]
+
+            self.logger.info(f"Updated dashboard values for period {stats['period']['start_date']} to {stats['period']['end_date']}")
+            return updated_html
+
+        except Exception as e:
+            self.logger.error(f"Error updating existing dashboard values: {e}")
+            return None
+
+    def _update_html_text(self, html_content, pattern, replacement):
+        """Update HTML content using regex pattern."""
+        try:
+            import re
+            return re.sub(pattern, replacement, html_content, flags=re.DOTALL)
+        except Exception as e:
+            self.logger.error(f"Error updating HTML text: {e}")
+            return html_content
+
+    def _update_html_elements_with_data(self, html_content, stats):
+        """Update HTML elements in the dashboard with filtered data."""
+        try:
+            self.logger.info("Updating HTML elements with dashboard data...")
+            updated_html = html_content
+
+            # Get dashboard mapping to extract the data
+            dashboard_mapping = self._map_stats_to_dashboard_categories(stats)
+
+            # Validate data before injection
+            if dashboard_mapping:
+                validation_result = self._validate_injection_data(dashboard_mapping)
+                if not validation_result['valid']:
+                    self.logger.error(f"Data validation failed before HTML injection:")
+                    for error in validation_result['errors']:
+                        self.logger.error(f"  • {error}")
+                    self.logger.warning("Proceeding with injection despite validation errors")
+
+                if validation_result['warnings']:
+                    self.logger.warning("Data validation warnings:")
+                    for warning in validation_result['warnings']:
+                        self.logger.warning(f"  • {warning}")
+
+                self.logger.info(f"Data validation summary: {validation_result.get('data_summary', {})}")
+            else:
+                self.logger.warning("No dashboard mapping available for validation")
+
+            if dashboard_mapping and 'cm' in dashboard_mapping:
+                cm_data = dashboard_mapping['cm']
+                cm_values = cm_data['data']  # [RAF_count, MODIF_count, CREA_count]
+                total_cm = sum(cm_values)
+
+                self.logger.info(f"Updating CM HTML elements: RAF={cm_values[0]}, MODIF={cm_values[1]}, CREA={cm_values[2]}, Total={total_cm}")
+
+                # Update CM card title with total count
+                # Pattern: <h2>CM (894)</h2>
+                cm_title_pattern = r'(<h2>CM\s*\()[^)]*(\)</h2>)'
+                cm_title_replacement = rf'\g<1>{total_cm}\g<2>'
+                updated_html = self._update_html_text(updated_html, cm_title_pattern, cm_title_replacement)
+
+                # Verify title update
+                title_check = re.search(cm_title_pattern, updated_html)
+                if title_check and str(total_cm) in title_check.group(0):
+                    self.logger.info(f"✅ CM title updated to: {title_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ CM title update may have failed")
+
+                # Update individual CM stat values
+                # RAF value: <span class="stat-value raf">806</span>
+                raf_pattern = r'(<span class="stat-value raf">)[^<]*(</span>)'
+                raf_replacement = rf'\g<1>{cm_values[0]}\g<2>'
+                updated_html = self._update_html_text(updated_html, raf_pattern, raf_replacement)
+
+                # MODIF value: <span class="stat-value modif">17</span>
+                modif_pattern = r'(<span class="stat-value modif">)[^<]*(</span>)'
+                modif_replacement = rf'\g<1>{cm_values[1]}\g<2>'
+                updated_html = self._update_html_text(updated_html, modif_pattern, modif_replacement)
+
+                # CREA value: <span class="stat-value crea">71</span>
+                crea_pattern = r'(<span class="stat-value crea">)[^<]*(</span>)'
+                crea_replacement = rf'\g<1>{cm_values[2]}\g<2>'
+                updated_html = self._update_html_text(updated_html, crea_pattern, crea_replacement)
+
+                # Verify individual value updates
+                raf_check = re.search(raf_pattern, updated_html)
+                modif_check = re.search(modif_pattern, updated_html)
+                crea_check = re.search(crea_pattern, updated_html)
+
+                if raf_check and str(cm_values[0]) in raf_check.group(0):
+                    self.logger.info(f"✅ RAF value updated to: {raf_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ RAF value update may have failed")
+
+                if modif_check and str(cm_values[1]) in modif_check.group(0):
+                    self.logger.info(f"✅ MODIF value updated to: {modif_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ MODIF value update may have failed")
+
+                if crea_check and str(cm_values[2]) in crea_check.group(0):
+                    self.logger.info(f"✅ CREA value updated to: {crea_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ CREA value update may have failed")
+
+                self.logger.info("CM HTML elements update process completed")
+            else:
+                self.logger.warning("No CM data available for HTML element updates")
+
+            # Update Communes section if data is available
+            if dashboard_mapping and 'communes' in dashboard_mapping:
+                communes_data = dashboard_mapping['communes']
+                communes_values = communes_data['data']  # [Orange_count, RIP_count]
+                total_communes = sum(communes_values)
+
+                self.logger.info(f"Updating Communes HTML elements: Orange={communes_values[0]}, RIP={communes_values[1]}, Total={total_communes}")
+
+                # Update Communes card title with total count
+                # Pattern: <h2>Communes Livrées (60)</h2>
+                communes_title_pattern = r'(<h2>Communes Livrées\s*\()[^)]*(\)</h2>)'
+                communes_title_replacement = rf'\g<1>{total_communes}\g<2>'
+                updated_html = self._update_html_text(updated_html, communes_title_pattern, communes_title_replacement)
+
+                # Update individual Communes stat values
+                # Orange value: <span class="stat-value orange">56</span>
+                orange_pattern = r'(<span class="stat-value orange">)[^<]*(</span>)'
+                orange_replacement = rf'\g<1>{communes_values[0]}\g<2>'
+                updated_html = self._update_html_text(updated_html, orange_pattern, orange_replacement)
+
+                # RIP value: <span class="stat-value rip">4</span>
+                rip_pattern = r'(<span class="stat-value rip">)[^<]*(</span>)'
+                rip_replacement = rf'\g<1>{communes_values[1]}\g<2>'
+                updated_html = self._update_html_text(updated_html, rip_pattern, rip_replacement)
+
+                # Verify Communes updates
+                communes_title_check = re.search(communes_title_pattern, updated_html)
+                orange_check = re.search(orange_pattern, updated_html)
+                rip_check = re.search(rip_pattern, updated_html)
+
+                if communes_title_check and str(total_communes) in communes_title_check.group(0):
+                    self.logger.info(f"✅ Communes title updated to: {communes_title_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ Communes title update may have failed")
+
+                if orange_check and str(communes_values[0]) in orange_check.group(0):
+                    self.logger.info(f"✅ Orange value updated to: {orange_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ Orange value update may have failed")
+
+                if rip_check and str(communes_values[1]) in rip_check.group(0):
+                    self.logger.info(f"✅ RIP value updated to: {rip_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ RIP value update may have failed")
+
+                self.logger.info("Communes HTML elements update process completed")
+            else:
+                self.logger.warning("No Communes data available for HTML element updates")
+
+            # Update Acts section if data is available
+            if dashboard_mapping and 'acts' in dashboard_mapping:
+                acts_data = dashboard_mapping['acts']
+                acts_values = acts_data['data']  # [count1, count2, ...]
+                acts_labels = acts_data['labels']  # ['category1', 'category2', ...]
+                total_acts = sum(acts_values)
+
+                self.logger.info(f"Updating Acts HTML elements: Total={total_acts}, Categories={len(acts_labels)}")
+
+                # Update Acts card title with total count
+                # Pattern: <h2>Acts Traitement PA (11,396)</h2>
+                acts_title_pattern = r'(<h2>Acts Traitement PA\s*\()[^)]*(\)</h2>)'
+                acts_title_replacement = rf'\g<1>{total_acts:,}\g<2>'
+                updated_html = self._update_html_text(updated_html, acts_title_pattern, acts_title_replacement)
+
+                # Update individual Acts stat values AND percentages based on the HTML structure
+                # The HTML has specific summary-value elements for each category with static percentages
+                acts_html_mappings = {
+                    'AD RAS sans temps': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">AD RAS sans temps \()[^)]*(\)</span>)',
+                    'AD RAS avec temps': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">AD RAS avec temps \()[^)]*(\)</span>)',
+                    'OK': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">OK \()[^)]*(\)</span>)',
+                    'NOK': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">NOK \()[^)]*(\)</span>)',
+                    'AD Non jointe': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">AD Non jointe \()[^)]*(\)</span>)',
+                    'UPR RAS': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">UPR RAS \()[^)]*(\)</span>)',
+                    'AD Non trouvée': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">AD Non trouvée \()[^)]*(\)</span>)',
+                    'Hors commune': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">Hors commune \()[^)]*(\)</span>)',
+                    'UPR NOK': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">UPR NOK \()[^)]*(\)</span>)',
+                    'UPR OK': r'(<span class="summary-value">)[^<]*(</span>\s*<span class="summary-label">UPR OK \()[^)]*(\)</span>)'
+                }
+
+                # Update each category that we have data for with calculated percentages
+                for i, (label, count) in enumerate(zip(acts_labels, acts_values)):
+                    if label in acts_html_mappings:
+                        # Calculate percentage
+                        percentage = (count / total_acts * 100) if total_acts > 0 else 0
+
+                        pattern = acts_html_mappings[label]
+                        replacement = rf'\g<1>{count:,}\g<2>{percentage:.1f}%\g<3>'
+                        updated_html = self._update_html_text(updated_html, pattern, replacement)
+                        self.logger.info(f"   Updated {label}: {count:,} ({percentage:.1f}%)")
+
+                # Verify Acts title update
+                acts_title_check = re.search(acts_title_pattern, updated_html)
+                if acts_title_check and str(total_acts) in acts_title_check.group(0).replace(',', ''):
+                    self.logger.info(f"✅ Acts title updated to: {acts_title_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ Acts title update may have failed")
+
+                self.logger.info("Acts HTML elements update process completed")
+            else:
+                self.logger.warning("No Acts data available for HTML element updates")
+
+            # Update UPR section if data is available
+            if dashboard_mapping and 'upr' in dashboard_mapping:
+                upr_data = dashboard_mapping['upr']
+                upr_values = upr_data['data']  # [cree_count, non_count]
+                upr_labels = upr_data['labels']  # ['Créé', 'Non']
+                total_upr = sum(upr_values)
+
+                self.logger.info(f"Updating UPR HTML elements: Créé tickets={upr_values[0] if len(upr_values) > 0 else 0}")
+
+                # Update only the Créé count (simplified UPR display)
+                if len(upr_values) >= 1:
+                    # Update Créé count with new metric-value class
+                    cree_pattern = r'(<span class="metric-value upr-cree">)[^<]*(</span>)'
+                    cree_replacement = rf'\g<1>{upr_values[0]:,}\g<2>'
+                    updated_html = self._update_html_text(updated_html, cree_pattern, cree_replacement)
+
+                    self.logger.info(f"   Updated UPR Créé tickets: {upr_values[0]:,}")
+                else:
+                    self.logger.warning("   No UPR data available for Créé count")
+
+                self.logger.info("UPR HTML elements update process completed")
+            else:
+                self.logger.warning("No UPR data available for HTML element updates")
+
+            # Update 501/511 section if data is available
+            if dashboard_mapping and 'tickets_501511' in dashboard_mapping:
+                tickets_501511_data = dashboard_mapping['tickets_501511']
+                tickets_501511_values = tickets_501511_data['data']  # [count]
+                total_501511 = sum(tickets_501511_values)
+
+                self.logger.info(f"Updating 501/511 HTML elements: Total tickets={total_501511}")
+
+                # Update 501/511 stat value with new metric-value class
+                if len(tickets_501511_values) >= 1:
+                    tickets_501511_pattern = r'(<span class="metric-value tickets-501511">)[^<]*(</span>)'
+                    tickets_501511_replacement = rf'\g<1>{tickets_501511_values[0]:,}\g<2>'
+                    updated_html = self._update_html_text(updated_html, tickets_501511_pattern, tickets_501511_replacement)
+
+                    self.logger.info(f"   Updated 501/511 tickets count: {tickets_501511_values[0]:,}")
+                else:
+                    self.logger.warning("   No 501/511 data available")
+
+                self.logger.info("501/511 HTML elements update process completed")
+            else:
+                self.logger.warning("No 501/511 data available for HTML element updates")
+
+            # Update RIP section if data is available
+            if dashboard_mapping and 'rip' in dashboard_mapping:
+                rip_data = dashboard_mapping['rip']
+                rip_values = rip_data['data']  # [rien_count, modification_count, creation_count]
+                rip_labels = rip_data['labels']  # ['Rien à faire', 'Modification', 'Création']
+                total_rip = sum(rip_values)
+
+                self.logger.info(f"Updating RIP HTML elements: Total={total_rip}, Categories={len(rip_labels)}")
+
+                # Update RIP card title with total count
+                # Pattern: <h2>RIP (P0 P1) (0)</h2>
+                rip_title_pattern = r'(<h2>RIP \(P0 P1\)\s*\()[^)]*(\)</h2>)'
+                rip_title_replacement = rf'\g<1>{total_rip:,}\g<2>'
+                updated_html = self._update_html_text(updated_html, rip_title_pattern, rip_title_replacement)
+
+                # Update individual RIP stat values (using stat-value class like CM section)
+                if len(rip_values) >= 3:
+                    # Update Rien à faire count
+                    rien_pattern = r'(<span class="stat-value rip-rien">)[^<]*(</span>)'
+                    rien_replacement = rf'\g<1>{rip_values[0]:,}\g<2>'
+                    updated_html = self._update_html_text(updated_html, rien_pattern, rien_replacement)
+
+                    # Update Modification count
+                    modification_pattern = r'(<span class="stat-value rip-modification">)[^<]*(</span>)'
+                    modification_replacement = rf'\g<1>{rip_values[1]:,}\g<2>'
+                    updated_html = self._update_html_text(updated_html, modification_pattern, modification_replacement)
+
+                    # Update Création count
+                    creation_pattern = r'(<span class="stat-value rip-creation">)[^<]*(</span>)'
+                    creation_replacement = rf'\g<1>{rip_values[2]:,}\g<2>'
+                    updated_html = self._update_html_text(updated_html, creation_pattern, creation_replacement)
+
+                    self.logger.info(f"   Updated RIP Rien à faire: {rip_values[0]:,}")
+                    self.logger.info(f"   Updated RIP Modification: {rip_values[1]:,}")
+                    self.logger.info(f"   Updated RIP Création: {rip_values[2]:,}")
+
+                # Verify RIP title update
+                rip_title_check = re.search(rip_title_pattern, updated_html)
+                if rip_title_check and str(total_rip) in rip_title_check.group(0).replace(',', ''):
+                    self.logger.info(f"✅ RIP title updated to: {rip_title_check.group(0)}")
+                else:
+                    self.logger.warning(f"⚠️ RIP title update may have failed")
+
+                self.logger.info("RIP HTML elements update process completed")
+            else:
+                self.logger.warning("No RIP data available for HTML element updates")
+
+            # Update other sections if data is available
+            # TODO: Add updates for Quality Control sections
+
+            # Update Facturation section with real data
+            self._update_facturation_data(updated_html, dashboard_mapping)
+
+            return updated_html
+
+        except Exception as e:
+            self.logger.error(f"Error updating HTML elements with data: {e}")
+            return html_content
+
+    def _validate_injection_data(self, dashboard_mapping):
+        """Validate data before injecting into HTML dashboard."""
+        try:
+            from core.data_validator import DataValidator
+
+            validator = DataValidator()
+            return validator.validate_dashboard_injection_data(dashboard_mapping)
+
+        except ImportError:
+            self.logger.warning("DataValidator not available - skipping validation")
+            return {
+                'valid': True,
+                'errors': [],
+                'warnings': ['DataValidator not available - validation skipped'],
+                'data_summary': {}
+            }
+        except Exception as e:
+            self.logger.error(f"Error during data validation: {e}")
+            return {
+                'valid': False,
+                'errors': [f"Validation error: {str(e)}"],
+                'warnings': [],
+                'data_summary': {}
+            }
+
+    def _update_facturation_data(self, html_content, dashboard_mapping):
+        """Update the facturation section with real CM and PA data by individual motifs."""
+        try:
+            self.logger.info("Updating Facturation section with detailed motif data...")
+
+            if dashboard_mapping:
+                # Extract PA data (Acts) - individual motif counts
+                pa_motif_data = []
+                if 'acts' in dashboard_mapping:
+                    acts_data = dashboard_mapping['acts']
+                    acts_values = acts_data.get('data', [])
+                    acts_labels = acts_data.get('labels', [])
+
+                    # Store individual motif counts (should match the order in JavaScript)
+                    pa_motif_data = acts_values if acts_values else [0] * 10
+
+                    self.logger.info(f"PA (Acts) motif data for facturation:")
+                    for i, (label, count) in enumerate(zip(acts_labels, pa_motif_data)):
+                        if i < len(acts_labels):
+                            self.logger.info(f"   {label}: {count:,}")
+
+                # Extract CM data - individual motif counts
+                cm_motif_data = []
+                if 'cm' in dashboard_mapping:
+                    cm_data = dashboard_mapping['cm']
+                    cm_values = cm_data.get('data', [])
+                    cm_labels = cm_data.get('labels', [])
+
+                    # Store individual motif counts (should match the order in JavaScript)
+                    cm_motif_data = cm_values if cm_values else [0] * 3
+
+                    self.logger.info(f"CM motif data for facturation:")
+                    for i, (label, count) in enumerate(zip(cm_labels, cm_motif_data)):
+                        if i < len(cm_labels):
+                            self.logger.info(f"   {label}: {count:,}")
+
+                # Extract UPR data - individual motif counts
+                upr_motif_data = []
+                if 'upr' in dashboard_mapping:
+                    upr_data = dashboard_mapping['upr']
+                    upr_values = upr_data.get('data', [])
+                    upr_labels = upr_data.get('labels', [])
+
+                    # Store individual motif counts (should match the order in JavaScript)
+                    upr_motif_data = upr_values if upr_values else [0] * 2
+
+                    self.logger.info(f"UPR motif data for facturation:")
+                    for i, (label, count) in enumerate(zip(upr_labels, upr_motif_data)):
+                        if i < len(upr_labels):
+                            self.logger.info(f"   {label}: {count:,}")
+
+                # Extract 501/511 data - single value
+                tickets_501511_data = []
+                if 'tickets_501511' in dashboard_mapping:
+                    tickets_501511_mapping = dashboard_mapping['tickets_501511']
+                    tickets_501511_values = tickets_501511_mapping.get('data', [])
+
+                    # Store single value as array for consistency
+                    tickets_501511_data = tickets_501511_values if tickets_501511_values else [0]
+
+                    self.logger.info(f"501/511 tickets data for facturation:")
+                    if tickets_501511_data:
+                        self.logger.info(f"   Tickets 501/511: {tickets_501511_data[0]:,}")
+
+                # Store the detailed data for script.js update
+                self.facturation_data = {
+                    'pa_motifs': pa_motif_data,
+                    'cm_motifs': cm_motif_data,
+                    'upr_motifs': upr_motif_data,
+                    'tickets_501511_motifs': tickets_501511_data,
+                    'pa_total': sum(pa_motif_data) if pa_motif_data else 0,
+                    'cm_total': sum(cm_motif_data) if cm_motif_data else 0,
+                    'upr_total': sum(upr_motif_data) if upr_motif_data else 0,
+                    'tickets_501511_total': sum(tickets_501511_data) if tickets_501511_data else 0
+                }
+
+                total_pa = sum(pa_motif_data) if pa_motif_data else 0
+                total_cm = sum(cm_motif_data) if cm_motif_data else 0
+                total_upr = sum(upr_motif_data) if upr_motif_data else 0
+                total_501511 = sum(tickets_501511_data) if tickets_501511_data else 0
+                self.logger.info(f"Facturation detailed data prepared:")
+                self.logger.info(f"   PA motifs={len(pa_motif_data)}, CM motifs={len(cm_motif_data)}")
+                self.logger.info(f"   UPR motifs={len(upr_motif_data)}, 501/511 motifs={len(tickets_501511_data)}")
+                self.logger.info(f"   Total PA: {total_pa:,}, Total CM: {total_cm:,}")
+                self.logger.info(f"   Total UPR: {total_upr:,}, Total 501/511: {total_501511:,}")
+
+            else:
+                self.logger.warning("No dashboard mapping available for facturation")
+                self.facturation_data = {
+                    'pa_motifs': [0] * 10,
+                    'cm_motifs': [0] * 3,
+                    'upr_motifs': [0] * 2,
+                    'tickets_501511_motifs': [0] * 1,
+                    'pa_total': 0,
+                    'cm_total': 0,
+                    'upr_total': 0,
+                    'tickets_501511_total': 0
+                }
+
+        except Exception as e:
+            self.logger.error(f"Error updating facturation data: {e}")
+            self.facturation_data = {
+                'pa_motifs': [0] * 10,
+                'cm_motifs': [0] * 3,
+                'upr_motifs': [0] * 2,
+                'tickets_501511_motifs': [0] * 1,
+                'pa_total': 0,
+                'cm_total': 0,
+                'upr_total': 0,
+                'tickets_501511_total': 0
+            }
+
+    def _update_script_js_values(self, script_path, stats):
+        """Update the script.js file with new statistical values."""
+        try:
+            with open(script_path, 'r', encoding='utf-8') as f:
+                script_content = f.read()
+
+            updated_script = script_content
+
+            # Map filtered statistics to dashboard categories
+            self.logger.info("Mapping filtered statistics to dashboard categories...")
+            dashboard_mapping = self._map_stats_to_dashboard_categories(stats)
+            self.logger.info(f"Dashboard mapping result: {dashboard_mapping}")
+
+            # Update Chart.js data arrays based on the mapping
+            if dashboard_mapping:
+                # Update communes data if available
+                if 'communes' in dashboard_mapping:
+                    communes_data = dashboard_mapping['communes']
+                    communes_chart_data = communes_data.get('data', [56, 4])
+                    self.logger.info(f"Updating communes chart data: {communes_chart_data}")
+                    # Update the communes chart data: [56, 4] -> new values
+                    updated_script = self._update_chart_data(updated_script, 'communesCtx', communes_chart_data)
+
+                # Update CM data if available
+                if 'cm' in dashboard_mapping:
+                    cm_data = dashboard_mapping['cm']
+                    cm_chart_data = cm_data.get('data', [806, 17, 71])
+                    self.logger.info(f"Updating CM chart data: {cm_chart_data}")
+                    # Update the CM chart data: [806, 17, 71] -> new values
+                    updated_script = self._update_chart_data(updated_script, 'cmCtx', cm_chart_data)
+
+                # Update quality control data if available
+                if 'quality' in dashboard_mapping:
+                    quality_data = dashboard_mapping['quality']
+                    # Update quality chart data: [37, 25] -> new values
+                    updated_script = self._update_chart_data(updated_script, 'qualityCtx', quality_data.get('data', [37, 25]))
+
+                # Update acts data if available
+                if 'acts' in dashboard_mapping:
+                    acts_data = dashboard_mapping['acts']
+                    acts_chart_data = acts_data.get('data', [2324, 6023, 584, 143, 23, 930, 1084, 180, 16, 14])
+                    self.logger.info(f"Updating acts chart data: {len(acts_chart_data)} categories")
+                    self.logger.info(f"   Acts data: {acts_chart_data}")
+                    # Update acts chart data with real filtered values
+                    updated_script = self._update_chart_data(updated_script, 'actsCtx', acts_chart_data)
+
+                # Update RIP data if available
+                if 'rip' in dashboard_mapping:
+                    rip_data = dashboard_mapping['rip']
+                    rip_chart_data = rip_data.get('data', [0, 0, 0])
+                    self.logger.info(f"Updating RIP chart data: {len(rip_chart_data)} categories")
+                    self.logger.info(f"   RIP data: {rip_chart_data}")
+                    # Update RIP chart data with real filtered values
+                    updated_script = self._update_chart_data(updated_script, 'ripCtx', rip_chart_data)
+
+                # Note: UPR and 501/511 sections use simple number displays instead of charts
+                # No script.js updates needed for these sections
+
+            # Update detailed facturation data if available
+            if hasattr(self, 'facturation_data') and self.facturation_data:
+                pa_motifs = self.facturation_data.get('pa_motifs', [])
+                cm_motifs = self.facturation_data.get('cm_motifs', [])
+                upr_motifs = self.facturation_data.get('upr_motifs', [])
+                tickets_501511_motifs = self.facturation_data.get('tickets_501511_motifs', [])
+
+                self.logger.info(f"Updating detailed facturation data in script.js:")
+                self.logger.info(f"   PA motifs: {len(pa_motifs)} values")
+                self.logger.info(f"   CM motifs: {len(cm_motifs)} values")
+                self.logger.info(f"   UPR motifs: {len(upr_motifs)} values")
+                self.logger.info(f"   501/511 motifs: {len(tickets_501511_motifs)} values")
+
+                # Create JavaScript arrays for the data
+                pa_data_str = ', '.join(str(count) for count in pa_motifs) if pa_motifs else '0'
+                cm_data_str = ', '.join(str(count) for count in cm_motifs) if cm_motifs else '0'
+                upr_data_str = ', '.join(str(count) for count in upr_motifs) if upr_motifs else '0'
+                tickets_501511_data_str = ', '.join(str(count) for count in tickets_501511_motifs) if tickets_501511_motifs else '0'
+
+                # Add detailed facturation data update at the end
+                facturation_update = f'''
+// Update detailed facturation data with real values
+if (typeof detailedBillingCalculator !== 'undefined' && detailedBillingCalculator) {{
+    detailedBillingCalculator.updateWithRealData([{pa_data_str}], [{cm_data_str}], [{upr_data_str}], [{tickets_501511_data_str}]);
+}}
+'''
+                updated_script += facturation_update
+                self.logger.info(f"   Added detailed facturation data update")
+                self.logger.info(f"   PA data: [{pa_data_str}]")
+                self.logger.info(f"   CM data: [{cm_data_str}]")
+                self.logger.info(f"   UPR data: [{upr_data_str}]")
+                self.logger.info(f"   501/511 data: [{tickets_501511_data_str}]")
+
+            # Add timestamp comment
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            comment = f'\n// Pladria Statistics Updated: {timestamp}\n// Period: {stats["period"]["start_date"]} to {stats["period"]["end_date"]}\n// Total Records: {stats["data_summary"]["total_records"]}\n'
+            updated_script = comment + updated_script
+
+            # Write updated script
+            with open(script_path, 'w', encoding='utf-8') as f:
+                f.write(updated_script)
+
+            self.logger.info(f"Updated script.js with new statistical values")
+
+        except Exception as e:
+            self.logger.error(f"Error updating script.js values: {e}")
+
+    def _map_stats_to_dashboard_categories(self, stats):
+        """Map filtered statistics to dashboard categories using actual Suivi Global data."""
+        try:
+            mapping = {}
+
+            # Extract CM data from Sheet 2 (Traitement CMS Adr) of the Suivi Global file
+            self.logger.info("Attempting to extract CM data from Suivi Global...")
+            cm_data = self._extract_cm_data_for_dashboard()
+            if cm_data:
+                mapping['cm'] = cm_data
+                self.logger.info(f"✅ CM data successfully mapped: {cm_data['data']}")
+                self.logger.info(f"   Total CM records processed: {cm_data['total_records']}")
+                self.logger.info(f"   CM motif breakdown: {cm_data['motif_breakdown']}")
+            else:
+                self.logger.warning("❌ No CM data extracted - using fallback values")
+
+            # Extract Communes data from Sheet 1 (Suivi Tickets) of the Suivi Global file
+            self.logger.info("Attempting to extract Communes data from Suivi Global...")
+            communes_data = self._extract_communes_data_for_dashboard()
+            if communes_data:
+                mapping['communes'] = communes_data
+                self.logger.info(f"✅ Communes data successfully mapped: {communes_data['data']}")
+                self.logger.info(f"   Total Communes records processed: {communes_data['total_records']}")
+                self.logger.info(f"   Communes breakdown: {communes_data['commune_breakdown']}")
+            else:
+                self.logger.warning("❌ No Communes data extracted - using fallback values")
+
+            # Extract Acts data from Sheet 3 (Traitement PA) of the Suivi Global file
+            self.logger.info("Attempting to extract Acts data from Suivi Global...")
+            acts_data = self._extract_acts_data_for_dashboard()
+            if acts_data:
+                mapping['acts'] = acts_data
+                self.logger.info(f"✅ Acts data successfully mapped: {len(acts_data['data'])} categories")
+                self.logger.info(f"   Total Acts records processed: {acts_data['total_records']}")
+                self.logger.info(f"   Acts categories: {acts_data['labels']}")
+                self.logger.info(f"   Acts counts: {acts_data['data']}")
+            else:
+                self.logger.warning("❌ No Acts data extracted - using fallback values")
+
+            # Extract UPR tickets data from Sheet 1 (Suivi Tickets) of the Suivi Global file
+            self.logger.info("Attempting to extract UPR tickets data from Suivi Global...")
+            upr_data = self._extract_upr_data_for_dashboard()
+            if upr_data:
+                mapping['upr'] = upr_data
+                self.logger.info(f"✅ UPR data successfully mapped: {len(upr_data['data'])} categories")
+                self.logger.info(f"   Total UPR records processed: {upr_data['total_records']}")
+                self.logger.info(f"   UPR categories: {upr_data['labels']}")
+                self.logger.info(f"   UPR counts: {upr_data['data']}")
+            else:
+                self.logger.warning("❌ No UPR data extracted - using fallback values")
+
+            # Extract 501/511 tickets data from Sheet 1 (Suivi Tickets) of the Suivi Global file
+            self.logger.info("Attempting to extract 501/511 tickets data from Suivi Global...")
+            tickets_501511_data = self._extract_501511_data_for_dashboard()
+            if tickets_501511_data:
+                mapping['tickets_501511'] = tickets_501511_data
+                self.logger.info(f"✅ 501/511 data successfully mapped: {len(tickets_501511_data['data'])} categories")
+                self.logger.info(f"   Total 501/511 records processed: {tickets_501511_data['total_records']}")
+                self.logger.info(f"   501/511 categories: {tickets_501511_data['labels']}")
+                self.logger.info(f"   501/511 counts: {tickets_501511_data['data']}")
+            else:
+                self.logger.warning("❌ No 501/511 data extracted - using fallback values")
+
+            # Extract RIP (P0 P1) data from Sheet 4 (Traitement RIP) of the Suivi Global file
+            self.logger.info("Attempting to extract RIP (P0 P1) data from Suivi Global...")
+            rip_data = self._extract_rip_data_for_dashboard()
+            if rip_data:
+                mapping['rip'] = rip_data
+                self.logger.info(f"✅ RIP data successfully mapped: {len(rip_data['data'])} categories")
+                self.logger.info(f"   Total RIP records processed: {rip_data['total_records']}")
+                self.logger.info(f"   RIP categories: {rip_data['labels']}")
+                self.logger.info(f"   RIP counts: {rip_data['data']}")
+            else:
+                self.logger.warning("❌ No RIP data extracted - using fallback values")
+
+            # Keep existing logic for other categories as fallback
+            if stats.get('motifs', {}).get('sorted'):
+                top_motifs = dict(stats['motifs']['sorted'][:10])
+
+                # Map to communes (example - you'll need to adjust based on your data)
+                if 'Orange' in top_motifs or 'RIP' in top_motifs:
+                    mapping['communes'] = {
+                        'data': [
+                            top_motifs.get('Orange', 56),
+                            top_motifs.get('RIP', 4)
+                        ]
+                    }
+
+                # Map to quality control (example)
+                total_records = stats['data_summary']['total_records']
+                conformes = int(total_records * 0.6)  # Example: 60% conformes
+                non_conformes = total_records - conformes
+
+                mapping['quality'] = {
+                    'data': [conformes, non_conformes]
+                }
+
+                # Map to acts data (example - you'll need to map your actual categories)
+                mapping['acts'] = {
+                    'data': [
+                        top_motifs.get('AD_RAS_AVEC_TEMPS', 2324),
+                        top_motifs.get('AD_RAS_SANS_TEMPS', 6023),
+                        top_motifs.get('AD_NON_JOINTE', 584),
+                        top_motifs.get('AD_NON_TROUVEE', 143),
+                        top_motifs.get('HORS_COMMUNE', 23),
+                        top_motifs.get('NOK', 930),
+                        top_motifs.get('OK', 1084),
+                        top_motifs.get('UPR_RAS', 180),
+                        top_motifs.get('UPR_NOK', 16),
+                        top_motifs.get('UPR_OK', 14)
+                    ]
+                }
+
+            return mapping
+
+        except Exception as e:
+            self.logger.error(f"Error mapping stats to dashboard categories: {e}")
+            return {}
+
+    def _extract_cm_data_for_dashboard(self):
+        """Extract CM data from Sheet 2 (Traitement CMS Adr) for dashboard population."""
+        try:
+            from datetime import datetime
+            # Check if we have the required data
+            if not hasattr(self, 'global_suivi_data') or not self.global_suivi_data:
+                self.logger.warning("No global_suivi_data available for CM extraction")
+                return None
+
+            if 'Traitement CMS Adr' not in self.global_suivi_data:
+                self.logger.warning("Sheet 'Traitement CMS Adr' not found in global_suivi_data")
+                return None
+
+            df_cms = self.global_suivi_data['Traitement CMS Adr']
+            if df_cms.empty:
+                self.logger.warning("Sheet 'Traitement CMS Adr' is empty")
+                return None
+
+            # Check if we have the required date range
+            if not hasattr(self, 'date_from_selected') or not hasattr(self, 'date_to_selected'):
+                self.logger.warning("Date range not set for CM data extraction")
+                return None
+
+            if not self.date_from_selected or not self.date_to_selected:
+                self.logger.warning("Date range values are None")
+                return None
+
+            self.logger.info(f"Extracting CM data for period: {self.date_from_selected} to {self.date_to_selected}")
+
+            # Check column structure
+            if len(df_cms.columns) < 8:  # Need at least 8 columns (A-H)
+                self.logger.warning(f"CM sheet: Not enough columns (found {len(df_cms.columns)}, need at least 8)")
+                return None
+
+            # Column mapping based on the existing code structure
+            motif_column = df_cms.columns[3]  # Column D (Motif Voie)
+
+            # Try to find delivery date column (Column H, index 7)
+            delivery_date_column = None
+            if len(df_cms.columns) > 7:
+                delivery_date_column = df_cms.columns[7]  # Column H (delivery date)
+                self.logger.info(f"Using delivery date column H: '{delivery_date_column}'")
+            else:
+                # Fallback to processing date (Column G, index 6)
+                delivery_date_column = df_cms.columns[6]  # Column G (processing date)
+                self.logger.info(f"Fallback to processing date column G: '{delivery_date_column}'")
+
+            self.logger.info(f"CM extraction: Using motif column '{motif_column}' and date column '{delivery_date_column}'")
+
+            # Extract and count motifs within the date range
+            motif_counts = {}
+            total_processed = 0
+
+            for index, row in df_cms.iterrows():
+                try:
+                    # Get motif value
+                    motif_value = row.get(motif_column, '')
+                    if not motif_value or str(motif_value).strip() == '' or str(motif_value).lower() == 'nan':
+                        continue
+                    motif_value = str(motif_value).strip().upper()  # Normalize to uppercase
+
+                    # Get date value
+                    date_value = row.get(delivery_date_column, '')
+                    if not date_value or str(date_value).strip() == '' or str(date_value).lower() == 'nan':
+                        continue
+
+                    # Parse date (try multiple formats)
+                    date_obj = None
+                    for date_format in ['%Y-%m-%d', '%d/%m/%Y', '%d-%m-%Y']:
+                        try:
+                            date_obj = datetime.strptime(str(date_value), date_format).date()
+                            break
+                        except ValueError:
+                            continue
+
+                    if not date_obj:
+                        continue
+
+                    # Check if date is within selected range
+                    if self.date_from_selected <= date_obj <= self.date_to_selected:
+                        # Count this motif
+                        if motif_value not in motif_counts:
+                            motif_counts[motif_value] = 0
+                        motif_counts[motif_value] += 1
+                        total_processed += 1
+
+                except Exception as e:
+                    self.logger.debug(f"Error processing CM row {index}: {e}")
+                    continue
+
+            self.logger.info(f"CM extraction completed: {total_processed} records processed, {len(motif_counts)} unique motifs found")
+
+            # Log the motif counts for debugging
+            for motif, count in sorted(motif_counts.items(), key=lambda x: x[1], reverse=True):
+                self.logger.info(f"  {motif}: {count}")
+
+            # Map motifs to CM chart categories
+            # The original dashboard has RAF, MODIF, CREA categories
+            # We'll map the actual motifs found to these categories or use the top motifs
+
+            cm_chart_data = self._map_motifs_to_cm_categories(motif_counts)
+
+            return {
+                'data': cm_chart_data,
+                'total_records': total_processed,
+                'motif_breakdown': motif_counts
+            }
+
+        except Exception as e:
+            self.logger.error(f"Error extracting CM data for dashboard: {e}")
+            return None
+
+    def _extract_communes_data_for_dashboard(self):
+        """Extract Communes data from Sheet 1 (Suivi Tickets) for dashboard population."""
+        try:
+            from datetime import datetime
+
+            # Check if we have the required data
+            if not hasattr(self, 'global_suivi_data') or not self.global_suivi_data:
+                self.logger.warning("No global_suivi_data available for Communes extraction")
+                return None
+
+            if 'Suivi Tickets' not in self.global_suivi_data:
+                self.logger.warning("Sheet 'Suivi Tickets' not found in global_suivi_data")
+                return None
+
+            df_tickets = self.global_suivi_data['Suivi Tickets']
+            if df_tickets.empty:
+                self.logger.warning("Sheet 'Suivi Tickets' is empty")
+                return None
+
+            # Check if we have the required date range
+            if not hasattr(self, 'date_from_selected') or not hasattr(self, 'date_to_selected'):
+                self.logger.warning("Date range not set for Communes data extraction")
+                return None
+
+            if not self.date_from_selected or not self.date_to_selected:
+                self.logger.warning("Date range values are None")
+                return None
+
+            self.logger.info(f"Extracting Communes data for period: {self.date_from_selected} to {self.date_to_selected}")
+
+            # Check column structure - need at least 15 columns (A-O)
+            if len(df_tickets.columns) < 15:
+                self.logger.warning(f"Tickets sheet: Not enough columns (found {len(df_tickets.columns)}, need at least 15)")
+                return None
+
+            # Column mapping based on requirements
+            commune_type_column = df_tickets.columns[3]  # Column D (Commune Type)
+            delivery_date_column = df_tickets.columns[14]  # Column O (Delivery Date)
+
+            self.logger.info(f"Communes extraction: Using commune type column '{commune_type_column}' and delivery date column '{delivery_date_column}'")
+
+            # Extract and count commune types within the date range
+            commune_counts = {'Orange': 0, 'RIP': 0}
+            total_processed = 0
+
+            for index, row in df_tickets.iterrows():
+                try:
+                    # Get commune type value
+                    commune_type = row.get(commune_type_column, '')
+                    if not commune_type or str(commune_type).strip() == '' or str(commune_type).lower() == 'nan':
+                        continue
+                    commune_type = str(commune_type).strip()
+
+                    # Normalize commune type (case-insensitive)
+                    commune_type_upper = commune_type.upper()
+                    if commune_type_upper not in ['ORANGE', 'RIP']:
+                        continue  # Skip if not Orange or RIP
+
+                    # Get delivery date value
+                    delivery_date = row.get(delivery_date_column, '')
+                    if not delivery_date or str(delivery_date).strip() == '' or str(delivery_date).lower() == 'nan':
+                        continue
+
+                    # Parse delivery date (handle datetime format: "2025-05-22 00:00:00")
+                    date_obj = None
+                    delivery_date_str = str(delivery_date).strip()
+
+                    # Try multiple datetime formats
+                    date_formats = [
+                        '%Y-%m-%d %H:%M:%S',  # "2025-05-22 00:00:00"
+                        '%Y-%m-%d',           # "2025-05-22"
+                        '%d/%m/%Y %H:%M:%S',  # "22/05/2025 00:00:00"
+                        '%d/%m/%Y',           # "22/05/2025"
+                        '%d-%m-%Y %H:%M:%S',  # "22-05-2025 00:00:00"
+                        '%d-%m-%Y'            # "22-05-2025"
+                    ]
+
+                    for date_format in date_formats:
+                        try:
+                            date_obj = datetime.strptime(delivery_date_str, date_format).date()
+                            break
+                        except ValueError:
+                            continue
+
+                    if not date_obj:
+                        continue
+
+                    # Check if date is within selected range
+                    if self.date_from_selected <= date_obj <= self.date_to_selected:
+                        # Count this commune type
+                        if commune_type_upper == 'ORANGE':
+                            commune_counts['Orange'] += 1
+                        elif commune_type_upper == 'RIP':
+                            commune_counts['RIP'] += 1
+
+                        total_processed += 1
+
+                except Exception as e:
+                    self.logger.debug(f"Error processing Communes row {index}: {e}")
+                    continue
+
+            self.logger.info(f"Communes extraction completed: {total_processed} records processed")
+            self.logger.info(f"  Orange: {commune_counts['Orange']}")
+            self.logger.info(f"  RIP: {commune_counts['RIP']}")
+
+            # Prepare data for dashboard (Orange first, then RIP to match chart labels)
+            communes_chart_data = [commune_counts['Orange'], commune_counts['RIP']]
+
+            return {
+                'data': communes_chart_data,
+                'total_records': total_processed,
+                'commune_breakdown': commune_counts
+            }
+
+        except Exception as e:
+            self.logger.error(f"Error extracting Communes data for dashboard: {e}")
+            return None
+
+    def _extract_acts_data_for_dashboard(self):
+        """Extract Acts data from Sheet 3 (Traitement PA) for dashboard population."""
+        try:
+            from datetime import datetime
+
+            # Check if we have the required data
+            if not hasattr(self, 'global_suivi_data') or not self.global_suivi_data:
+                self.logger.warning("No global_suivi_data available for Acts extraction")
+                return None
+
+            if 'Traitement PA' not in self.global_suivi_data:
+                self.logger.warning("Sheet 'Traitement PA' not found in global_suivi_data")
+                return None
+
+            df_acts = self.global_suivi_data['Traitement PA']
+            if df_acts.empty:
+                self.logger.warning("Sheet 'Traitement PA' is empty")
+                return None
+
+            # Check if we have the required date range
+            if not hasattr(self, 'date_from_selected') or not hasattr(self, 'date_to_selected'):
+                self.logger.warning("Date range not set for Acts data extraction")
+                return None
+
+            if not self.date_from_selected or not self.date_to_selected:
+                self.logger.warning("Date range values are None")
+                return None
+
+            self.logger.info(f"Extracting Acts data for period: {self.date_from_selected} to {self.date_to_selected}")
+
+            # Check column structure - need at least 8 columns (A-H)
+            if len(df_acts.columns) < 8:
+                self.logger.warning(f"Acts sheet: Not enough columns (found {len(df_acts.columns)}, need at least 8)")
+                return None
+
+            # Column mapping based on requirements
+            motif_column = df_acts.columns[3]  # Column D (Motif)
+            processing_date_column = df_acts.columns[6]  # Column G (Date traitement)
+            duration_column = df_acts.columns[7]  # Column H (Durée)
+
+            self.logger.info(f"Acts extraction: Using motif column '{motif_column}', date column '{processing_date_column}', duration column '{duration_column}'")
+
+            # Extract and count motifs within the date range
+            motif_counts = {}
+            total_processed = 0
+
+            for index, row in df_acts.iterrows():
+                try:
+                    # Get motif value
+                    motif = row.get(motif_column, '')
+                    if not motif or str(motif).strip() == '' or str(motif).lower() == 'nan':
+                        continue
+                    motif = str(motif).strip()
+
+                    # Get processing date value
+                    processing_date = row.get(processing_date_column, '')
+                    if not processing_date or str(processing_date).strip() == '' or str(processing_date).lower() == 'nan':
+                        continue
+
+                    # Parse processing date (handle date format: "2025-07-02")
+                    date_obj = None
+                    processing_date_str = str(processing_date).strip()
+
+                    # Try multiple date formats
+                    date_formats = [
+                        '%Y-%m-%d',           # "2025-07-02"
+                        '%Y-%m-%d %H:%M:%S',  # "2025-07-02 00:00:00"
+                        '%d/%m/%Y',           # "02/07/2025"
+                        '%d/%m/%Y %H:%M:%S',  # "02/07/2025 00:00:00"
+                        '%d-%m-%Y',           # "02-07-2025"
+                        '%d-%m-%Y %H:%M:%S'   # "02-07-2025 00:00:00"
+                    ]
+
+                    for date_format in date_formats:
+                        try:
+                            date_obj = datetime.strptime(processing_date_str, date_format).date()
+                            break
+                        except ValueError:
+                            continue
+
+                    if not date_obj:
+                        continue
+
+                    # Check if date is within selected range
+                    if self.date_from_selected <= date_obj <= self.date_to_selected:
+                        # Get duration for special Ad Ras handling
+                        duration = row.get(duration_column, 0)
+                        try:
+                            duration_val = float(duration) if duration is not None else 0
+                        except (ValueError, TypeError):
+                            duration_val = 0
+
+                        # Normalize motif for categorization
+                        motif_normalized = motif.upper().strip()
+
+                        # Special handling for Ad Ras motifs
+                        if 'AD' in motif_normalized and 'RAS' in motif_normalized:
+                            if duration_val > 0:
+                                category = 'AD RAS avec temps'
+                            else:
+                                category = 'AD RAS sans temps'
+                        else:
+                            # Map other motifs to standard categories
+                            category = self._normalize_acts_motif(motif_normalized)
+
+                        # Count this motif category
+                        if category in motif_counts:
+                            motif_counts[category] += 1
+                        else:
+                            motif_counts[category] = 1
+
+                        total_processed += 1
+
+                except Exception as e:
+                    self.logger.debug(f"Error processing Acts row {index}: {e}")
+                    continue
+
+            self.logger.info(f"Acts extraction completed: {total_processed} records processed")
+            self.logger.info(f"  Unique motif categories found: {len(motif_counts)}")
+
+            # Log all found categories with counts
+            for category, count in sorted(motif_counts.items(), key=lambda x: x[1], reverse=True):
+                self.logger.info(f"    {category}: {count}")
+
+            # Special logging for NOK/UPR categories to debug the issue
+            nok_count = motif_counts.get('NOK', 0)
+            upr_nok_count = motif_counts.get('UPR NOK', 0)
+            upr_ok_count = motif_counts.get('UPR OK', 0)
+
+            self.logger.info(f"  Debug - Specific categories:")
+            self.logger.info(f"    NOK: {nok_count}")
+            self.logger.info(f"    UPR NOK: {upr_nok_count}")
+            self.logger.info(f"    UPR OK: {upr_ok_count}")
+
+            if nok_count == 0 and upr_nok_count == 0 and upr_ok_count == 0:
+                self.logger.warning(f"  ⚠️ No NOK/UPR categories found - this may explain 0 values in dashboard")
+                self.logger.warning(f"  Check if these motifs exist in the data or need different normalization")
+
+            # Prepare data for dashboard - MUST match the exact order of labels in script.js AND HTML
+            # Order matches HTML structure: AD RAS sans temps first (most frequent), then avec temps, etc.
+            chart_labels_order = [
+                'AD RAS sans temps',
+                'AD RAS avec temps',
+                'OK',
+                'NOK',
+                'AD Non jointe',
+                'UPR RAS',
+                'AD Non trouvée',
+                'Hors commune',
+                'UPR NOK',
+                'UPR OK'
+            ]
+
+            # Map extracted data to the fixed chart order
+            acts_chart_data = []
+            acts_labels = []
+
+            for label in chart_labels_order:
+                count = motif_counts.get(label, 0)  # Get count or 0 if category not found
+                acts_chart_data.append(count)
+                acts_labels.append(label)
+
+            self.logger.info(f"Acts data mapped to chart order:")
+            for i, (label, count) in enumerate(zip(acts_labels, acts_chart_data)):
+                self.logger.info(f"  {i+1}. {label}: {count}")
+
+            return {
+                'data': acts_chart_data,
+                'labels': acts_labels,
+                'total_records': total_processed,
+                'motif_breakdown': motif_counts
+            }
+
+        except Exception as e:
+            self.logger.error(f"Error extracting Acts data for dashboard: {e}")
+            return None
+
+    def _normalize_acts_motif(self, motif_upper):
+        """Normalize Acts motifs to standard categories that match Chart.js labels."""
+        # Define motif mappings based on the exact Chart.js labels order
+        # Chart labels: ['AD RAS\navec temps', 'AD RAS\nsans temps', 'AD Non jointe', 'AD Non trouvée', 'Hors commune', 'NOK', 'OK', 'UPR RAS', 'UPR NOK', 'UPR OK']
+
+        # Log the original motif for debugging
+        self.logger.debug(f"Normalizing motif: '{motif_upper}'")
+
+        # More comprehensive motif mappings with extensive variations
+        # IMPORTANT: Order matters! More specific patterns first to avoid false matches
+        motif_mappings = [
+            # UPR patterns first (most specific)
+            ('UPR NOK', ['UPR NOK', 'UPR-NOK', 'UPR_NOK', 'UPRNOK', 'UPR KO', 'UPR-KO', 'UPR_KO', 'UPRKO', 'UPR NOT OK', 'UPR NOTOK']),
+            ('UPR OK', ['UPR OK', 'UPR-OK', 'UPR_OK', 'UPROK', 'UPR VALIDE', 'UPR CORRECT', 'UPR GOOD']),
+            ('UPR RAS', ['UPR RAS', 'UPR-RAS', 'UPR_RAS', 'UPRRAS', 'UPR RIEN', 'UPR NOTHING']),
+
+            # AD patterns
+            ('AD Non jointe', ['AD NON JOINTE', 'ADRESSE NON JOINTE', 'AD_NON_JOINTE', 'ADRESSE_NON_JOINTE', 'AD NON JOINT', 'ADRESSE NON JOINT']),
+            ('AD Non trouvée', ['AD NON TROUVEE', 'AD NON TROUVÉE', 'ADRESSE NON TROUVEE', 'ADRESSE NON TROUVÉE', 'AD_NON_TROUVEE', 'ADRESSE_NON_TROUVEE', 'AD NON TROUVE', 'ADRESSE NON TROUVE']),
+
+            # Other patterns
+            ('Hors commune', ['HORS COMMUNE', 'HORS_COMMUNE', 'HORSCOMMUNE', 'HORS COM', 'HORS-COMMUNE']),
+
+            # NOK patterns (before OK to avoid false matches)
+            ('NOK', ['NOK', 'KO', 'NOT OK', 'NOTOK', 'INVALIDE', 'INCORRECT', 'ERREUR', 'ERROR', 'MAUVAIS', 'BAD']),
+
+            # OK patterns (last to avoid matching NOK)
+            ('OK', ['OK', 'VALIDE', 'CORRECT', 'GOOD'])
+        ]
+
+        # Check each mapping with exact match first, then contains
+        for category, patterns in motif_mappings:
+            # First try exact matches
+            for pattern in patterns:
+                if motif_upper == pattern:
+                    self.logger.debug(f"Exact match: '{motif_upper}' → '{category}'")
+                    return category
+
+            # Then try contains matches (but be careful with overlaps)
+            for pattern in patterns:
+                if pattern in motif_upper:
+                    # Special check to avoid false matches
+                    if category == 'OK' and ('NOK' in motif_upper or 'KO' in motif_upper.replace('OK', '')):
+                        continue  # Skip OK match if NOK is also present
+                    self.logger.debug(f"Contains match: '{motif_upper}' contains '{pattern}' → '{category}'")
+                    return category
+
+        # Special handling for UPR without suffix
+        if motif_upper == 'UPR':
+            self.logger.debug(f"UPR fallback: '{motif_upper}' → 'UPR RAS'")
+            return 'UPR RAS'
+
+        # Special handling for standalone patterns that might be missed
+        if 'UPR' in motif_upper:
+            if any(nok_word in motif_upper for nok_word in ['NOK', 'KO', 'NOT', 'ERREUR', 'ERROR']):
+                self.logger.debug(f"UPR+NOK pattern: '{motif_upper}' → 'UPR NOK'")
+                return 'UPR NOK'
+            elif any(ok_word in motif_upper for ok_word in ['OK', 'VALIDE', 'CORRECT', 'GOOD']):
+                self.logger.debug(f"UPR+OK pattern: '{motif_upper}' → 'UPR OK'")
+                return 'UPR OK'
+            else:
+                self.logger.debug(f"UPR generic: '{motif_upper}' → 'UPR RAS'")
+                return 'UPR RAS'
+
+        # If no match found, log and return the original motif (cleaned)
+        self.logger.debug(f"No match found: '{motif_upper}' → '{motif_upper}' (unchanged)")
+        return motif_upper
+
+    def _extract_upr_data_for_dashboard(self):
+        """Extract UPR tickets data from Sheet 1 (Suivi Tickets) for dashboard population."""
+        try:
+            from datetime import datetime
+
+            # Check if we have the required data
+            if not hasattr(self, 'global_suivi_data') or not self.global_suivi_data:
+                self.logger.warning("No global_suivi_data available for UPR extraction")
+                return None
+
+            if 'Suivi Tickets' not in self.global_suivi_data:
+                self.logger.warning("Sheet 'Suivi Tickets' not found in global_suivi_data")
+                return None
+
+            df_tickets = self.global_suivi_data['Suivi Tickets']
+            if df_tickets.empty:
+                self.logger.warning("Sheet 'Suivi Tickets' is empty")
+                return None
+
+            # Check if we have the required date range
+            if not hasattr(self, 'date_from_selected') or not hasattr(self, 'date_to_selected'):
+                self.logger.warning("Date range not set for UPR data extraction")
+                return None
+
+            if not self.date_from_selected or not self.date_to_selected:
+                self.logger.warning("Date range values are None")
+                return None
+
+            self.logger.info(f"Extracting UPR data for period: {self.date_from_selected} to {self.date_to_selected}")
+
+            # Check column structure - need at least 19 columns (A-S)
+            if len(df_tickets.columns) < 19:
+                self.logger.warning(f"UPR sheet: Not enough columns (found {len(df_tickets.columns)}, need at least 19)")
+                return None
+
+            # Column mapping based on analysis
+            upr_motif_column = df_tickets.columns[18]  # Column S (Dépose Ticket UPR)
+            delivery_date_column = df_tickets.columns[14]  # Column O (Date Livraison)
+
+            self.logger.info(f"UPR extraction: Using motif column '{upr_motif_column}', date column '{delivery_date_column}'")
+
+            # Extract and count UPR tickets within the date range
+            upr_counts = {'Créé': 0, 'Non': 0}
+            total_processed = 0
+
+            for index, row in df_tickets.iterrows():
+                try:
+                    # Get UPR motif value
+                    upr_motif = row.get(upr_motif_column, '')
+                    if not upr_motif or str(upr_motif).strip() == '' or str(upr_motif).lower() == 'nan':
+                        continue
+                    upr_motif = str(upr_motif).strip()
+
+                    # Get delivery date value
+                    delivery_date = row.get(delivery_date_column, '')
+                    if not delivery_date or str(delivery_date).strip() == '' or str(delivery_date).lower() == 'nan':
+                        continue
+
+                    # Parse delivery date (handle format: "2025-05-22 00:00:00")
+                    date_obj = None
+                    delivery_date_str = str(delivery_date).strip()
+
+                    # Try multiple date formats
+                    date_formats = [
+                        '%Y-%m-%d %H:%M:%S',  # "2025-05-22 00:00:00"
+                        '%Y-%m-%d',           # "2025-05-22"
+                        '%d/%m/%Y %H:%M:%S',  # "22/05/2025 00:00:00"
+                        '%d/%m/%Y',           # "22/05/2025"
+                        '%d-%m-%Y %H:%M:%S',  # "22-05-2025 00:00:00"
+                        '%d-%m-%Y'            # "22-05-2025"
+                    ]
+
+                    for date_format in date_formats:
+                        try:
+                            date_obj = datetime.strptime(delivery_date_str, date_format).date()
+                            break
+                        except ValueError:
+                            continue
+
+                    if not date_obj:
+                        continue
+
+                    # Check if date is within selected range
+                    if self.date_from_selected <= date_obj <= self.date_to_selected:
+                        # Normalize UPR motif
+                        upr_motif_normalized = upr_motif.strip()
+
+                        # Count UPR tickets by status
+                        if upr_motif_normalized in upr_counts:
+                            upr_counts[upr_motif_normalized] += 1
+                        else:
+                            # Handle unexpected values
+                            upr_counts[upr_motif_normalized] = 1
+
+                        total_processed += 1
+
+                except Exception as e:
+                    self.logger.debug(f"Error processing UPR row {index}: {e}")
+                    continue
+
+            self.logger.info(f"UPR extraction completed: {total_processed} records processed")
+            self.logger.info(f"  UPR ticket counts: {upr_counts}")
+
+            # Prepare data for dashboard - fixed order for chart consistency
+            # Order: ['Créé', 'Non'] to match expected chart structure
+            chart_labels_order = ['Créé', 'Non']
+
+            upr_chart_data = []
+            upr_labels = []
+
+            for label in chart_labels_order:
+                count = upr_counts.get(label, 0)
+                upr_chart_data.append(count)
+                upr_labels.append(label)
+
+            self.logger.info(f"UPR data mapped to chart order:")
+            for i, (label, count) in enumerate(zip(upr_labels, upr_chart_data)):
+                self.logger.info(f"  {i+1}. {label}: {count}")
+
+            return {
+                'data': upr_chart_data,
+                'labels': upr_labels,
+                'total_records': total_processed,
+                'upr_breakdown': upr_counts
+            }
+
+        except Exception as e:
+            self.logger.error(f"Error extracting UPR data for dashboard: {e}")
+            return None
+
+    def _extract_501511_data_for_dashboard(self):
+        """Extract 501/511 tickets data from Sheet 1 (Suivi Tickets) for dashboard population."""
+        try:
+            from datetime import datetime
+
+            # Check if we have the required data
+            if not hasattr(self, 'global_suivi_data') or not self.global_suivi_data:
+                self.logger.warning("No global_suivi_data available for 501/511 extraction")
+                return None
+
+            if 'Suivi Tickets' not in self.global_suivi_data:
+                self.logger.warning("Sheet 'Suivi Tickets' not found in global_suivi_data")
+                return None
+
+            df_tickets = self.global_suivi_data['Suivi Tickets']
+            if df_tickets.empty:
+                self.logger.warning("Sheet 'Suivi Tickets' is empty")
+                return None
+
+            # Check if we have the required date range
+            if not hasattr(self, 'date_from_selected') or not hasattr(self, 'date_to_selected'):
+                self.logger.warning("Date range not set for 501/511 data extraction")
+                return None
+
+            if not self.date_from_selected or not self.date_to_selected:
+                self.logger.warning("Date range values are None")
+                return None
+
+            self.logger.info(f"Extracting 501/511 data for period: {self.date_from_selected} to {self.date_to_selected}")
+
+            # Check column structure - need at least 18 columns (A-R)
+            if len(df_tickets.columns) < 18:
+                self.logger.warning(f"501/511 sheet: Not enough columns (found {len(df_tickets.columns)}, need at least 18)")
+                return None
+
+            # Column mapping based on analysis
+            deposit_date_column = df_tickets.columns[17]  # Column R (Date Dépose Ticket 501/511)
+
+            self.logger.info(f"501/511 extraction: Using deposit date column '{deposit_date_column}'")
+
+            # Extract and count 501/511 tickets within the date range
+            tickets_501511_count = 0
+            total_processed = 0
+
+            for index, row in df_tickets.iterrows():
+                try:
+                    # Get deposit date value
+                    deposit_date = row.get(deposit_date_column, '')
+                    if not deposit_date or str(deposit_date).strip() == '' or str(deposit_date).lower() == 'nan':
+                        continue
+
+                    # Parse deposit date (handle format: "2025-07-02")
+                    date_obj = None
+                    deposit_date_str = str(deposit_date).strip()
+
+                    # Try multiple date formats
+                    date_formats = [
+                        '%Y-%m-%d',           # "2025-07-02"
+                        '%Y-%m-%d %H:%M:%S',  # "2025-07-02 00:00:00"
+                        '%d/%m/%Y',           # "02/07/2025"
+                        '%d/%m/%Y %H:%M:%S',  # "02/07/2025 00:00:00"
+                        '%d-%m-%Y',           # "02-07-2025"
+                        '%d-%m-%Y %H:%M:%S'   # "02-07-2025 00:00:00"
+                    ]
+
+                    for date_format in date_formats:
+                        try:
+                            date_obj = datetime.strptime(deposit_date_str, date_format).date()
+                            break
+                        except ValueError:
+                            continue
+
+                    if not date_obj:
+                        continue
+
+                    # Check if date is within selected range
+                    if self.date_from_selected <= date_obj <= self.date_to_selected:
+                        tickets_501511_count += 1
+                        total_processed += 1
+
+                except Exception as e:
+                    self.logger.debug(f"Error processing 501/511 row {index}: {e}")
+                    continue
+
+            self.logger.info(f"501/511 extraction completed: {total_processed} records processed")
+            self.logger.info(f"  501/511 tickets count: {tickets_501511_count}")
+
+            # Prepare data for dashboard - simple count for now
+            # Can be extended later if subcategories are needed
+            tickets_501511_data = [tickets_501511_count]
+            tickets_501511_labels = ['501/511 Tickets']
+
+            return {
+                'data': tickets_501511_data,
+                'labels': tickets_501511_labels,
+                'total_records': total_processed,
+                'tickets_breakdown': {'501/511 Tickets': tickets_501511_count}
+            }
+
+        except Exception as e:
+            self.logger.error(f"Error extracting 501/511 data for dashboard: {e}")
+            return None
+
+    def _extract_rip_data_for_dashboard(self):
+        """Extract RIP (P0 P1) data from Sheet 4 (Traitement RIP) for dashboard population."""
+        try:
+            from datetime import datetime
+
+            # Check if we have the required data
+            if not hasattr(self, 'global_suivi_data') or not self.global_suivi_data:
+                self.logger.warning("No global_suivi_data available for RIP extraction")
+                return None
+
+            if 'Traitement RIP' not in self.global_suivi_data:
+                self.logger.warning("Sheet 'Traitement RIP' not found in global_suivi_data")
+                return None
+
+            df_rip = self.global_suivi_data['Traitement RIP']
+            if df_rip.empty:
+                self.logger.warning("Sheet 'Traitement RIP' is empty")
+                return None
+
+            # Check if we have the required date range
+            if not hasattr(self, 'date_from_selected') or not hasattr(self, 'date_to_selected'):
+                self.logger.warning("Date range not set for RIP data extraction")
+                return None
+
+            if not self.date_from_selected or not self.date_to_selected:
+                self.logger.warning("Date range values are None")
+                return None
+
+            self.logger.info(f"Extracting RIP data for period: {self.date_from_selected} to {self.date_to_selected}")
+
+            # Check column structure - need at least 9 columns (A-I)
+            if len(df_rip.columns) < 9:
+                self.logger.warning(f"RIP sheet: Not enough columns (found {len(df_rip.columns)}, need at least 9)")
+                return None
+
+            # Column mapping based on analysis
+            type_column = df_rip.columns[3]  # Column D (Type)
+            motif_column = df_rip.columns[4]  # Column E (Acte de traitement)
+            delivery_date_column = df_rip.columns[8]  # Column I (Date de livraison)
+
+            self.logger.info(f"RIP extraction: Using type column '{type_column}', motif column '{motif_column}', date column '{delivery_date_column}'")
+
+            # Extract and count RIP motifs within the date range for P0/P1 types
+            rip_motif_counts = {}
+            total_processed = 0
+
+            for index, row in df_rip.iterrows():
+                try:
+                    # Get type value and filter for P0/P1
+                    type_value = row.get(type_column, '')
+                    if not type_value or str(type_value).strip() == '' or str(type_value).lower() == 'nan':
+                        continue
+
+                    type_str = str(type_value).upper().strip()
+                    if 'P0' not in type_str and 'P1' not in type_str:
+                        continue  # Skip non-P0/P1 records
+
+                    # Get motif value
+                    motif_value = row.get(motif_column, '')
+                    if not motif_value or str(motif_value).strip() == '' or str(motif_value).lower() == 'nan':
+                        continue
+                    motif_value = str(motif_value).strip()
+
+                    # Get delivery date value
+                    delivery_date = row.get(delivery_date_column, '')
+                    if not delivery_date or str(delivery_date).strip() == '' or str(delivery_date).lower() == 'nan':
+                        continue
+
+                    # Parse delivery date
+                    date_obj = None
+                    delivery_date_str = str(delivery_date).strip()
+
+                    # Try multiple date formats
+                    date_formats = [
+                        '%Y-%m-%d %H:%M:%S',  # "2025-05-22 00:00:00"
+                        '%Y-%m-%d',           # "2025-05-22"
+                        '%d/%m/%Y %H:%M:%S',  # "22/05/2025 00:00:00"
+                        '%d/%m/%Y',           # "22/05/2025"
+                        '%d-%m-%Y %H:%M:%S',  # "22-05-2025 00:00:00"
+                        '%d-%m-%Y'            # "22-05-2025"
+                    ]
+
+                    for date_format in date_formats:
+                        try:
+                            date_obj = datetime.strptime(delivery_date_str, date_format).date()
+                            break
+                        except ValueError:
+                            continue
+
+                    if not date_obj:
+                        continue
+
+                    # Check if date is within selected range
+                    if self.date_from_selected <= date_obj <= self.date_to_selected:
+                        # Normalize RIP motif
+                        motif_normalized = self._normalize_rip_motif(motif_value.upper().strip())
+
+                        # Count RIP motifs
+                        if motif_normalized in rip_motif_counts:
+                            rip_motif_counts[motif_normalized] += 1
+                        else:
+                            rip_motif_counts[motif_normalized] = 1
+
+                        total_processed += 1
+
+                except Exception as e:
+                    self.logger.debug(f"Error processing RIP row {index}: {e}")
+                    continue
+
+            self.logger.info(f"RIP extraction completed: {total_processed} records processed")
+            self.logger.info(f"  RIP motif counts: {rip_motif_counts}")
+
+            # Prepare data for dashboard - fixed order for chart consistency
+            # Order: ['Rien à faire', 'Modification', 'Création'] to match expected structure
+            chart_labels_order = ['Rien à faire', 'Modification', 'Création']
+
+            rip_chart_data = []
+            rip_labels = []
+
+            for label in chart_labels_order:
+                count = rip_motif_counts.get(label, 0)
+                rip_chart_data.append(count)
+                rip_labels.append(label)
+
+            self.logger.info(f"RIP data mapped to chart order:")
+            for i, (label, count) in enumerate(zip(rip_labels, rip_chart_data)):
+                self.logger.info(f"  {i+1}. {label}: {count}")
+
+            return {
+                'data': rip_chart_data,
+                'labels': rip_labels,
+                'total_records': total_processed,
+                'rip_breakdown': rip_motif_counts
+            }
+
+        except Exception as e:
+            self.logger.error(f"Error extracting RIP data for dashboard: {e}")
+            return None
+
+    def _normalize_rip_motif(self, motif_upper):
+        """Normalize RIP motifs to standard categories."""
+        # Log the original motif for debugging
+        self.logger.debug(f"Normalizing RIP motif: '{motif_upper}'")
+
+        # RIP motif mappings with extensive variations
+        # Order matters! More specific patterns first to avoid false matches
+        motif_mappings = [
+            ('Rien à faire', ['RIEN A FAIRE', 'RIEN À FAIRE', 'RIEN_A_FAIRE', 'RIENAfaire', 'NOTHING TO DO', 'NO ACTION']),
+            ('Modification', ['MODIFICATION', 'MODIF', 'MODIFY', 'UPDATE', 'CHANGE', 'EDIT']),
+            ('Création', ['CREATION', 'CRÉATION', 'CREATE', 'NEW', 'ADD', 'CREER', 'CRÉER'])
+        ]
+
+        # Check each mapping with exact match first, then contains
+        for category, patterns in motif_mappings:
+            # First try exact matches
+            for pattern in patterns:
+                if motif_upper == pattern:
+                    self.logger.debug(f"Exact match: '{motif_upper}' → '{category}'")
+                    return category
+
+            # Then try contains matches
+            for pattern in patterns:
+                if pattern in motif_upper:
+                    self.logger.debug(f"Contains match: '{motif_upper}' contains '{pattern}' → '{category}'")
+                    return category
+
+        # If no match found, log and return the original motif (cleaned)
+        self.logger.debug(f"No match found: '{motif_upper}' → '{motif_upper}' (unchanged)")
+        return motif_upper
+
+    def _map_motifs_to_cm_categories(self, motif_counts):
+        """Map actual motifs found to CM chart categories."""
+        try:
+            # Default CM categories from the original dashboard
+            default_categories = ['RAF', 'MODIF', 'CREA']
+
+            # Create mapping from real motif names to dashboard categories
+            motif_mapping = {
+                # RAF category - "Rien à faire"
+                'RAF': ['RAF', 'RAS', 'RIEN À FAIRE', 'RIEN A FAIRE', 'RIEN_A_FAIRE'],
+                # MODIF category - "Modification"
+                'MODIF': ['MODIF', 'MODIFICATION', 'MODIFICATION VOIE', 'CORRIGER', 'MODIFIER'],
+                # CREA category - "Création"
+                'CREA': ['CREA', 'CREATION', 'CRÉATION', 'CRÉATION VOIE', 'CREATION VOIE', 'CREER', 'CRÉER', 'NOUVEAU']
+            }
+
+            cm_data = []
+
+            # Strategy 1: Map using the motif mapping
+            self.logger.info("Mapping motifs using predefined categories...")
+            for category in default_categories:
+                count = 0
+                patterns = motif_mapping.get(category, [])
+
+                # Check each motif in the data
+                for motif, motif_count in motif_counts.items():
+                    motif_upper = motif.upper().strip()
+
+                    # Check if this motif matches any pattern for this category
+                    for pattern in patterns:
+                        if pattern.upper() in motif_upper or motif_upper in pattern.upper():
+                            count += motif_count
+                            self.logger.info(f"Matched '{motif}' to category '{category}' (pattern: '{pattern}')")
+                            break
+
+                cm_data.append(count)
+                if count > 0:
+                    self.logger.info(f"CM category '{category}': {count} records")
+
+            # Strategy 2: If no matches found, try exact category names
+            if sum(cm_data) == 0:
+                self.logger.info("No pattern matches found, trying exact category names...")
+                for category in default_categories:
+                    count = motif_counts.get(category, 0)
+                    cm_data.append(count)
+                    if count > 0:
+                        self.logger.info(f"CM exact category '{category}': {count} records")
+
+            # Strategy 3: If still no matches, use top 3 motifs
+            if sum(cm_data) == 0 and motif_counts:
+                self.logger.info("No category matches found, using top 3 motifs")
+                sorted_motifs = sorted(motif_counts.items(), key=lambda x: x[1], reverse=True)
+
+                cm_data = []
+                for i in range(3):
+                    if i < len(sorted_motifs):
+                        motif, count = sorted_motifs[i]
+                        cm_data.append(count)
+                        self.logger.info(f"CM top motif {i+1} '{motif}': {count} records")
+                    else:
+                        cm_data.append(0)
+
+            # Ensure we always have exactly 3 values
+            while len(cm_data) < 3:
+                cm_data.append(0)
+            cm_data = cm_data[:3]
+
+            self.logger.info(f"Final CM chart data: {cm_data}")
+
+            # Log the mapping for debugging
+            if sum(cm_data) > 0:
+                self.logger.info("CM mapping successful:")
+                for i, (category, count) in enumerate(zip(default_categories, cm_data)):
+                    self.logger.info(f"  {category}: {count}")
+            else:
+                self.logger.warning("CM mapping resulted in all zeros - check motif names and date range")
+
+            return cm_data
+
+        except Exception as e:
+            self.logger.error(f"Error mapping motifs to CM categories: {e}")
+            # Return default values if mapping fails
+            return [0, 0, 0]
+
+    def _update_chart_data(self, script_content, chart_context, new_data):
+        """Update Chart.js data array in the script content."""
+        try:
+            import re
+
+            # Find the chart configuration for the specific context
+            # Look for pattern like: const communesCtx = ... data: [56, 4]
+            pattern = rf'(const {chart_context}.*?data:\s*\[)[^\]]*(\])'
+
+            # Convert new_data to string format
+            data_str = ', '.join(str(x) for x in new_data)
+
+            # Replace the data array
+            replacement = rf'\g<1>{data_str}\g<2>'
+            updated_script = re.sub(pattern, replacement, script_content, flags=re.DOTALL)
+
+            if updated_script != script_content:
+                self.logger.info(f"Updated {chart_context} data: {new_data}")
+            else:
+                self.logger.warning(f"Could not find data array for {chart_context}")
+
+            return updated_script
+
+        except Exception as e:
+            self.logger.error(f"Error updating chart data for {chart_context}: {e}")
+            return script_content
+
+    def _format_stats_as_cards(self, stats_html):
+        """Format statistics to match the existing card-based layout of pres stats dashboard."""
+        try:
+            # Extract key statistics from the stats_data
+            if not hasattr(self, 'filtered_statistics') or not self.filtered_statistics:
+                return stats_html
+
+            stats = self.filtered_statistics
+
+            # Create cards that match the existing dashboard style
+            cards_html = ""
+
+            # Period Summary Card
+            cards_html += f'''
+            <!-- Pladria Statistics Card - Period Summary -->
+            <div class="card">
+                <h2>📊 Statistiques Pladria - Période Filtrée</h2>
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-value" style="color: #3498db;">{stats['data_summary']['total_records']}</span>
+                        <span class="stat-label">Total enregistrements</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" style="color: #27ae60;">{stats['period']['total_days']}</span>
+                        <span class="stat-label">Jours analysés</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" style="color: #f39c12;">{stats['motifs'].get('total_unique', 0)}</span>
+                        <span class="stat-label">Motifs uniques</span>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 0.9em;">
+                    <strong>Période:</strong> {stats['period']['start_date']} à {stats['period']['end_date']}
+                </div>
+            </div>'''
+
+            # Top Motifs Card (if available)
+            if stats['motifs'].get('sorted'):
+                top_motifs = stats['motifs']['sorted'][:5]  # Top 5 motifs
+                motifs_html = ""
+                for i, (motif, count) in enumerate(top_motifs):
+                    percentage = round((count / stats['data_summary']['total_records']) * 100, 1)
+                    color = ['#e74c3c', '#f39c12', '#3498db', '#27ae60', '#9b59b6'][i % 5]
+                    motifs_html += f'''
+                    <div class="stat-item">
+                        <span class="stat-value" style="color: {color};">{count}</span>
+                        <span class="stat-label">{motif[:20]}... ({percentage}%)</span>
+                    </div>'''
+
+                cards_html += f'''
+            <!-- Pladria Statistics Card - Top Motifs -->
+            <div class="card">
+                <h2>🎯 Top Motifs Pladria</h2>
+                <div class="stats-summary">
+                    {motifs_html}
+                </div>
+            </div>'''
+
+            # Collaborateurs Card (if available)
+            if stats['collaborateurs']:
+                sorted_collabs = sorted(stats['collaborateurs'].items(), key=lambda x: x[1]['count'], reverse=True)[:4]
+                collabs_html = ""
+                for i, (collab, data) in enumerate(sorted_collabs):
+                    percentage = round((data['count'] / stats['data_summary']['total_records']) * 100, 1)
+                    color = ['#27ae60', '#3498db', '#f39c12', '#e74c3c'][i % 4]
+                    collabs_html += f'''
+                    <div class="stat-item">
+                        <span class="stat-value" style="color: {color};">{data['count']}</span>
+                        <span class="stat-label">{collab[:15]}... ({percentage}%)</span>
+                    </div>'''
+
+                cards_html += f'''
+            <!-- Pladria Statistics Card - Collaborateurs -->
+            <div class="card">
+                <h2>👥 Top Collaborateurs Pladria</h2>
+                <div class="stats-summary">
+                    {collabs_html}
+                </div>
+            </div>'''
+
+            # Processing Times Card (if available)
+            if stats['processing_times'].get('count', 0) > 0:
+                pt = stats['processing_times']
+                cards_html += f'''
+            <!-- Pladria Statistics Card - Processing Times -->
+            <div class="card">
+                <h2>⏱️ Temps de Traitement Pladria</h2>
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-value" style="color: #3498db;">{pt['average']:.1f}</span>
+                        <span class="stat-label">Temps moyen</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" style="color: #27ae60;">{pt['median']:.1f}</span>
+                        <span class="stat-label">Temps médian</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" style="color: #f39c12;">{pt['count']}</span>
+                        <span class="stat-label">Total traité</span>
+                    </div>
+                </div>
+            </div>'''
+
+            return cards_html
+
+        except Exception as e:
+            self.logger.error(f"Error formatting stats as cards: {e}")
+            # Fallback to original stats_html
+            return stats_html
+
+    def _generate_html_statistics(self, stats_data):
+        """Generate HTML content for statistics injection."""
+        try:
+            html = f"""
+<div id="pladria-statistics" style="margin: 20px 0; padding: 20px; border: 2px solid #007acc; border-radius: 8px; background-color: #f8f9fa;">
+    <h2 style="color: #007acc; margin-bottom: 15px;">📊 Statistiques Pladria - Période Filtrée</h2>
+
+    <div style="margin-bottom: 20px;">
+        <h3 style="color: #333; font-size: 16px;">📋 Résumé</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+            <tr style="background-color: #e9ecef;">
+                <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Période</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{stats_data['metadata']['period_start']} à {stats_data['metadata']['period_end']}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Durée</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{stats_data['metadata']['total_days']} jour(s)</td>
+            </tr>
+            <tr style="background-color: #e9ecef;">
+                <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Total enregistrements</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{stats_data['summary']['total_records']}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Motifs uniques</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{stats_data['summary']['unique_motifs']}</td>
+            </tr>
+            <tr style="background-color: #e9ecef;">
+                <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Généré le</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{stats_data['metadata']['generated_at']}</td>
+            </tr>
+        </table>
+    </div>
+"""
+
+            # Top motifs section
+            if stats_data['top_motifs']:
+                html += """
+    <div style="margin-bottom: 20px;">
+        <h3 style="color: #333; font-size: 16px;">🎯 Top Motifs</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #007acc; color: white;">
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Motif</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Nombre</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">%</th>
+                </tr>
+            </thead>
+            <tbody>
+"""
+                for i, motif_data in enumerate(stats_data['top_motifs'][:5]):
+                    bg_color = "#f8f9fa" if i % 2 == 0 else "#ffffff"
+                    html += f"""
+                <tr style="background-color: {bg_color};">
+                    <td style="padding: 8px; border: 1px solid #ddd;">{motif_data['motif']}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{motif_data['count']}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{motif_data['percentage']}%</td>
+                </tr>
+"""
+                html += """
+            </tbody>
+        </table>
+    </div>
+"""
+
+            # Collaborateurs section
+            if stats_data['collaborateurs']:
+                html += """
+    <div style="margin-bottom: 20px;">
+        <h3 style="color: #333; font-size: 16px;">👥 Top Collaborateurs</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #28a745; color: white;">
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Collaborateur</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Nombre</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">%</th>
+                </tr>
+            </thead>
+            <tbody>
+"""
+                for i, collab_data in enumerate(stats_data['collaborateurs'][:5]):
+                    bg_color = "#f8f9fa" if i % 2 == 0 else "#ffffff"
+                    html += f"""
+                <tr style="background-color: {bg_color};">
+                    <td style="padding: 8px; border: 1px solid #ddd;">{collab_data['name']}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{collab_data['count']}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{collab_data['percentage']}%</td>
+                </tr>
+"""
+                html += """
+            </tbody>
+        </table>
+    </div>
+"""
+
+            # Processing times section
+            if stats_data['processing_times']:
+                pt = stats_data['processing_times']
+                html += f"""
+    <div style="margin-bottom: 20px;">
+        <h3 style="color: #333; font-size: 16px;">⏱️ Temps de Traitement</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <div style="background-color: #e3f2fd; padding: 10px; border-radius: 5px; min-width: 120px;">
+                <strong>Moyenne:</strong> {pt['average']}
+            </div>
+            <div style="background-color: #f3e5f5; padding: 10px; border-radius: 5px; min-width: 120px;">
+                <strong>Médiane:</strong> {pt['median']}
+            </div>
+            <div style="background-color: #e8f5e8; padding: 10px; border-radius: 5px; min-width: 120px;">
+                <strong>Min/Max:</strong> {pt['min']} / {pt['max']}
+            </div>
+        </div>
+    </div>
+"""
+
+            # Daily stats section
+            if stats_data['daily_stats']:
+                html += """
+    <div style="margin-bottom: 20px;">
+        <h3 style="color: #333; font-size: 16px;">📈 Évolution Quotidienne (7 derniers jours)</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #ffc107; color: black;">
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Date</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: center;">Nombre</th>
+                    <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Graphique</th>
+                </tr>
+            </thead>
+            <tbody>
+"""
+                max_count = max([day['count'] for day in stats_data['daily_stats']]) if stats_data['daily_stats'] else 1
+                for i, day_data in enumerate(stats_data['daily_stats']):
+                    bg_color = "#f8f9fa" if i % 2 == 0 else "#ffffff"
+                    bar_width = int((day_data['count'] / max_count) * 100) if max_count > 0 else 0
+                    html += f"""
+                <tr style="background-color: {bg_color};">
+                    <td style="padding: 8px; border: 1px solid #ddd;">{day_data['date']}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">{day_data['count']}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        <div style="background-color: #007acc; height: 20px; width: {bar_width}%; border-radius: 3px;"></div>
+                    </td>
+                </tr>
+"""
+                html += """
+            </tbody>
+        </table>
+    </div>
+"""
+
+            html += """
+    <div style="margin-top: 20px; padding: 10px; background-color: #d4edda; border-radius: 5px; font-size: 12px; color: #155724;">
+        <strong>Note:</strong> Ces statistiques ont été générées automatiquement par Pladria v3.0 - Module Team Statistics
+    </div>
+</div>
+"""
+
+            return html
+
+        except Exception as e:
+            self.logger.error(f"Error generating HTML statistics: {e}")
+            return "<div>Erreur lors de la génération des statistiques HTML</div>"
+
+    def _prepare_dashboard_data(self, statistics):
+        """Prepare data for the dashboard view."""
+        try:
+            dashboard_data = {
+                'summary': {
+                    'period': f"{statistics['period']['start_date']} à {statistics['period']['end_date']}",
+                    'total_days': statistics['period']['total_days'],
+                    'total_records': statistics['data_summary']['total_records'],
+                    'stats_files': statistics['data_summary']['stats_files']
+                },
+                'charts': {},
+                'tables': {},
+                'key_metrics': {}
+            }
+
+            # Prepare motifs chart data
+            if statistics['motifs'].get('sorted'):
+                dashboard_data['charts']['motifs'] = {
+                    'type': 'bar',
+                    'title': 'Répartition des motifs',
+                    'data': statistics['motifs']['sorted'][:10]  # Top 10
+                }
+
+            # Prepare processing times metrics
+            if statistics['processing_times'].get('count', 0) > 0:
+                dashboard_data['key_metrics']['processing_times'] = {
+                    'average': round(statistics['processing_times']['average'], 2),
+                    'median': round(statistics['processing_times']['median'], 2),
+                    'total_processed': statistics['processing_times']['count']
+                }
+
+            # Prepare collaborateurs table
+            if statistics['collaborateurs']:
+                collab_data = []
+                for collab, data in statistics['collaborateurs'].items():
+                    collab_data.append({
+                        'collaborateur': collab,
+                        'count': data['count'],
+                        'percentage': round((data['count'] / statistics['data_summary']['total_records']) * 100, 1)
+                    })
+                dashboard_data['tables']['collaborateurs'] = sorted(collab_data, key=lambda x: x['count'], reverse=True)
+
+            # Prepare communes table
+            if statistics['communes']:
+                commune_data = []
+                for commune, data in statistics['communes'].items():
+                    commune_data.append({
+                        'commune': commune,
+                        'count': data['count'],
+                        'percentage': round((data['count'] / statistics['data_summary']['total_records']) * 100, 1)
+                    })
+                dashboard_data['tables']['communes'] = sorted(commune_data, key=lambda x: x['count'], reverse=True)
+
+            # Prepare daily chart data
+            if statistics['daily_stats']:
+                daily_data = []
+                for date_str, data in sorted(statistics['daily_stats'].items()):
+                    daily_data.append((date_str, data['count']))
+                dashboard_data['charts']['daily'] = {
+                    'type': 'line',
+                    'title': 'Évolution quotidienne',
+                    'data': daily_data
+                }
+
+            return dashboard_data
+
+        except Exception as e:
+            self.logger.error(f"Error preparing dashboard data: {e}")
+            return {}
+
+    def _update_statistics_display_with_filtered_data(self):
+        """Update the statistics display with filtered data."""
+        try:
+            if not hasattr(self, 'filtered_statistics') or not self.filtered_statistics:
+                return
+
+            # Update the statistics text area if it exists
+            if hasattr(self, 'stats_text') and self.stats_text:
+                # Clear existing content
+                self.stats_text.delete(1.0, tk.END)
+
+                # Add filtered statistics summary
+                stats = self.filtered_statistics
+                summary_text = f"""📊 STATISTIQUES FILTRÉES
+{'='*50}
+
+📅 Période: {stats['period']['start_date']} à {stats['period']['end_date']}
+📈 Durée: {stats['period']['total_days']} jour(s)
+📋 Total enregistrements: {stats['data_summary']['total_records']}
+📁 Fichiers stats: {stats['data_summary']['stats_files']}
+
+🎯 MOTIFS LES PLUS FRÉQUENTS:
+"""
+
+                # Add top motifs
+                if stats['motifs'].get('sorted'):
+                    for i, (motif, count) in enumerate(stats['motifs']['sorted'][:5], 1):
+                        percentage = round((count / stats['data_summary']['total_records']) * 100, 1)
+                        summary_text += f"{i}. {motif}: {count} ({percentage}%)\n"
+
+                # Add processing times if available
+                if stats['processing_times'].get('count', 0) > 0:
+                    pt = stats['processing_times']
+                    summary_text += f"""
+⏱️ TEMPS DE TRAITEMENT:
+   • Moyenne: {pt['average']:.2f}
+   • Médiane: {pt['median']:.2f}
+   • Min/Max: {pt['min']:.2f} / {pt['max']:.2f}
+"""
+
+                # Add collaborateurs summary
+                if stats['collaborateurs']:
+                    summary_text += f"\n👥 COLLABORATEURS ({len(stats['collaborateurs'])}):\n"
+                    sorted_collabs = sorted(stats['collaborateurs'].items(), key=lambda x: x[1]['count'], reverse=True)
+                    for collab, data in sorted_collabs[:5]:
+                        percentage = round((data['count'] / stats['data_summary']['total_records']) * 100, 1)
+                        summary_text += f"   • {collab}: {data['count']} ({percentage}%)\n"
+
+                # Add communes summary
+                if stats['communes']:
+                    summary_text += f"\n🏘️ COMMUNES ({len(stats['communes'])}):\n"
+                    sorted_communes = sorted(stats['communes'].items(), key=lambda x: x[1]['count'], reverse=True)
+                    for commune, data in sorted_communes[:5]:
+                        percentage = round((data['count'] / stats['data_summary']['total_records']) * 100, 1)
+                        summary_text += f"   • {commune}: {data['count']} ({percentage}%)\n"
+
+                # Insert the text
+                self.stats_text.insert(1.0, summary_text)
+
+            self.logger.info("Statistics display updated with filtered data")
+
+        except Exception as e:
+            self.logger.error(f"Error updating statistics display: {e}")
+
+
+
+
+
+
+
+
 
     def _create_archive_zip(self, treated_communes: list) -> str:
         """Create ZIP archive with complete folders of treated communes."""
