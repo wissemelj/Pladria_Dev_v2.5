@@ -16,10 +16,20 @@ import threading
 from config.constants import TeamsConfig
 
 # Import des utilitaires Pladria
-from config.constants import COLORS, AppInfo, TeamsConfig, UIConfig
+from config.constants import COLORS, AppInfo, TeamsConfig, UIConfig, AccessControl
 from utils.logging_config import setup_logging
 from utils.lazy_imports import get_pandas
 from ui.styles import create_sofrecom_card
+
+# Import password dialog with error handling
+try:
+    from ui.components.password_dialog import show_password_dialog
+except ImportError as e:
+    # Fallback function
+    def show_password_dialog(parent, title="", message=""):
+        from tkinter import simpledialog
+        password = simpledialog.askstring(title, message, show='*')
+        return password is not None, password or ""
 
 # Imports pour la génération de rapports Excel
 try:
@@ -80,6 +90,7 @@ class QualityControlModule:
         self.viewer_tree = None
         self.viewer_filters = {}
         self.viewer_status_label = None
+        self.viewer_access_granted = False  # Flag pour l'accès au visualiseur
 
         # Indicateurs de statut
         self.files_status = None
@@ -134,7 +145,7 @@ class QualityControlModule:
             # Configurer l'onglet analyse
             self._setup_analysis_tab()
 
-            # Configurer l'onglet visualiseur
+            # Configurer l'onglet visualiseur avec protection par mot de passe
             self._setup_viewer_tab()
 
             self.logger.info("Interface utilisateur créée avec onglets")
@@ -144,8 +155,163 @@ class QualityControlModule:
             messagebox.showerror("Erreur", f"Erreur lors de la création de l'interface:\n{e}")
 
     def _setup_viewer_tab(self):
-        """Configure l'onglet visualiseur de contrôle qualité."""
+        """Configure l'onglet visualiseur de contrôle qualité avec protection par mot de passe."""
         try:
+            # Créer l'interface de protection par mot de passe par défaut
+            self._create_viewer_access_ui()
+
+            self.logger.info("Onglet visualiseur configuré avec protection par mot de passe")
+
+        except Exception as e:
+            self.logger.error(f"Erreur configuration onglet visualiseur: {e}")
+
+    def _create_viewer_access_ui(self):
+        """Crée l'interface d'accès protégé pour le visualiseur."""
+        # Clear any existing content
+        for widget in self.viewer_tab.winfo_children():
+            widget.destroy()
+
+        # Main container with modern layout
+        main_frame = tk.Frame(self.viewer_tab, bg=COLORS['BG'])
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=40, pady=40)
+
+        # Center container with modern card design
+        center_container = tk.Frame(main_frame, bg=COLORS['BG'])
+        center_container.pack(expand=True)
+
+        # Modern card with shadow effect
+        card_frame = tk.Frame(center_container, bg=COLORS['CARD'], relief=tk.FLAT, bd=0)
+        card_frame.pack(padx=20, pady=20)
+
+        # Add subtle shadow effect
+        shadow_frame = tk.Frame(center_container, bg=COLORS['BORDER'], height=2)
+        shadow_frame.pack(fill=tk.X, padx=22, pady=(0, 2))
+
+        # Content frame with padding
+        content_frame = tk.Frame(card_frame, bg=COLORS['CARD'])
+        content_frame.pack(padx=40, pady=30)
+
+        # Icon and title section
+        title_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        title_frame.pack(fill=tk.X, pady=(0, 20))
+
+        # Security icon
+        icon_label = tk.Label(
+            title_frame,
+            text="🔐",
+            font=("Segoe UI", 32),
+            bg=COLORS['CARD'],
+            fg=COLORS['PRIMARY']
+        )
+        icon_label.pack()
+
+        # Title
+        title_label = tk.Label(
+            title_frame,
+            text="Accès Visualiseur Contrôle Qualité",
+            font=UIConfig.FONT_HEADER,
+            fg=COLORS['PRIMARY'],
+            bg=COLORS['CARD']
+        )
+        title_label.pack(pady=(10, 0))
+
+        # Subtitle
+        subtitle_label = tk.Label(
+            title_frame,
+            text="Accès protégé par authentification",
+            font=UIConfig.FONT_SUBTITLE,
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['CARD']
+        )
+        subtitle_label.pack(pady=(5, 0))
+
+        # Message section
+        message_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        message_frame.pack(fill=tk.X, pady=(0, 25))
+
+        message_label = tk.Label(
+            message_frame,
+            text="Le visualiseur contient des données sensibles de contrôle qualité.\nVeuillez vous authentifier pour accéder aux fonctionnalités.",
+            font=UIConfig.FONT_SUBTITLE,
+            fg=COLORS['INFO'],
+            bg=COLORS['CARD'],
+            wraplength=450,
+            justify=tk.CENTER
+        )
+        message_label.pack()
+
+        # Action buttons
+        buttons_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        buttons_frame.pack(fill=tk.X, pady=(0, 10))
+
+        # Access button - primary action
+        access_button = tk.Button(
+            buttons_frame,
+            text="🔑 Accéder au Visualiseur",
+            font=UIConfig.FONT_BUTTON,
+            bg=COLORS['PRIMARY'],
+            fg=COLORS['WHITE'],
+            relief=tk.FLAT,
+            bd=0,
+            padx=25,
+            pady=12,
+            command=self._request_viewer_access,
+            cursor='hand2'
+        )
+        access_button.pack(side=tk.RIGHT, padx=(10, 0))
+
+        # Add hover effects
+        def on_access_enter(e):
+            access_button.config(bg=COLORS['PRIMARY_DARK'])
+
+        def on_access_leave(e):
+            access_button.config(bg=COLORS['PRIMARY'])
+
+        access_button.bind('<Enter>', on_access_enter)
+        access_button.bind('<Leave>', on_access_leave)
+
+    def _request_viewer_access(self):
+        """Demande l'authentification pour accéder au visualiseur."""
+        try:
+            self.logger.info("Demande d'accès au visualiseur")
+
+            # Show password dialog
+            success, password = show_password_dialog(
+                self.parent,
+                title="🔐 Accès Visualiseur Contrôle Qualité",
+                message="Ce visualiseur est protégé par mot de passe.\nVeuillez saisir le mot de passe pour continuer :"
+            )
+
+            if not success:
+                self.logger.info("Authentification annulée par l'utilisateur")
+                return
+
+            # Verify password using the same system as statistics module
+            if AccessControl.verify_stats_password(password):
+                self.logger.info("Authentification réussie pour le visualiseur")
+                self.viewer_access_granted = True
+                self._create_viewer_interface()
+            else:
+                self.logger.warning("Tentative d'authentification échouée pour le visualiseur")
+                messagebox.showerror(
+                    "Accès Refusé",
+                    "Accès refusé - mot de passe invalide"
+                )
+
+        except Exception as e:
+            self.logger.error(f"Erreur lors de l'authentification du visualiseur: {e}")
+            messagebox.showerror(
+                "Erreur",
+                f"Erreur lors de l'authentification:\n{e}"
+            )
+
+    def _create_viewer_interface(self):
+        """Crée l'interface complète du visualiseur après authentification réussie."""
+        try:
+            # Clear the access UI
+            for widget in self.viewer_tab.winfo_children():
+                widget.destroy()
+
             # Layout en grille
             self.viewer_tab.grid_rowconfigure(0, weight=0)  # Header
             self.viewer_tab.grid_rowconfigure(1, weight=0)  # Filtres
@@ -166,12 +332,13 @@ class QualityControlModule:
             self._create_viewer_status()
 
             # Charger les données initiales avec un délai pour s'assurer que l'interface est prête
-            self.viewer_tab.after(500, self._load_viewer_data)  # Augmenter le délai
+            self.viewer_tab.after(500, self._load_viewer_data)
 
-            self.logger.info("Onglet visualiseur configuré")
+            self.logger.info("Interface du visualiseur créée avec succès")
 
         except Exception as e:
-            self.logger.error(f"Erreur configuration onglet visualiseur: {e}")
+            self.logger.error(f"Erreur création interface visualiseur: {e}")
+            messagebox.showerror("Erreur", f"Erreur lors de la création de l'interface:\n{e}")
 
     def _create_viewer_header(self):
         """Crée l'en-tête du visualiseur."""
@@ -362,6 +529,11 @@ class QualityControlModule:
     def _load_viewer_data(self):
         """Charge les données du visualiseur depuis l'arborescence Teams."""
         try:
+            # Vérifier l'accès au visualiseur
+            if not self.viewer_access_granted:
+                self.logger.warning("Tentative de chargement des données sans accès autorisé")
+                return
+
             # Vérifier que l'interface existe
             if not hasattr(self, 'viewer_tree') or not self.viewer_tree:
                 self._update_viewer_status("❌ Interface non initialisée")
@@ -662,6 +834,10 @@ class QualityControlModule:
     def _apply_viewer_filters(self):
         """Applique les filtres au tableau du visualiseur."""
         try:
+            # Vérifier l'accès au visualiseur
+            if not self.viewer_access_granted:
+                return
+
             if not self.viewer_data:
                 return
 
@@ -710,11 +886,18 @@ class QualityControlModule:
 
     def _refresh_viewer_data(self):
         """Actualise les données du visualiseur."""
+        # Vérifier l'accès au visualiseur
+        if not self.viewer_access_granted:
+            return
         self._load_viewer_data()
 
     def _on_viewer_double_click(self, event):
         """Gère le double-clic sur une ligne du tableau pour ouvrir le fichier."""
         try:
+            # Vérifier l'accès au visualiseur
+            if not self.viewer_access_granted:
+                return
+
             selection = self.viewer_tree.selection()
             if not selection:
                 return
@@ -2345,10 +2528,9 @@ class QualityControlModule:
     
     def _run_quality_analysis(self):
         """Lance l'analyse de contrôle qualité."""
-        # Vérifier le mode sélectionné
-        if self.is_autoevaluation_mode():
-            if not self._handle_future_functionality("Analyse Autoévaluation"):
-                return
+        # Log du mode utilisé
+        mode = "Autoévaluation" if self.is_autoevaluation_mode() else "Contrôle Qualité"
+        self.logger.info(f"Lancement analyse en mode: {mode}")
 
         if not self._check_analysis_ready():
             messagebox.showwarning("Attention", "Veuillez charger tous les fichiers requis avant de lancer l'analyse.")
@@ -3258,7 +3440,9 @@ class QualityControlModule:
 
     def _get_teams_save_path(self, commune: str, id_tache: str, insee: str, collaborateur: str, filename: str) -> str:
         """
-        Génère le chemin de sauvegarde Teams pour le contrôle qualité.
+        Génère le chemin de sauvegarde pour le contrôle qualité.
+        - Mode Autoévaluation: Sauvegarde locale
+        - Mode Contrôle Qualité: Sauvegarde Teams
 
         Args:
             commune: Nom de la commune
@@ -3274,7 +3458,13 @@ class QualityControlModule:
             import os
             from utils.file_utils import create_quality_control_folder, get_quality_control_file_path
             from config.constants import TeamsConfig
+            from tkinter import filedialog
 
+            # Mode Autoévaluation: Sauvegarde locale
+            if self.is_autoevaluation_mode():
+                return self._get_local_save_path(commune, id_tache, insee, collaborateur, filename)
+
+            # Mode Contrôle Qualité: Sauvegarde Teams
             # Vérifier que Teams est accessible
             quality_control_base = TeamsConfig.get_quality_control_teams_path()
             if not os.path.exists(quality_control_base):
@@ -3321,15 +3511,68 @@ class QualityControlModule:
             messagebox.showerror("Erreur", f"Erreur lors de la préparation de la sauvegarde:\n{e}")
             return None
 
+    def _get_local_save_path(self, commune: str, id_tache: str, insee: str, collaborateur: str, filename: str) -> str:
+        """
+        Génère le chemin de sauvegarde locale pour le mode autoévaluation.
+
+        Args:
+            commune: Nom de la commune
+            id_tache: ID de la tâche
+            insee: Code INSEE
+            collaborateur: Nom du collaborateur
+            filename: Nom du fichier
+
+        Returns:
+            Chemin complet du fichier ou None si annulé
+        """
+        try:
+            from tkinter import filedialog
+            import os
+
+            # Nom de fichier suggéré
+            commune_folder = f"{commune}_{id_tache}_{insee}"
+            suggested_filename = f"QC_Autoevaluation_{commune_folder}_{filename}"
+
+            # Demander à l'utilisateur où sauvegarder
+            file_path = filedialog.asksaveasfilename(
+                title="Sauvegarder le rapport d'autoévaluation",
+                defaultextension=".xlsx",
+                filetypes=[("Fichiers Excel", "*.xlsx"), ("Tous les fichiers", "*.*")]
+            )
+
+            if file_path:
+                # Afficher confirmation à l'utilisateur
+                message = (f"Le fichier sera sauvegardé localement :\n\n"
+                          f"📁 Mode: Autoévaluation (Local)\n"
+                          f"👤 Collaborateur: {collaborateur}\n"
+                          f"🏘️ Commune: {commune_folder}\n"
+                          f"📄 Fichier: {os.path.basename(file_path)}\n"
+                          f"📂 Dossier: {os.path.dirname(file_path)}\n\n"
+                          f"Continuer ?")
+
+                if messagebox.askyesno("Sauvegarde Locale", message, icon='question'):
+                    self.logger.info(f"Sauvegarde locale confirmée: {file_path}")
+                    return file_path
+                else:
+                    self.logger.info("Sauvegarde locale annulée par l'utilisateur")
+                    return None
+            else:
+                self.logger.info("Aucun fichier sélectionné pour la sauvegarde locale")
+                return None
+
+        except Exception as e:
+            self.logger.error(f"Erreur génération chemin local: {e}")
+            messagebox.showerror("Erreur", f"Erreur lors de la sélection du fichier:\n{e}")
+            return None
+
     def _generate_excel_report(self, file_path: str) -> bool:
         """Génère le rapport Excel avec 2 feuilles."""
         try:
-            # Vérifier le mode sélectionné
-            if self.is_autoevaluation_mode():
-                if not self._handle_future_functionality("Génération Rapport Autoévaluation"):
-                    return False
-
             self.logger.info(f"Début génération rapport Excel: {file_path}")
+
+            # Log du mode utilisé
+            mode = "Autoévaluation (Local)" if self.is_autoevaluation_mode() else "Contrôle Qualité (Teams)"
+            self.logger.info(f"Mode de sauvegarde: {mode}")
 
             # Vérifier que les résultats QC existent
             if not self.qc_results:
@@ -6411,8 +6654,7 @@ class QualityControlModule:
                 command=lambda: self._select_mode("Autoévaluation", "📊")
             )
 
-            # Tooltip informatif
-            self._create_mode_tooltip()
+            # Tooltip supprimé pour éviter les popups
 
             self.logger.info("Bouton de sélection de mode créé avec succès")
 
@@ -6425,84 +6667,20 @@ class QualityControlModule:
             self.selected_mode.set(mode)
             self.mode_button.config(text=f"{icon} {mode}")
 
-            # Feedback visuel
+            # Feedback visuel uniquement sur le bouton
             if mode == "Autoévaluation":
                 self.mode_button.config(bg=COLORS['INFO'])
-                mode_description = "Mode Autoévaluation sélectionné (fonctionnalité future)"
             else:
                 self.mode_button.config(bg=COLORS['PRIMARY'])
-                mode_description = "Mode Contrôle Qualité sélectionné (actuel)"
-
-            # Afficher un message informatif
-            if hasattr(self, 'status_label') and self.status_label:
-                original_text = self.status_label.cget('text')
-                self.status_label.config(text=mode_description, fg=COLORS['INFO'])
-
-                # Restaurer le texte original après 3 secondes
-                self.parent.after(3000, lambda: self._restore_status_text(original_text))
 
             self.logger.info(f"Mode sélectionné: {mode}")
 
         except Exception as e:
             self.logger.warning(f"Erreur sélection mode: {e}")
 
-    def _restore_status_text(self, original_text: str):
-        """Restaure le texte de statut original."""
-        try:
-            if hasattr(self, 'status_label') and self.status_label:
-                self.status_label.config(text=original_text, fg=COLORS['TEXT_SECONDARY'])
-        except Exception as e:
-            self.logger.warning(f"Erreur restauration statut: {e}")
 
-    def _create_mode_tooltip(self):
-        """Crée un tooltip informatif pour le bouton de mode."""
-        try:
-            def show_tooltip(event):
-                tooltip_text = (
-                    "Sélection du mode d'analyse:\n\n"
-                    "🔍 Contrôle Qualité:\n"
-                    "   • Mode actuel et fonctionnel\n"
-                    "   • Analyse complète des 5 critères\n"
-                    "   • Génération de rapports Excel\n\n"
-                    "📊 Autoévaluation:\n"
-                    "   • Fonctionnalité future\n"
-                    "   • Auto-analyse des données\n"
-                    "   • Suggestions d'amélioration"
-                )
 
-                # Créer une fenêtre tooltip simple
-                tooltip = tk.Toplevel()
-                tooltip.wm_overrideredirect(True)
-                tooltip.wm_geometry(f"+{event.x_root+10}+{event.y_root+10}")
-                tooltip.configure(bg='#FFFFDD')
 
-                label = tk.Label(
-                    tooltip,
-                    text=tooltip_text,
-                    font=("Segoe UI", 8),
-                    bg='#FFFFDD',
-                    fg='black',
-                    justify=tk.LEFT,
-                    padx=8,
-                    pady=6
-                )
-                label.pack()
-
-                # Supprimer le tooltip après 5 secondes
-                tooltip.after(5000, tooltip.destroy)
-
-                # Supprimer le tooltip si on clique ailleurs
-                def hide_tooltip(event):
-                    tooltip.destroy()
-
-                tooltip.bind("<Button-1>", hide_tooltip)
-                tooltip.bind("<FocusOut>", hide_tooltip)
-
-            # Lier l'événement hover au bouton
-            self.mode_button.bind("<Enter>", show_tooltip)
-
-        except Exception as e:
-            self.logger.warning(f"Erreur création tooltip: {e}")
 
     def get_selected_mode(self) -> str:
         """Retourne le mode actuellement sélectionné."""

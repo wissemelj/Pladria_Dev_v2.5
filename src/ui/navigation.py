@@ -224,11 +224,17 @@ class NavigationManager:
 
             # Clear content frame completely
             self.logger.debug("Clearing content frame...")
-            for widget in self.content_frame.winfo_children():
-                widget.destroy()
-
-            # Force update to ensure clearing is complete
-            self.content_frame.update()
+            try:
+                if hasattr(self, 'content_frame') and self.content_frame and self.content_frame.winfo_exists():
+                    for widget in self.content_frame.winfo_children():
+                        if widget.winfo_exists():
+                            widget.destroy()
+                    # Force update to ensure clearing is complete
+                    self.content_frame.update()
+            except tk.TclError as e:
+                self.logger.warning(f"Erreur lors du nettoyage (widgets détruits): {e}")
+            except Exception as e:
+                self.logger.error(f"Erreur inattendue lors du nettoyage: {e}")
 
             # Update breadcrumbs
             self._update_breadcrumbs()
@@ -256,8 +262,15 @@ class NavigationManager:
             self.logger.error(f"Full traceback: {traceback.format_exc()}")
 
             # Clear any partial content
-            for widget in self.content_frame.winfo_children():
-                widget.destroy()
+            try:
+                if hasattr(self, 'content_frame') and self.content_frame and self.content_frame.winfo_exists():
+                    for widget in self.content_frame.winfo_children():
+                        if widget.winfo_exists():
+                            widget.destroy()
+            except tk.TclError as e:
+                self.logger.warning(f"Erreur lors du nettoyage d'erreur (widgets détruits): {e}")
+            except Exception as e:
+                self.logger.error(f"Erreur inattendue lors du nettoyage d'erreur: {e}")
 
             # Show error and fallback to home
             self._show_detailed_error_message("Erreur de navigation", str(e))
@@ -304,16 +317,32 @@ class NavigationManager:
             self.logger.error(f"Full traceback: {traceback.format_exc()}")
 
             # Clear any partial content
-            for widget in self.content_frame.winfo_children():
-                widget.destroy()
+            try:
+                if hasattr(self, 'content_frame') and self.content_frame and self.content_frame.winfo_exists():
+                    for widget in self.content_frame.winfo_children():
+                        if widget.winfo_exists():
+                            widget.destroy()
+            except tk.TclError as e:
+                self.logger.warning(f"Erreur lors du nettoyage de module (widgets détruits): {e}")
+            except Exception as e:
+                self.logger.error(f"Erreur inattendue lors du nettoyage de module: {e}")
 
             # Show detailed error message
             self._show_detailed_error_message(f"Erreur lors du chargement du module {module_info['title']}", str(e))
     
     def _update_breadcrumbs(self):
         """Update the breadcrumb display."""
-        breadcrumb_text = self._get_breadcrumb_text()
-        self.breadcrumb_label.config(text=breadcrumb_text)
+        try:
+            # Vérifier que le widget existe encore
+            if hasattr(self, 'breadcrumb_label') and self.breadcrumb_label and self.breadcrumb_label.winfo_exists():
+                breadcrumb_text = self._get_breadcrumb_text()
+                self.breadcrumb_label.config(text=breadcrumb_text)
+            else:
+                self.logger.warning("Breadcrumb label n'existe plus, ignoré")
+        except tk.TclError as e:
+            self.logger.warning(f"Erreur mise à jour breadcrumbs (widget détruit): {e}")
+        except Exception as e:
+            self.logger.error(f"Erreur inattendue mise à jour breadcrumbs: {e}")
 
         # Back button removed - no longer needed
     

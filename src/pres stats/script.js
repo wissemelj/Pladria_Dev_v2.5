@@ -1,4 +1,16 @@
 
+// Pladria Statistics Updated: 2025-07-24 14:00:15
+// Period: 2025-05-01 to 2025-07-24
+// Total Records: 0
+
+// Pladria Statistics Updated: 2025-07-23 23:59:05
+// Period: 2025-07-02 to 2025-07-23
+// Total Records: 0
+
+// Pladria Statistics Updated: 2025-07-23 23:30:46
+// Period: 2025-07-01 to 2025-07-16
+// Total Records: 0
+
 // Pladria Statistics Updated: 2025-07-23 15:26:52
 // Period: 2025-05-01 to 2025-07-23
 // Total Records: 0
@@ -710,3 +722,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize detailed billing calculator
     detailedBillingCalculator = new DetailedBillingCalculator();
 });
+
+// Update detailed facturation data with real values
+if (typeof detailedBillingCalculator !== 'undefined' && detailedBillingCalculator) {
+    detailedBillingCalculator.updateWithRealData([6029, 2374, 1082, 942, 584, 207, 143, 23, 17, 16], [806, 17, 71], [11, 49], [45]);
+}
+
+// Update detailed facturation data with real values
+if (typeof detailedBillingCalculator !== 'undefined' && detailedBillingCalculator) {
+    detailedBillingCalculator.updateWithRealData([7987, 2971, 1297, 1144, 619, 240, 175, 23, 18, 16], [956, 10, 60], [11, 59], [55]);
+}
+
+// Update detailed facturation data with real values
+if (typeof detailedBillingCalculator !== 'undefined' && detailedBillingCalculator) {
+    detailedBillingCalculator.updateWithRealData([13247, 4862, 2388, 1740, 893, 498, 285, 39, 45, 34], [1573, 24, 124], [16, 83], [98]);
+}

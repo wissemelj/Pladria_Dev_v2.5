@@ -11669,3 +11669,1166 @@
 2025-07-23 17:03:32 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
 2025-07-23 17:03:51 - __main__ - INFO - start_main_application:88 - Application closed normally
 2025-07-23 17:06:26 - main - INFO - start_main_application:88 - Application closed normally
+2025-07-23 23:29:25 - root - INFO - setup_logging:73 - Logging to file: logs\suivi_generator_20250723.log
+2025-07-23 23:29:25 - root - INFO - setup_logging:79 - ==================================================
+2025-07-23 23:29:25 - root - INFO - setup_logging:80 - Suivi Generator Application Started
+2025-07-23 23:29:25 - root - INFO - setup_logging:81 - Log level: INFO
+2025-07-23 23:29:25 - root - INFO - setup_logging:82 - File logging: Enabled
+2025-07-23 23:29:25 - root - INFO - setup_logging:83 - ==================================================
+2025-07-23 23:29:28 - ui.modules.team_stats_module - INFO - <module>:38 - Successfully imported password_dialog
+2025-07-23 23:29:35 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-23 23:29:35 - ui.main_window - INFO - _setup_window:81 - Window maximized using 'zoomed' state
+2025-07-23 23:29:35 - ui.styles - INFO - setup_styles:42 - UI styles configured successfully
+2025-07-23 23:29:35 - ui.main_window - INFO - _setup_window:106 - Main window configured
+2025-07-23 23:29:35 - ui.main_window - INFO - _setup_responsive_fonts:195 - Responsive fonts configured
+2025-07-23 23:29:35 - ui.navigation - WARNING - _setup_navigation_bar:108 - Sofrecom logo not found at: C:\Users\wzaouga\Desktop\pladria git\logo_Sofrecom.png
+2025-07-23 23:29:36 - ui.navigation - INFO - register_module:195 - Registered module: Générateur Suivi (suivi_generator)
+2025-07-23 23:29:36 - ui.navigation - INFO - register_module:195 - Registered module: Suivi Global Tickets (suivi_global)
+2025-07-23 23:29:36 - ui.navigation - INFO - register_module:195 - Registered module: Statistiques Équipe (team_stats)
+2025-07-23 23:29:36 - ui.navigation - INFO - register_module:195 - Registered module: Visualiseur de Données (data_viewer)
+2025-07-23 23:29:36 - ui.navigation - INFO - register_module:195 - Registered module: Contrôle Qualité (quality_control)
+2025-07-23 23:29:36 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-23 23:29:36 - ui.main_window - WARNING - _set_window_icon:319 - All icon methods failed, using text fallback
+2025-07-23 23:29:36 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-23 23:29:36 - ui.main_window - INFO - _setup_navigation:163 - Navigation system initialized
+2025-07-23 23:29:36 - ui.main_window - INFO - run:371 - Starting application main loop
+2025-07-23 23:29:36 - ui.main_window - INFO - _post_init:181 - Window state after initialization: zoomed
+2025-07-23 23:29:36 - ui.main_window - INFO - _post_init:189 - Main window initialization complete
+2025-07-23 23:29:38 - ui.home_screen - INFO - _open_quality_control:423 - User clicked Quality Control button
+2025-07-23 23:29:38 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: quality_control
+2025-07-23 23:29:38 - ui.navigation - INFO - _load_module:274 - Loading module: quality_control (Contrôle Qualité)
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _create_mode_selection_button:6417 - Bouton de sélection de mode créé avec succès
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _setup_analysis_tab:859 - Interface utilisateur modernisée créée avec succès
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _setup_viewer_tab:171 - Onglet visualiseur configuré
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - setup_ui:140 - Interface utilisateur créée avec onglets
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - __init__:107 - Module Contrôle Qualité initialisé
+2025-07-23 23:29:38 - ui.navigation - INFO - _load_module:299 - Module quality_control created and loaded successfully
+2025-07-23 23:29:38 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: quality_control
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:415 - 🔍 Début scan - Chemin base: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:426 - 📁 Contenu dossier base: ['desktop.ini', 'ELJ Wissem', 'OUESLATI Mohamed Amine', 'ZZZ_Suivi_Controle_Qualité']
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: desktop.ini
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:442 - ⚠️ Ignoré (pas un dossier): desktop.ini
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: ELJ Wissem
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu ELJ Wissem: ['BOIS BERNARD_2835991_62148', 'BOREY_2815290_70077']
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: BOIS BERNARD_2835991_62148
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu BOIS BERNARD_2835991_62148: ['Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx']
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx
+2025-07-23 23:29:38 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\ELJ Wissem\BOIS BERNARD_2835991_62148\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx
+2025-07-23 23:29:40 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOIS BERNARD_2835991_62148\\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx'}
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: BOREY_2815290_70077
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu BOREY_2815290_70077: ['Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx']
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\ELJ Wissem\BOREY_2815290_70077\Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx
+2025-07-23 23:29:40 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOREY_2815290_70077\\Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx'}
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: OUESLATI Mohamed Amine
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu OUESLATI Mohamed Amine: ['AWOINGT_2815123_59039']
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: AWOINGT_2815123_59039
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu AWOINGT_2815123_59039: ['Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx']
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\OUESLATI Mohamed Amine\AWOINGT_2815123_59039\Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx
+2025-07-23 23:29:40 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\OUESLATI Mohamed Amine\\AWOINGT_2815123_59039\\Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx'}
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: ZZZ_Suivi_Controle_Qualité
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu ZZZ_Suivi_Controle_Qualité: ['Suivi Controle Qualité.xlsx']
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: Suivi Controle Qualité.xlsx
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:456 - ⚠️ Ignoré (pas un dossier): Suivi Controle Qualité.xlsx
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:482 - 🎯 Scan terminé: 3 fichiers trouvés
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _load_viewer_data:387 - 📝 Première entrée de données:
+2025-07-23 23:29:40 - ui.modules.quality_control_module - INFO - _load_viewer_data:388 -    {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOIS BERNARD_2835991_62148\\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx'}
+2025-07-23 23:29:40 - ui.modules.quality_control_module - ERROR - _generate_tracking_report:7208 - Erreur génération rapport Excel: [WinError 5] Accès refusé: 'C:\\Users\\welj'
+2025-07-23 23:29:54 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-23 23:29:55 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-23 23:29:56 - ui.home_screen - INFO - _open_team_stats:396 - User clicked Team Statistics button
+2025-07-23 23:29:56 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: team_stats
+2025-07-23 23:29:56 - ui.navigation - INFO - _load_module:274 - Loading module: team_stats (Statistiques Équipe)
+2025-07-23 23:29:56 - ui.modules.team_stats_module - INFO - _verify_password_access:172 - Starting password verification process
+2025-07-23 23:29:56 - ui.modules.team_stats_module - INFO - _verify_password_access:175 - Showing password dialog
+2025-07-23 23:29:56 - ui.components.password_dialog - INFO - show:42 - Creating password dialog
+2025-07-23 23:29:56 - ui.components.password_dialog - INFO - show:45 - Centering password dialog
+2025-07-23 23:29:56 - ui.components.password_dialog - INFO - show:49 - Making dialog modal
+2025-07-23 23:29:56 - ui.components.password_dialog - INFO - show:54 - Waiting for dialog to close
+2025-07-23 23:30:10 - ui.components.password_dialog - INFO - show:57 - Dialog closed with result: True, password length: 16
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _verify_password_access:182 - Password dialog result: success=True, password_length=16
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _verify_password_access:189 - Verifying password with AccessControl
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _verify_password_access:191 - Password verification successful
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - __init__:85 - Core components initialized
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _create_archive_section:834 - Creating archive section...
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _create_archive_section:924 - Archive section created successfully
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _create_period_filtering_in_export:1562 - Period filtering controls integrated into export section
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _create_export_buttons:1688 - Export buttons and filters created successfully
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _create_module_ui:493 - Module UI created successfully
+2025-07-23 23:30:10 - ui.navigation - INFO - _load_module:299 - Module team_stats created and loaded successfully
+2025-07-23 23:30:10 - ui.keyboard_shortcuts - INFO - _setup_default_shortcuts:47 - Default keyboard shortcuts registered
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _initialize_optional_features:433 - Optional features initialized successfully
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _auto_load_data:441 - Auto-loading data...
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _load_global_data:1775 - Loaded sheet 'Suivi Tickets' with 134 rows
+2025-07-23 23:30:10 - ui.modules.team_stats_module - INFO - _load_global_data:1775 - Loaded sheet 'Traitement CMS Adr' with 2331 rows
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _load_global_data:1775 - Loaded sheet 'Traitement PA' with 25334 rows
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2887 - Available columns in Suivi Tickets: ['Nom Commune', 'ID tâche Plan Adressage', 'Code INSEE', 'Domaine', 'Type de Commune', 'Type de base', 'Nbr des voies CM', 'Nbr des IMB PA', "Date d'affectation", 'Temps préparation QGis', 'Durée Totale CM', 'Duréé Totale PA', 'Traitement Optimum', 'Durée Finale', 'Date Livraison', 'Etat Ticket PA ', 'ID Tache 501/511', 'Date Dépose Ticket 501/511', 'Dépose Ticket UPR', 'ID tâche UPR', 'Collaborateur']
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2888 - DataFrame shape: (134, 21)
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2909 - Found status column: 'Etat Ticket PA ' (exists: True)
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2910 - Has 'Date Livraison' column: True
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2974 - Communes traitées ce mois: 72
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2975 - Communes autres statuts: {'En Attente': 22, 'En Cours': 11}
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for ELJ Wissem: 0 elements today (ONLY with positive duration)
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for ELJ Wissem: 0 elements today (based on column F dates)
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for OUESLATI Mohamed Amine: 55 elements today (ONLY with positive duration)
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for OUESLATI Mohamed Amine: 0 elements today (based on column F dates)
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for ZAOUGA Wissem: 0 elements today (ONLY with positive duration)
+2025-07-23 23:30:13 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for ZAOUGA Wissem: 0 elements today (based on column F dates)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for WARDI Aymen: 50 elements today (ONLY with positive duration)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for WARDI Aymen: 0 elements today (based on column F dates)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for BACHOUEL Iheb: 0 elements today (ONLY with positive duration)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for BACHOUEL Iheb: 0 elements today (based on column F dates)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for DAKHLI Shady: 0 elements today (ONLY with positive duration)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for DAKHLI Shady: 0 elements today (based on column F dates)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for ZGOLLI Iheb: 0 elements today (ONLY with positive duration)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for ZGOLLI Iheb: 0 elements today (based on column F dates)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for NOUIRA Iyed: 0 elements today (ONLY with positive duration)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for NOUIRA Iyed: 0 elements today (based on column F dates)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for BEN ALI Mariem: 0 elements today (ONLY with positive duration)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for BEN ALI Mariem: 0 elements today (based on column F dates)
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _calculate_team_kpis:2875 - Team KPIs calculated - DMT: 265.0min (from 9 collaborators with treated communes), CTJ PA Today: 105 elements, CTJ CM Today: 0 elements
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _analyze_team_statistics:2625 - Analyzed statistics for 9 collaborators
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _update_overview_display:3037 - Team statistics keys: ['total_tickets', 'total_cms_records', 'total_pa_records', 'total_duration_cms', 'total_duration_pa', 'total_duration_finale', 'collaborators', 'communes', 'communes_traitees_mois_courant', 'communes_autres_statuts', 'team_dmt', 'team_ctj_today', 'total_elements_today', 'team_ctj_cm_today']
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _update_overview_display:3038 - Communes traitées mois courant: 72
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _update_overview_display:3039 - Communes autres statuts: {'En Attente': 22, 'En Cours': 11}
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _load_global_data:1801 - Data loaded successfully, enabling export buttons...
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _enable_export_buttons:7074 - Export buttons and filters enabled successfully
+2025-07-23 23:30:14 - ui.modules.team_stats_module - INFO - _update_export_filters:7031 - Export filters updated with 10 collaborators (including 'Toute l'équipe')
+2025-07-23 23:30:15 - ui.modules.team_stats_module - INFO - _enable_date_range_functionality:1853 - Date range functionality enabled with 27799 records
+2025-07-23 23:30:16 - ui.modules.team_stats_module - INFO - _calculate_dmt_pa:2039 - DMT PA calculé: 3.66 (moyenne de 9 collaborateurs)
+2025-07-23 23:30:16 - ui.modules.team_stats_module - WARNING - _calculate_dmt_cm:2061 - CM sheet data not found for DMT calculation
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _calculate_dmt_automatically:1957 - DMT calculation completed automatically
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _enable_archive_button:1861 - Attempting to enable archive button...
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _enable_archive_button:1867 - Archive button enabled successfully
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _enable_archive_button:1877 - Counting treated communes...
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _enable_archive_button:1879 - Found 72 treated communes this month
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _enable_archive_button:1886 - Archive status updated with success message
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _load_global_data:1826 - Global data loaded and analyzed successfully
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _debug_layout:474 - Layout Debug - Canvas height: 842, Frame height: 644, Scroll region: 0 0 1127 654
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:30:22 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:30:22 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: team_stats
+2025-07-23 23:30:33 - ui.modules.team_stats_module - INFO - _show_date_from_picker:1207 - Start date selected: 2025-07-1
+2025-07-23 23:30:42 - ui.modules.team_stats_module - INFO - _show_date_to_picker:1235 - End date selected: 2025-07-16
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _generate_filtered_statistics:9002 - Generating filtered statistics from 2025-07-01 to 2025-07-16
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _filter_data_by_date_range:9146 - Filtered 0 records from 27799 total records
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _load_stats_folder_data:9226 - No stats folder found
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _load_stats_folder_data:9226 - No stats folder found
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _load_stats_folder_data:9226 - No stats folder found
+2025-07-23 23:30:44 - ui.modules.team_stats_module - ERROR - _analyze_daily_statistics:9456 - Error analyzing daily statistics: type object 'datetime.datetime' has no attribute 'timedelta'
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _compute_filtered_statistics:9278 - Computed statistics for 0 records
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _update_statistics_display_with_filtered_data:12428 - Statistics display updated with filtered data
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9566 - Starting statistics injection process...
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9572 - Filtered statistics available, analyzing pres stats folder...
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9869 - Found pres stats folder: pres stats at C:\Users\wzaouga\Desktop\pladria git\src\pres stats
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9924 - Pres stats folder analysis:
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9925 -   Total files: 3
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9926 -   HTML files: 1
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9927 -   Excel files: 0
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9928 -   Other files: 2
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9929 -   Potential index files: 1
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9933 -     index.html (20562 bytes)
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9933 -     script.js (23750 bytes)
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9933 -     styles.css (10850 bytes)
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9775 - Searching for pres stats folder in: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Suivis Global Tickets CMS Adresse_Plan Adressage
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9775 - Searching for pres stats folder in: C:\Users\wzaouga\Desktop\pladria git\src\ui
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9775 - Searching for pres stats folder in: C:\Users\wzaouga\Desktop\pladria git
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9775 - Searching for pres stats folder in: C:\Users\wzaouga\Desktop\pladria git\src
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9781 - Found pres stats folder: pres stats at C:\Users\wzaouga\Desktop\pladria git\src\pres stats
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9810 - Found stats index file: index.html
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9609 - Injecting statistics into: C:\Users\wzaouga\Desktop\pladria git\src\pres stats\index.html
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _examine_index_file_structure:9944 - Examining index file structure: C:\Users\wzaouga\Desktop\pladria git\src\pres stats\index.html
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _examine_html_structure:10009 - HTML structure analysis: 1 injection strategies available
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9614 - File structure analysis completed for html file
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9615 - Available injection strategies: ['before_body_close']
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _inject_to_html_index:10162 - Original HTML content length: 20085 characters
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _inject_to_html_index:10166 - Detected pres stats dashboard - using value update strategy
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _update_existing_dashboard_values:10352 - Updating HTML elements with filtered data...
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10388 - Updating HTML elements with dashboard data...
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10926 - Attempting to extract CM data from Suivi Global...
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11066 - Extracting CM data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11080 - Using delivery date column H: 'Date livraison'
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11086 - CM extraction: Using motif column 'Motif Voie' and date column 'Date livraison'
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11129 - CM extraction completed: 894 records processed, 3 unique motifs found
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   RIEN À FAIRE: 806
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   CRÉATION VOIE: 71
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   MODIFICATION VOIE: 17
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11936 - Mapping motifs using predefined categories...
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'RIEN À FAIRE' to category 'RAF' (pattern: 'RIEN À FAIRE')
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'RAF': 806 records
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'MODIFICATION VOIE' to category 'MODIF' (pattern: 'MODIF')
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'MODIF': 17 records
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'CRÉATION VOIE' to category 'CREA' (pattern: 'CRÉATION')
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'CREA': 71 records
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11984 - Final CM chart data: [806, 17, 71]
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11988 - CM mapping successful:
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   RAF: 806
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   MODIF: 17
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   CREA: 71
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10930 - ✅ CM data successfully mapped: [806, 17, 71]
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10931 -    Total CM records processed: 894
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10932 -    CM motif breakdown: {'RIEN À FAIRE': 806, 'CRÉATION VOIE': 71, 'MODIFICATION VOIE': 17}
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10937 - Attempting to extract Communes data from Suivi Global...
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11179 - Extracting Communes data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11190 - Communes extraction: Using commune type column 'Domaine' and delivery date column 'Date Livraison'
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11252 - Communes extraction completed: 60 records processed
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11253 -   Orange: 56
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11254 -   RIP: 4
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10941 - ✅ Communes data successfully mapped: [56, 4]
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10942 -    Total Communes records processed: 60
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10943 -    Communes breakdown: {'Orange': 56, 'RIP': 4}
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10948 - Attempting to extract Acts data from Suivi Global...
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11297 - Extracting Acts data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:44 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11309 - Acts extraction: Using motif column 'Motif', date column 'Date traitement', duration column 'Durée'
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11386 - Acts extraction completed: 11417 records processed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11387 -   Unique motif categories found: 10
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD RAS sans temps: 6029
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD RAS avec temps: 2374
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     OK: 1082
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     NOK: 942
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD Non jointe: 584
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR RAS: 207
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD Non trouvée: 143
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     Hors commune: 23
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR NOK: 17
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR OK: 16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11398 -   Debug - Specific categories:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11399 -     NOK: 942
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11400 -     UPR NOK: 17
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11401 -     UPR OK: 16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11431 - Acts data mapped to chart order:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   1. AD RAS sans temps: 6029
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   2. AD RAS avec temps: 2374
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   3. OK: 1082
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   4. NOK: 942
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   5. AD Non jointe: 584
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   6. UPR RAS: 207
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   7. AD Non trouvée: 143
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   8. Hors commune: 23
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   9. UPR NOK: 17
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   10. UPR OK: 16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10952 - ✅ Acts data successfully mapped: 10 categories
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10953 -    Total Acts records processed: 11417
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10954 -    Acts categories: ['AD RAS sans temps', 'AD RAS avec temps', 'OK', 'NOK', 'AD Non jointe', 'UPR RAS', 'AD Non trouvée', 'Hors commune', 'UPR NOK', 'UPR OK']
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10955 -    Acts counts: [6029, 2374, 1082, 942, 584, 207, 143, 23, 17, 16]
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10960 - Attempting to extract UPR tickets data from Suivi Global...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11542 - Extracting UPR data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11553 - UPR extraction: Using motif column 'Dépose Ticket UPR', date column 'Date Livraison'
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11614 - UPR extraction completed: 60 records processed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11615 -   UPR ticket counts: {'Créé': 11, 'Non': 49}
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11629 - UPR data mapped to chart order:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11631 -   1. Créé: 11
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11631 -   2. Non: 49
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10964 - ✅ UPR data successfully mapped: 2 categories
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10965 -    Total UPR records processed: 60
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10966 -    UPR categories: ['Créé', 'Non']
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10967 -    UPR counts: [11, 49]
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10972 - Attempting to extract 501/511 tickets data from Suivi Global...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11672 - Extracting 501/511 data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11682 - 501/511 extraction: Using deposit date column 'Date Dépose Ticket 501/511'
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11728 - 501/511 extraction completed: 45 records processed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11729 -   501/511 tickets count: 45
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10976 - ✅ 501/511 data successfully mapped: 1 categories
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10977 -    Total 501/511 records processed: 45
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10978 -    501/511 categories: ['501/511 Tickets']
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10979 -    501/511 counts: [45]
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10984 - Attempting to extract RIP (P0 P1) data from Suivi Global...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - WARNING - _extract_rip_data_for_dashboard:11758 - Sheet 'Traitement RIP' not found in global_suivi_data
+2025-07-23 23:30:45 - ui.modules.team_stats_module - WARNING - _map_stats_to_dashboard_categories:10993 - ❌ No RIP data extracted - using fallback values
+2025-07-23 23:30:45 - ui.modules.team_stats_module - WARNING - _update_html_elements_with_data:10404 - Data validation warnings:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - WARNING - _update_html_elements_with_data:10406 -   • Missing data for sections: RIP (P0 P1) - these will use fallback values
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10408 - Data validation summary: {'cm': {'values': [806, 17, 71], 'total': 894, 'categories': ['RAF', 'MODIF', 'CREA']}, 'communes': {'values': [56, 4], 'total': 60, 'categories': ['Orange', 'RIP']}, 'acts': {'values': [6029, 2374, 1082, 942, 584, 207, 143, 23, 17, 16], 'total': 11417, 'categories': ['AD RAS sans temps', 'AD RAS avec temps', 'OK', 'NOK', 'AD Non jointe', 'UPR RAS', 'AD Non trouvée', 'Hors commune', 'UPR NOK', 'UPR OK'], 'num_categories': 10}, 'upr': {'values': [11, 49], 'total': 60, 'categories': ['Créé', 'Non'], 'num_categories': 2}, 'tickets_501511': {'values': [45], 'total': 45, 'categories': ['501/511 Tickets'], 'num_categories': 1}}
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10417 - Updating CM HTML elements: RAF=806, MODIF=17, CREA=71, Total=894
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10428 - ✅ CM title updated to: <h2>CM (894)</h2>
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10454 - ✅ RAF value updated to: <span class="stat-value raf">806</span>
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10459 - ✅ MODIF value updated to: <span class="stat-value modif">17</span>
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10464 - ✅ CREA value updated to: <span class="stat-value crea">71</span>
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10468 - CM HTML elements update process completed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10478 - Updating Communes HTML elements: Orange=56, RIP=4, Total=60
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10503 - ✅ Communes title updated to: <h2>Communes Livrées (60)</h2>
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10508 - ✅ Orange value updated to: <span class="stat-value orange">56</span>
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10513 - ✅ RIP value updated to: <span class="stat-value rip">4</span>
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10517 - Communes HTML elements update process completed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10528 - Updating Acts HTML elements: Total=11417, Categories=10
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated AD RAS sans temps: 6,029 (52.8%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated AD RAS avec temps: 2,374 (20.8%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated OK: 1,082 (9.5%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated NOK: 942 (8.3%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated AD Non jointe: 584 (5.1%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated UPR RAS: 207 (1.8%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated AD Non trouvée: 143 (1.3%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated Hors commune: 23 (0.2%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated UPR NOK: 17 (0.1%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated UPR OK: 16 (0.1%)
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10565 - ✅ Acts title updated to: <h2>Acts Traitement PA (11,417)</h2>
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10569 - Acts HTML elements update process completed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10580 - Updating UPR HTML elements: Créé tickets=11
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10589 -    Updated UPR Créé tickets: 11
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10593 - UPR HTML elements update process completed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10603 - Updating 501/511 HTML elements: Total tickets=45
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10611 -    Updated 501/511 tickets count: 45
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10615 - 501/511 HTML elements update process completed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - WARNING - _update_html_elements_with_data:10664 - No RIP data available for HTML element updates
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10706 - Updating Facturation section with detailed motif data...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10719 - PA (Acts) motif data for facturation:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    AD RAS sans temps: 6,029
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    AD RAS avec temps: 2,374
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    OK: 1,082
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    NOK: 942
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    AD Non jointe: 584
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    UPR RAS: 207
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    AD Non trouvée: 143
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    Hors commune: 23
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    UPR NOK: 17
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    UPR OK: 16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10734 - CM motif data for facturation:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10749 - UPR motif data for facturation:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10752 -    Créé: 11
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10752 -    Non: 49
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10763 - 501/511 tickets data for facturation:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10765 -    Tickets 501/511: 45
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10783 - Facturation detailed data prepared:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10784 -    PA motifs=10, CM motifs=3
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10785 -    UPR motifs=2, 501/511 motifs=1
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10786 -    Total PA: 11,417, Total CM: 894
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_facturation_data:10787 -    Total UPR: 60, Total 501/511: 45
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _update_script_js_values:10824 - Mapping filtered statistics to dashboard categories...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10926 - Attempting to extract CM data from Suivi Global...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11066 - Extracting CM data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11080 - Using delivery date column H: 'Date livraison'
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11086 - CM extraction: Using motif column 'Motif Voie' and date column 'Date livraison'
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11129 - CM extraction completed: 894 records processed, 3 unique motifs found
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   RIEN À FAIRE: 806
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   CRÉATION VOIE: 71
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   MODIFICATION VOIE: 17
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11936 - Mapping motifs using predefined categories...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'RIEN À FAIRE' to category 'RAF' (pattern: 'RIEN À FAIRE')
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'RAF': 806 records
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'MODIFICATION VOIE' to category 'MODIF' (pattern: 'MODIF')
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'MODIF': 17 records
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'CRÉATION VOIE' to category 'CREA' (pattern: 'CRÉATION')
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'CREA': 71 records
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11984 - Final CM chart data: [806, 17, 71]
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11988 - CM mapping successful:
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   RAF: 806
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   MODIF: 17
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   CREA: 71
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10930 - ✅ CM data successfully mapped: [806, 17, 71]
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10931 -    Total CM records processed: 894
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10932 -    CM motif breakdown: {'RIEN À FAIRE': 806, 'CRÉATION VOIE': 71, 'MODIFICATION VOIE': 17}
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10937 - Attempting to extract Communes data from Suivi Global...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11179 - Extracting Communes data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11190 - Communes extraction: Using commune type column 'Domaine' and delivery date column 'Date Livraison'
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11252 - Communes extraction completed: 60 records processed
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11253 -   Orange: 56
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11254 -   RIP: 4
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10941 - ✅ Communes data successfully mapped: [56, 4]
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10942 -    Total Communes records processed: 60
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10943 -    Communes breakdown: {'Orange': 56, 'RIP': 4}
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10948 - Attempting to extract Acts data from Suivi Global...
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11297 - Extracting Acts data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:45 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11309 - Acts extraction: Using motif column 'Motif', date column 'Date traitement', duration column 'Durée'
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11386 - Acts extraction completed: 11417 records processed
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11387 -   Unique motif categories found: 10
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD RAS sans temps: 6029
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD RAS avec temps: 2374
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     OK: 1082
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     NOK: 942
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD Non jointe: 584
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR RAS: 207
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD Non trouvée: 143
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     Hors commune: 23
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR NOK: 17
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR OK: 16
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11398 -   Debug - Specific categories:
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11399 -     NOK: 942
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11400 -     UPR NOK: 17
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11401 -     UPR OK: 16
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11431 - Acts data mapped to chart order:
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   1. AD RAS sans temps: 6029
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   2. AD RAS avec temps: 2374
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   3. OK: 1082
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   4. NOK: 942
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   5. AD Non jointe: 584
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   6. UPR RAS: 207
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   7. AD Non trouvée: 143
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   8. Hors commune: 23
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   9. UPR NOK: 17
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   10. UPR OK: 16
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10952 - ✅ Acts data successfully mapped: 10 categories
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10953 -    Total Acts records processed: 11417
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10954 -    Acts categories: ['AD RAS sans temps', 'AD RAS avec temps', 'OK', 'NOK', 'AD Non jointe', 'UPR RAS', 'AD Non trouvée', 'Hors commune', 'UPR NOK', 'UPR OK']
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10955 -    Acts counts: [6029, 2374, 1082, 942, 584, 207, 143, 23, 17, 16]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10960 - Attempting to extract UPR tickets data from Suivi Global...
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11542 - Extracting UPR data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11553 - UPR extraction: Using motif column 'Dépose Ticket UPR', date column 'Date Livraison'
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11614 - UPR extraction completed: 60 records processed
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11615 -   UPR ticket counts: {'Créé': 11, 'Non': 49}
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11629 - UPR data mapped to chart order:
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11631 -   1. Créé: 11
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11631 -   2. Non: 49
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10964 - ✅ UPR data successfully mapped: 2 categories
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10965 -    Total UPR records processed: 60
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10966 -    UPR categories: ['Créé', 'Non']
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10967 -    UPR counts: [11, 49]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10972 - Attempting to extract 501/511 tickets data from Suivi Global...
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11672 - Extracting 501/511 data for period: 2025-07-01 to 2025-07-16
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11682 - 501/511 extraction: Using deposit date column 'Date Dépose Ticket 501/511'
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11728 - 501/511 extraction completed: 45 records processed
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11729 -   501/511 tickets count: 45
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10976 - ✅ 501/511 data successfully mapped: 1 categories
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10977 -    Total 501/511 records processed: 45
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10978 -    501/511 categories: ['501/511 Tickets']
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10979 -    501/511 counts: [45]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10984 - Attempting to extract RIP (P0 P1) data from Suivi Global...
+2025-07-23 23:30:46 - ui.modules.team_stats_module - WARNING - _extract_rip_data_for_dashboard:11758 - Sheet 'Traitement RIP' not found in global_suivi_data
+2025-07-23 23:30:46 - ui.modules.team_stats_module - WARNING - _map_stats_to_dashboard_categories:10993 - ❌ No RIP data extracted - using fallback values
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10826 - Dashboard mapping result: {'cm': {'data': [806, 17, 71], 'total_records': 894, 'motif_breakdown': {'RIEN À FAIRE': 806, 'CRÉATION VOIE': 71, 'MODIFICATION VOIE': 17}}, 'communes': {'data': [56, 4], 'total_records': 60, 'commune_breakdown': {'Orange': 56, 'RIP': 4}}, 'acts': {'data': [6029, 2374, 1082, 942, 584, 207, 143, 23, 17, 16], 'labels': ['AD RAS sans temps', 'AD RAS avec temps', 'OK', 'NOK', 'AD Non jointe', 'UPR RAS', 'AD Non trouvée', 'Hors commune', 'UPR NOK', 'UPR OK'], 'total_records': 11417, 'motif_breakdown': {'AD RAS avec temps': 2374, 'AD RAS sans temps': 6029, 'NOK': 942, 'OK': 1082, 'AD Non jointe': 584, 'UPR NOK': 17, 'UPR OK': 16, 'UPR RAS': 207, 'Hors commune': 23, 'AD Non trouvée': 143}}, 'upr': {'data': [11, 49], 'labels': ['Créé', 'Non'], 'total_records': 60, 'upr_breakdown': {'Créé': 11, 'Non': 49}}, 'tickets_501511': {'data': [45], 'labels': ['501/511 Tickets'], 'total_records': 45, 'tickets_breakdown': {'501/511 Tickets': 45}}}
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10834 - Updating communes chart data: [56, 4]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_chart_data:12018 - Updated communesCtx data: [56, 4]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10842 - Updating CM chart data: [806, 17, 71]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_chart_data:12018 - Updated cmCtx data: [806, 17, 71]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10856 - Updating acts chart data: 10 categories
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10857 -    Acts data: [6029, 2374, 1082, 942, 584, 207, 143, 23, 17, 16]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_chart_data:12018 - Updated actsCtx data: [6029, 2374, 1082, 942, 584, 207, 143, 23, 17, 16]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10880 - Updating detailed facturation data in script.js:
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10881 -    PA motifs: 10 values
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10882 -    CM motifs: 3 values
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10883 -    UPR motifs: 2 values
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10884 -    501/511 motifs: 1 values
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10900 -    Added detailed facturation data update
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10901 -    PA data: [6029, 2374, 1082, 942, 584, 207, 143, 23, 17, 16]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10902 -    CM data: [806, 17, 71]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10903 -    UPR data: [11, 49]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10904 -    501/511 data: [45]
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_script_js_values:10915 - Updated script.js with new statistical values
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _update_existing_dashboard_values:10369 - Updated dashboard values for period 2025-07-01 to 2025-07-16
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _inject_to_html_index:10175 - Successfully updated pres stats dashboard with filtered data
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9624 - Statistics successfully injected into stats index
+2025-07-23 23:30:46 - ui.modules.team_stats_module - INFO - _open_stats_index_file:9653 - Opening stats index file: C:\Users\wzaouga\Desktop\pladria git\src\pres stats\index.html
+2025-07-23 23:32:57 - ui.modules.team_stats_module - INFO - _open_stats_index_file:9684 - Successfully opened stats index: index.html
+2025-07-23 23:32:57 - ui.modules.team_stats_module - INFO - on_success:9068 - Filtered statistics generated successfully
+2025-07-23 23:39:18 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-23 23:39:18 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-23 23:39:20 - ui.home_screen - INFO - _open_quality_control:423 - User clicked Quality Control button
+2025-07-23 23:39:20 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: quality_control
+2025-07-23 23:39:20 - ui.navigation - INFO - _load_module:274 - Loading module: quality_control (Contrôle Qualité)
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _create_mode_selection_button:6417 - Bouton de sélection de mode créé avec succès
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _setup_analysis_tab:859 - Interface utilisateur modernisée créée avec succès
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _setup_viewer_tab:171 - Onglet visualiseur configuré
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - setup_ui:140 - Interface utilisateur créée avec onglets
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - __init__:107 - Module Contrôle Qualité initialisé
+2025-07-23 23:39:20 - ui.navigation - INFO - _load_module:299 - Module quality_control created and loaded successfully
+2025-07-23 23:39:20 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: quality_control
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:415 - 🔍 Début scan - Chemin base: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:426 - 📁 Contenu dossier base: ['desktop.ini', 'ELJ Wissem', 'OUESLATI Mohamed Amine', 'ZZZ_Suivi_Controle_Qualité']
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: desktop.ini
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:442 - ⚠️ Ignoré (pas un dossier): desktop.ini
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: ELJ Wissem
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu ELJ Wissem: ['BOIS BERNARD_2835991_62148', 'BOREY_2815290_70077']
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: BOIS BERNARD_2835991_62148
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu BOIS BERNARD_2835991_62148: ['Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx']
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\ELJ Wissem\BOIS BERNARD_2835991_62148\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx
+2025-07-23 23:39:20 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOIS BERNARD_2835991_62148\\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx'}
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: BOREY_2815290_70077
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu BOREY_2815290_70077: ['Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx']
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\ELJ Wissem\BOREY_2815290_70077\Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx
+2025-07-23 23:39:20 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOREY_2815290_70077\\Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx'}
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: OUESLATI Mohamed Amine
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu OUESLATI Mohamed Amine: ['AWOINGT_2815123_59039']
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: AWOINGT_2815123_59039
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu AWOINGT_2815123_59039: ['Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx']
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\OUESLATI Mohamed Amine\AWOINGT_2815123_59039\Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx
+2025-07-23 23:39:20 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\OUESLATI Mohamed Amine\\AWOINGT_2815123_59039\\Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx'}
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: ZZZ_Suivi_Controle_Qualité
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu ZZZ_Suivi_Controle_Qualité: ['Suivi Controle Qualité.xlsx']
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: Suivi Controle Qualité.xlsx
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:456 - ⚠️ Ignoré (pas un dossier): Suivi Controle Qualité.xlsx
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:482 - 🎯 Scan terminé: 3 fichiers trouvés
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _load_viewer_data:387 - 📝 Première entrée de données:
+2025-07-23 23:39:20 - ui.modules.quality_control_module - ERROR - _generate_tracking_report:7208 - Erreur génération rapport Excel: [WinError 5] Accès refusé: 'C:\\Users\\welj'
+2025-07-23 23:39:20 - ui.modules.quality_control_module - INFO - _load_viewer_data:388 -    {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOIS BERNARD_2835991_62148\\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx'}
+2025-07-23 23:39:24 - ui.modules.quality_control_module - INFO - _select_mode:6444 - Mode sélectionné: Autoévaluation
+2025-07-23 23:39:30 - ui.modules.quality_control_module - INFO - _select_mode:6444 - Mode sélectionné: Contrôle Qualité
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:415 - 🔍 Début scan - Chemin base: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:426 - 📁 Contenu dossier base: ['desktop.ini', 'ELJ Wissem', 'OUESLATI Mohamed Amine', 'ZZZ_Suivi_Controle_Qualité']
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: desktop.ini
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:442 - ⚠️ Ignoré (pas un dossier): desktop.ini
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: ELJ Wissem
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu ELJ Wissem: ['BOIS BERNARD_2835991_62148', 'BOREY_2815290_70077']
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: BOIS BERNARD_2835991_62148
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu BOIS BERNARD_2835991_62148: ['Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx']
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\ELJ Wissem\BOIS BERNARD_2835991_62148\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx
+2025-07-23 23:43:33 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOIS BERNARD_2835991_62148\\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx'}
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: BOREY_2815290_70077
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu BOREY_2815290_70077: ['Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx']
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\ELJ Wissem\BOREY_2815290_70077\Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx
+2025-07-23 23:43:33 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOREY_2815290_70077\\Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx'}
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: OUESLATI Mohamed Amine
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu OUESLATI Mohamed Amine: ['AWOINGT_2815123_59039']
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: AWOINGT_2815123_59039
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu AWOINGT_2815123_59039: ['Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx']
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\OUESLATI Mohamed Amine\AWOINGT_2815123_59039\Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx
+2025-07-23 23:43:33 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\OUESLATI Mohamed Amine\\AWOINGT_2815123_59039\\Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx'}
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: ZZZ_Suivi_Controle_Qualité
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu ZZZ_Suivi_Controle_Qualité: ['Suivi Controle Qualité.xlsx']
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: Suivi Controle Qualité.xlsx
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:456 - ⚠️ Ignoré (pas un dossier): Suivi Controle Qualité.xlsx
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:482 - 🎯 Scan terminé: 3 fichiers trouvés
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _load_viewer_data:387 - 📝 Première entrée de données:
+2025-07-23 23:43:33 - ui.modules.quality_control_module - ERROR - _generate_tracking_report:7208 - Erreur génération rapport Excel: [WinError 5] Accès refusé: 'C:\\Users\\welj'
+2025-07-23 23:43:33 - ui.modules.quality_control_module - INFO - _load_viewer_data:388 -    {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOIS BERNARD_2835991_62148\\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx'}
+2025-07-23 23:53:32 - root - INFO - setup_logging:73 - Logging to file: logs\suivi_generator_20250723.log
+2025-07-23 23:53:32 - root - INFO - setup_logging:79 - ==================================================
+2025-07-23 23:53:32 - root - INFO - setup_logging:80 - Suivi Generator Application Started
+2025-07-23 23:53:32 - root - INFO - setup_logging:81 - Log level: INFO
+2025-07-23 23:53:32 - root - INFO - setup_logging:82 - File logging: Enabled
+2025-07-23 23:53:32 - root - INFO - setup_logging:83 - ==================================================
+2025-07-23 23:53:33 - ui.modules.team_stats_module - INFO - <module>:38 - Successfully imported password_dialog
+2025-07-23 23:53:38 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-23 23:53:38 - ui.main_window - INFO - _setup_window:81 - Window maximized using 'zoomed' state
+2025-07-23 23:53:38 - ui.styles - INFO - setup_styles:42 - UI styles configured successfully
+2025-07-23 23:53:38 - ui.main_window - INFO - _setup_window:106 - Main window configured
+2025-07-23 23:53:38 - ui.main_window - INFO - _setup_responsive_fonts:195 - Responsive fonts configured
+2025-07-23 23:53:38 - ui.navigation - WARNING - _setup_navigation_bar:108 - Sofrecom logo not found at: C:\Users\wzaouga\Desktop\pladria git\logo_Sofrecom.png
+2025-07-23 23:53:39 - ui.navigation - INFO - register_module:195 - Registered module: Générateur Suivi (suivi_generator)
+2025-07-23 23:53:39 - ui.navigation - INFO - register_module:195 - Registered module: Suivi Global Tickets (suivi_global)
+2025-07-23 23:53:39 - ui.navigation - INFO - register_module:195 - Registered module: Statistiques Équipe (team_stats)
+2025-07-23 23:53:39 - ui.navigation - INFO - register_module:195 - Registered module: Visualiseur de Données (data_viewer)
+2025-07-23 23:53:39 - ui.navigation - INFO - register_module:195 - Registered module: Contrôle Qualité (quality_control)
+2025-07-23 23:53:39 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-23 23:53:39 - ui.main_window - WARNING - _set_window_icon:319 - All icon methods failed, using text fallback
+2025-07-23 23:53:39 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-23 23:53:39 - ui.main_window - INFO - _setup_navigation:163 - Navigation system initialized
+2025-07-23 23:53:39 - ui.main_window - INFO - run:371 - Starting application main loop
+2025-07-23 23:53:39 - ui.main_window - INFO - _post_init:181 - Window state after initialization: zoomed
+2025-07-23 23:53:39 - ui.main_window - INFO - _post_init:189 - Main window initialization complete
+2025-07-23 23:53:45 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-23 23:53:45 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-23 23:53:46 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-23 23:53:49 - ui.home_screen - INFO - _open_quality_control:423 - User clicked Quality Control button
+2025-07-23 23:53:49 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: quality_control
+2025-07-23 23:53:49 - ui.navigation - INFO - _load_module:274 - Loading module: quality_control (Contrôle Qualité)
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _create_mode_selection_button:6417 - Bouton de sélection de mode créé avec succès
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _setup_analysis_tab:859 - Interface utilisateur modernisée créée avec succès
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _setup_viewer_tab:171 - Onglet visualiseur configuré
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - setup_ui:140 - Interface utilisateur créée avec onglets
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - __init__:107 - Module Contrôle Qualité initialisé
+2025-07-23 23:53:49 - ui.navigation - INFO - _load_module:299 - Module quality_control created and loaded successfully
+2025-07-23 23:53:49 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: quality_control
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:415 - 🔍 Début scan - Chemin base: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:426 - 📁 Contenu dossier base: ['desktop.ini', 'ELJ Wissem', 'OUESLATI Mohamed Amine', 'ZZZ_Suivi_Controle_Qualité']
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: desktop.ini
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:442 - ⚠️ Ignoré (pas un dossier): desktop.ini
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: ELJ Wissem
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu ELJ Wissem: ['BOIS BERNARD_2835991_62148', 'BOREY_2815290_70077']
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: BOIS BERNARD_2835991_62148
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu BOIS BERNARD_2835991_62148: ['Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx']
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx
+2025-07-23 23:53:49 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\ELJ Wissem\BOIS BERNARD_2835991_62148\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx
+2025-07-23 23:53:51 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOIS BERNARD_2835991_62148\\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx'}
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: BOREY_2815290_70077
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu BOREY_2815290_70077: ['Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx']
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\ELJ Wissem\BOREY_2815290_70077\Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx
+2025-07-23 23:53:51 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOREY_2815290_70077\\Etat_De_Lieu_BOREY_70077_ELJ Wissem.xlsx'}
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: OUESLATI Mohamed Amine
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu OUESLATI Mohamed Amine: ['AWOINGT_2815123_59039']
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: AWOINGT_2815123_59039
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:461 - 📁 Contenu AWOINGT_2815123_59039: ['Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx']
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:465 - 📄 Vérification fichier: Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:469 - ✅ Fichier état de lieu trouvé: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Contrôle Qualité\OUESLATI Mohamed Amine\AWOINGT_2815123_59039\Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx
+2025-07-23 23:53:51 - ui.modules.quality_control_module - WARNING - _extract_file_data:644 - Erreur lecture fichier Excel: [Errno 22] Invalid argument
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:476 - ✅ Fichier ajouté: {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\OUESLATI Mohamed Amine\\AWOINGT_2815123_59039\\Etat_De_Lieu_AWOINGT_59039_OUESLATI Mohamed Amine.xlsx'}
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:439 - 👤 Vérification collaborateur: ZZZ_Suivi_Controle_Qualité
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:447 - 📁 Contenu ZZZ_Suivi_Controle_Qualité: ['Suivi Controle Qualité.xlsx']
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:453 - 🏘️ Vérification commune: Suivi Controle Qualité.xlsx
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:456 - ⚠️ Ignoré (pas un dossier): Suivi Controle Qualité.xlsx
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _scan_quality_control_files:482 - 🎯 Scan terminé: 3 fichiers trouvés
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _load_viewer_data:387 - 📝 Première entrée de données:
+2025-07-23 23:53:51 - ui.modules.quality_control_module - ERROR - _generate_tracking_report:7208 - Erreur génération rapport Excel: [WinError 5] Accès refusé: 'C:\\Users\\welj'
+2025-07-23 23:53:51 - ui.modules.quality_control_module - INFO - _load_viewer_data:388 -    {'commune': 'N/A', 'id_tache': 'N/A', 'insee': 'N/A', 'domaine': 'N/A', 'affectation': 'N/A', 'controleur': 'N/A', 'score_total': 'N/A', 'statut_commune': 'N/A', 'chemin': 'C:\\Users\\wzaouga\\orange.com\\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\\Suivis CMS Adresse_Plan Adressage\\Contrôle Qualité\\ELJ Wissem\\BOIS BERNARD_2835991_62148\\Etat_De_Lieu_BOIS BERNARD_62148_ELJ Wissem.xlsx'}
+2025-07-23 23:55:11 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-23 23:55:11 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-23 23:55:32 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-23 23:55:34 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-23 23:55:35 - ui.responsive_utils - INFO - _detect_dpi_scaling:81 - DPI scaling detected - DPI: 96.0, Scale: 1.00, Font: 0.80, UI: 0.30
+2025-07-23 23:55:36 - ui.home_screen - INFO - _open_suivi_global:381 - User clicked Suivi Global Tickets button
+2025-07-23 23:55:36 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: suivi_global
+2025-07-23 23:55:36 - ui.navigation - INFO - _load_module:274 - Loading module: suivi_global (Suivi Global Tickets)
+2025-07-23 23:55:36 - ui.modules.suivi_global_module - INFO - __init__:56 - Core components initialized
+2025-07-23 23:55:36 - ui.modules.suivi_global_module - INFO - _create_module_ui:126 - Module UI created successfully
+2025-07-23 23:55:36 - ui.navigation - INFO - _load_module:299 - Module suivi_global created and loaded successfully
+2025-07-23 23:55:37 - ui.keyboard_shortcuts - INFO - _setup_default_shortcuts:47 - Default keyboard shortcuts registered
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _initialize_optional_features:102 - Optional features initialized successfully
+2025-07-23 23:55:37 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: suivi_global
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _start_automatic_scan:112 - Starting automatic scan on module load
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _load_existing_communes:878 - Loaded 134 existing communes for comparison
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\ANJEUX_2815299\Suivi_ANJEUX_2815299_70023.xlsx
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ANJEUX
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ARIES ESPENAN
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: AWOINGT
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\BALAISEAUX_2815265\Suivi_BALAISEAUX_2815265_39034.xlsx
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BALAISEAUX
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BARRANCOUEU
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BEAURECUEIL
+2025-07-23 23:55:37 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BIEVRES
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BOIS BERNARD
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\BOREY_2815290\Suivi_BOREY_2815290_70077.xlsx
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BOREY
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BOURLENS
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BOUVINES
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BRAY LES MAREUIL
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BRESSEY SUR TILLE
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BREUILAUFA
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BRIOD
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: BUIS
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: CAMPUZAN
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: CAUBOUS
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: CAUSSADE RIVIERE
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\CHANCEAUX_2815347\Suivi_CHANCEAUX_2815347_21142.xlsx
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: CHANCEAUX
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: CHERET
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: CHILLE
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: CHIS
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\COMBLANCHIEN_2815345\Suivi_COMBLANCHIEN_2815345_21186.xlsx
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: COMBLANCHIEN
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: CORGENGOUX
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: COURBOUZON
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ECHEVRONNE
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ESCALA
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ESCOUBES POUTS
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ESPLAS
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ESQUERCHIN
+2025-07-23 23:55:38 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ESTIRAC
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: ETOILE
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: FIEULAINE
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\FORCE_2855505\Suivi_FORCE_2855505_53099.xlsx
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: FORCE
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: FREBUANS
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: FRECHET AURE
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: FROZES
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: GAUCHIN LEGAL
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\GOMMEVILLE_2815343\Suivi_GOMMEVILLE_2815343_21302.xlsx
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: GOMMEVILLE
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: GROSEILLERS
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: GROSMAGNY
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: GUIGNEMICOURT
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: HAGEDET
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: HEBECOURT
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: JEZEAU
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\JUILLY_2815342\Suivi_JUILLY_2815342_21329.xlsx
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: JUILLY
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LAMEAC
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LANSAC
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LARROQUE
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LASLADES
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LEBETAIN
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _extract_rip_sheet_data:1148 - RIP sheet processed: 1 rows, total duration: 0.0
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _extract_commune_data:1091 - RIP sheet detected and processed for LERY
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LERY
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LOMMERANGE
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LOUBES BERNAC
+2025-07-23 23:55:39 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LUDIES
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\LUSSAT_2815304\Suivi_LUSSAT_2815304_63200.xlsx
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LUSSAT
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: LUSSERAY
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: MARCY
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - WARNING - _extract_rip_sheet_data:1128 - RIP sheet (page 4) is empty in C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MARLIENS_2815338\Suivi_MARLIENS_2815338_21388.xlsx
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: MARLIENS
+2025-07-23 23:55:40 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - INFO - _process_commune_folders:1033 - Processed commune: MAROLLES
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MARSAC_2840527: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MAZEIRAT_2800953: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MAZERES DE NESTE_2828898: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MERCATEL_2847844: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MOLINOT_2809836: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MONCETZ LONGEVAS_2815121: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MONTBOUTON_2823117: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MONTCET_2815131: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MONTCHALONS_2802326: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MONTHENAULT_2803433: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MORTEMART_2841653: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MOUMOULOUS_2846730: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MOUSSIERES_2815337: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\MOUTERRE SUR BLOURDE_2840577: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\NICOLE_2813023: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\NIERGNIES_2815124: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\NOUGAROULET_2831041: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\NOUILLY_2822510: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\OBLINGHEM_2818970: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\ORIGNAC_2838560: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\OSMETS_2844614: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\OSSUN EZ ANGLES_2817025: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PARFONDRU_2807998: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PEYRAUBE_2843044: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PEYRIGUERE_2807741: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PEYRUN_2845777: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PINTAC_2816891: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\POINTEL_2815165: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\POMPIEY_2821326: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\POUILLY_2823114: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PRESLES ET THIERNY_2815114: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PUBLY_2815146: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PUIHARDY_2845848: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\PUPILLIN_2815336: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\RANCENAY_2837078: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\RAZIMET_2821845: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\RIBECOURT LA TOUR_2815125: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\RICHE_2815322: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\ROCHEFORT EN TERRE_2741943: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\RUMIGNY_2832999: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SAINT ANDRE LA COTE_2815173: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SAINT BOHAIRE_2815149: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SAINT GIBRIEN_2841707: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SAINT MARTIN LE MAULT_2836044: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SAINTE ANNE SAINT PRIEST_2841312: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SAINTE CROIX EN JAREZ_2815150: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SALLES_2828368: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SAMURAN_2836904: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SARP_2838022: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SASSIS_2833561: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SELIGNE_2810857: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SENAC_2830696: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SERE LANSO_2846174: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SEUR_2819094: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SIARROUY_2830776: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SIEST_2815330: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SOREAC_2846738: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\SURDOUX_2809336: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\THUY_2803434: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\TOSTAT_2826926: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\TREVERIEN_2741956: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\UZ_2846628: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VADANS_2815334: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VALAIRE_2801974: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VERGES_2815333: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VESCEMONT_2824657: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VESLUD_2815115: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VIEUZOS_2838066: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VILLEFRANQUE_2844249: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VILLELONGUE_2827042: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VILLIERS LE SEC_2815122: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VILLONS LES BUISSONS_2815116: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - ui.modules.suivi_global_module - ERROR - _process_commune_folders:1036 - Error processing folder C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Actes des Traitements\VIVAISE_2815132: invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:40 - utils.performance - ERROR - worker:111 - Async task failed: Scan and process - invalid command name ".!frame.!frame3.!responsivescrollableframe.!canvas.!frame.!frame.!frame.!frame4.!frame3.!label3"
+2025-07-23 23:55:41 - ui.home_screen - INFO - _open_suivi_generator:366 - User clicked Suivi Generator button
+2025-07-23 23:55:41 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: suivi_generator
+2025-07-23 23:55:41 - ui.navigation - INFO - _load_module:274 - Loading module: suivi_generator (Générateur Suivi)
+2025-07-23 23:55:41 - ui.modules.suivi_generator_module - INFO - __init__:54 - Core components initialized
+2025-07-23 23:55:41 - ui.modules.suivi_generator_module - INFO - _create_module_ui:104 - Module UI created successfully
+2025-07-23 23:55:41 - ui.navigation - INFO - _load_module:299 - Module suivi_generator created and loaded successfully
+2025-07-23 23:55:41 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: suivi_generator
+2025-07-23 23:55:41 - ui.keyboard_shortcuts - INFO - _setup_default_shortcuts:47 - Default keyboard shortcuts registered
+2025-07-23 23:55:41 - ui.modules.suivi_generator_module - INFO - _initialize_optional_features:89 - Optional features initialized successfully
+2025-07-23 23:55:45 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-23 23:55:45 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-23 23:55:46 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: data_viewer
+2025-07-23 23:55:46 - ui.navigation - INFO - _load_module:274 - Loading module: data_viewer (Visualiseur de Données)
+2025-07-23 23:55:46 - ui.modules.data_viewer_module - INFO - _load_data:742 - Data loaded successfully: 134 rows
+2025-07-23 23:55:46 - ui.modules.data_viewer_module - INFO - _create_ui:242 - Data Viewer module UI created successfully
+2025-07-23 23:55:46 - ui.navigation - INFO - _load_module:299 - Module data_viewer created and loaded successfully
+2025-07-23 23:55:47 - ui.keyboard_shortcuts - INFO - _setup_default_shortcuts:47 - Default keyboard shortcuts registered
+2025-07-23 23:55:47 - ui.modules.data_viewer_module - ERROR - _setup_module_shortcuts:680 - Error setting up keyboard shortcuts: 'KeyboardShortcutManager' object has no attribute 'bind_key'
+2025-07-23 23:55:47 - ui.modules.data_viewer_module - INFO - _initialize_optional_features:666 - Optional features initialized successfully
+2025-07-23 23:55:47 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: data_viewer
+2025-07-23 23:56:09 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: home
+2025-07-23 23:56:09 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: home
+2025-07-23 23:58:12 - ui.home_screen - INFO - _open_team_stats:396 - User clicked Team Statistics button
+2025-07-23 23:58:12 - ui.navigation - INFO - navigate_to:216 - Attempting to navigate to: team_stats
+2025-07-23 23:58:12 - ui.navigation - INFO - _load_module:274 - Loading module: team_stats (Statistiques Équipe)
+2025-07-23 23:58:12 - ui.modules.team_stats_module - INFO - _verify_password_access:172 - Starting password verification process
+2025-07-23 23:58:12 - ui.modules.team_stats_module - INFO - _verify_password_access:175 - Showing password dialog
+2025-07-23 23:58:12 - ui.components.password_dialog - INFO - show:42 - Creating password dialog
+2025-07-23 23:58:12 - ui.components.password_dialog - INFO - show:45 - Centering password dialog
+2025-07-23 23:58:12 - ui.components.password_dialog - INFO - show:49 - Making dialog modal
+2025-07-23 23:58:12 - ui.components.password_dialog - INFO - show:54 - Waiting for dialog to close
+2025-07-23 23:58:35 - ui.keyboard_shortcuts - INFO - _focus_moai_section:119 - Focus MOAI section shortcut pressed
+2025-07-23 23:58:37 - ui.components.password_dialog - INFO - show:57 - Dialog closed with result: True, password length: 16
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _verify_password_access:182 - Password dialog result: success=True, password_length=16
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _verify_password_access:189 - Verifying password with AccessControl
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _verify_password_access:191 - Password verification successful
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - __init__:85 - Core components initialized
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _create_archive_section:834 - Creating archive section...
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _create_archive_section:924 - Archive section created successfully
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _create_period_filtering_in_export:1562 - Period filtering controls integrated into export section
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _create_export_buttons:1688 - Export buttons and filters created successfully
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _create_module_ui:493 - Module UI created successfully
+2025-07-23 23:58:37 - ui.navigation - INFO - _load_module:299 - Module team_stats created and loaded successfully
+2025-07-23 23:58:37 - ui.keyboard_shortcuts - INFO - _setup_default_shortcuts:47 - Default keyboard shortcuts registered
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _initialize_optional_features:433 - Optional features initialized successfully
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _auto_load_data:441 - Auto-loading data...
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _load_global_data:1775 - Loaded sheet 'Suivi Tickets' with 134 rows
+2025-07-23 23:58:37 - ui.modules.team_stats_module - INFO - _load_global_data:1775 - Loaded sheet 'Traitement CMS Adr' with 2331 rows
+2025-07-23 23:58:39 - ui.modules.team_stats_module - INFO - _load_global_data:1775 - Loaded sheet 'Traitement PA' with 25334 rows
+2025-07-23 23:58:39 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2887 - Available columns in Suivi Tickets: ['Nom Commune', 'ID tâche Plan Adressage', 'Code INSEE', 'Domaine', 'Type de Commune', 'Type de base', 'Nbr des voies CM', 'Nbr des IMB PA', "Date d'affectation", 'Temps préparation QGis', 'Durée Totale CM', 'Duréé Totale PA', 'Traitement Optimum', 'Durée Finale', 'Date Livraison', 'Etat Ticket PA ', 'ID Tache 501/511', 'Date Dépose Ticket 501/511', 'Dépose Ticket UPR', 'ID tâche UPR', 'Collaborateur']
+2025-07-23 23:58:39 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2888 - DataFrame shape: (134, 21)
+2025-07-23 23:58:39 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2909 - Found status column: 'Etat Ticket PA ' (exists: True)
+2025-07-23 23:58:39 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2910 - Has 'Date Livraison' column: True
+2025-07-23 23:58:39 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2974 - Communes traitées ce mois: 72
+2025-07-23 23:58:39 - ui.modules.team_stats_module - INFO - _analyze_commune_status_by_date:2975 - Communes autres statuts: {'En Attente': 22, 'En Cours': 11}
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for ELJ Wissem: 0 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for ELJ Wissem: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for OUESLATI Mohamed Amine: 55 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for OUESLATI Mohamed Amine: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for ZAOUGA Wissem: 0 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for ZAOUGA Wissem: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for WARDI Aymen: 50 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for WARDI Aymen: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for BACHOUEL Iheb: 0 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for BACHOUEL Iheb: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for DAKHLI Shady: 0 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for DAKHLI Shady: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for ZGOLLI Iheb: 0 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for ZGOLLI Iheb: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for NOUIRA Iyed: 0 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for NOUIRA Iyed: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_from_page3:2766 - CTJ calculation for BEN ALI Mariem: 0 elements today (ONLY with positive duration)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_ctj_cm_from_page2:2831 - CTJ CM calculation for BEN ALI Mariem: 0 elements today (based on column F dates)
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _calculate_team_kpis:2875 - Team KPIs calculated - DMT: 265.0min (from 9 collaborators with treated communes), CTJ PA Today: 105 elements, CTJ CM Today: 0 elements
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _analyze_team_statistics:2625 - Analyzed statistics for 9 collaborators
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _update_overview_display:3037 - Team statistics keys: ['total_tickets', 'total_cms_records', 'total_pa_records', 'total_duration_cms', 'total_duration_pa', 'total_duration_finale', 'collaborators', 'communes', 'communes_traitees_mois_courant', 'communes_autres_statuts', 'team_dmt', 'team_ctj_today', 'total_elements_today', 'team_ctj_cm_today']
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _update_overview_display:3038 - Communes traitées mois courant: 72
+2025-07-23 23:58:40 - ui.modules.team_stats_module - INFO - _update_overview_display:3039 - Communes autres statuts: {'En Attente': 22, 'En Cours': 11}
+2025-07-23 23:58:41 - ui.modules.team_stats_module - INFO - _load_global_data:1801 - Data loaded successfully, enabling export buttons...
+2025-07-23 23:58:41 - ui.modules.team_stats_module - INFO - _enable_export_buttons:7074 - Export buttons and filters enabled successfully
+2025-07-23 23:58:41 - ui.modules.team_stats_module - INFO - _update_export_filters:7031 - Export filters updated with 10 collaborators (including 'Toute l'équipe')
+2025-07-23 23:58:42 - ui.modules.team_stats_module - INFO - _enable_date_range_functionality:1853 - Date range functionality enabled with 27799 records
+2025-07-23 23:58:42 - ui.modules.team_stats_module - INFO - _calculate_dmt_pa:2039 - DMT PA calculé: 3.66 (moyenne de 9 collaborateurs)
+2025-07-23 23:58:42 - ui.modules.team_stats_module - WARNING - _calculate_dmt_cm:2061 - CM sheet data not found for DMT calculation
+2025-07-23 23:58:48 - ui.modules.team_stats_module - INFO - _calculate_dmt_automatically:1957 - DMT calculation completed automatically
+2025-07-23 23:58:48 - ui.modules.team_stats_module - INFO - _enable_archive_button:1861 - Attempting to enable archive button...
+2025-07-23 23:58:48 - ui.modules.team_stats_module - INFO - _enable_archive_button:1867 - Archive button enabled successfully
+2025-07-23 23:58:48 - ui.modules.team_stats_module - INFO - _enable_archive_button:1877 - Counting treated communes...
+2025-07-23 23:58:48 - ui.modules.team_stats_module - INFO - _enable_archive_button:1879 - Found 72 treated communes this month
+2025-07-23 23:58:48 - ui.modules.team_stats_module - INFO - _enable_archive_button:1886 - Archive status updated with success message
+2025-07-23 23:58:48 - ui.modules.team_stats_module - INFO - _load_global_data:1826 - Global data loaded and analyzed successfully
+2025-07-23 23:58:48 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:58:49 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:58:49 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:58:49 - ui.modules.team_stats_module - INFO - _debug_layout:474 - Layout Debug - Canvas height: 842, Frame height: 644, Scroll region: 0 0 1127 654
+2025-07-23 23:58:49 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:58:49 - ui.modules.team_stats_module - INFO - _update_scroll_region:456 - Scroll region updated successfully
+2025-07-23 23:58:49 - ui.navigation - INFO - navigate_to:251 - Successfully navigated to: team_stats
+2025-07-23 23:58:59 - ui.modules.team_stats_module - INFO - _show_date_from_picker:1207 - Start date selected: 2025-07-2
+2025-07-23 23:59:02 - ui.modules.team_stats_module - INFO - _show_date_to_picker:1235 - End date selected: 2025-07-23
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _generate_filtered_statistics:9002 - Generating filtered statistics from 2025-07-02 to 2025-07-23
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _filter_data_by_date_range:9146 - Filtered 0 records from 27799 total records
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _load_stats_folder_data:9226 - No stats folder found
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _load_stats_folder_data:9226 - No stats folder found
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _load_stats_folder_data:9226 - No stats folder found
+2025-07-23 23:59:03 - ui.modules.team_stats_module - ERROR - _analyze_daily_statistics:9456 - Error analyzing daily statistics: type object 'datetime.datetime' has no attribute 'timedelta'
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _compute_filtered_statistics:9278 - Computed statistics for 0 records
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _update_statistics_display_with_filtered_data:12428 - Statistics display updated with filtered data
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9566 - Starting statistics injection process...
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9572 - Filtered statistics available, analyzing pres stats folder...
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9869 - Found pres stats folder: pres stats at C:\Users\wzaouga\Desktop\pladria git\src\pres stats
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9924 - Pres stats folder analysis:
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9925 -   Total files: 3
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9926 -   HTML files: 1
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9927 -   Excel files: 0
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9928 -   Other files: 2
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9929 -   Potential index files: 1
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9933 -     index.html (17810 bytes)
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9933 -     script.js (24136 bytes)
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _analyze_pres_stats_folder:9933 -     styles.css (10850 bytes)
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9775 - Searching for pres stats folder in: C:\Users\wzaouga\orange.com\BOT G2R - CM Adresses et Plan Adressage - CM Adresses et Plan Adressage\Suivis CMS Adresse_Plan Adressage\Suivis Global Tickets CMS Adresse_Plan Adressage
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9775 - Searching for pres stats folder in: C:\Users\wzaouga\Desktop\pladria git\src\ui
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9775 - Searching for pres stats folder in: C:\Users\wzaouga\Desktop\pladria git
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9775 - Searching for pres stats folder in: C:\Users\wzaouga\Desktop\pladria git\src
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9781 - Found pres stats folder: pres stats at C:\Users\wzaouga\Desktop\pladria git\src\pres stats
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _find_stats_index_file:9810 - Found stats index file: index.html
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9609 - Injecting statistics into: C:\Users\wzaouga\Desktop\pladria git\src\pres stats\index.html
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _examine_index_file_structure:9944 - Examining index file structure: C:\Users\wzaouga\Desktop\pladria git\src\pres stats\index.html
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _examine_html_structure:10009 - HTML structure analysis: 1 injection strategies available
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9614 - File structure analysis completed for html file
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9615 - Available injection strategies: ['before_body_close']
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _inject_to_html_index:10162 - Original HTML content length: 17410 characters
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _inject_to_html_index:10166 - Detected pres stats dashboard - using value update strategy
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _update_existing_dashboard_values:10352 - Updating HTML elements with filtered data...
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10388 - Updating HTML elements with dashboard data...
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10926 - Attempting to extract CM data from Suivi Global...
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11066 - Extracting CM data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11080 - Using delivery date column H: 'Date livraison'
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11086 - CM extraction: Using motif column 'Motif Voie' and date column 'Date livraison'
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11129 - CM extraction completed: 1026 records processed, 3 unique motifs found
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   RIEN À FAIRE: 956
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   CRÉATION VOIE: 60
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   MODIFICATION VOIE: 10
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11936 - Mapping motifs using predefined categories...
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'RIEN À FAIRE' to category 'RAF' (pattern: 'RIEN À FAIRE')
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'RAF': 956 records
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'MODIFICATION VOIE' to category 'MODIF' (pattern: 'MODIF')
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'MODIF': 10 records
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'CRÉATION VOIE' to category 'CREA' (pattern: 'CRÉATION')
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'CREA': 60 records
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11984 - Final CM chart data: [956, 10, 60]
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11988 - CM mapping successful:
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   RAF: 956
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   MODIF: 10
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   CREA: 60
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10930 - ✅ CM data successfully mapped: [956, 10, 60]
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10931 -    Total CM records processed: 1026
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10932 -    CM motif breakdown: {'RIEN À FAIRE': 956, 'CRÉATION VOIE': 60, 'MODIFICATION VOIE': 10}
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10937 - Attempting to extract Communes data from Suivi Global...
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11179 - Extracting Communes data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11190 - Communes extraction: Using commune type column 'Domaine' and delivery date column 'Date Livraison'
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11252 - Communes extraction completed: 70 records processed
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11253 -   Orange: 58
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11254 -   RIP: 12
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10941 - ✅ Communes data successfully mapped: [58, 12]
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10942 -    Total Communes records processed: 70
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10943 -    Communes breakdown: {'Orange': 58, 'RIP': 12}
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10948 - Attempting to extract Acts data from Suivi Global...
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11297 - Extracting Acts data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:03 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11309 - Acts extraction: Using motif column 'Motif', date column 'Date traitement', duration column 'Durée'
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11386 - Acts extraction completed: 14490 records processed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11387 -   Unique motif categories found: 10
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD RAS sans temps: 7987
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD RAS avec temps: 2971
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     OK: 1297
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     NOK: 1144
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD Non jointe: 619
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR RAS: 240
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD Non trouvée: 175
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     Hors commune: 23
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR NOK: 18
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR OK: 16
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11398 -   Debug - Specific categories:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11399 -     NOK: 1144
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11400 -     UPR NOK: 18
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11401 -     UPR OK: 16
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11431 - Acts data mapped to chart order:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   1. AD RAS sans temps: 7987
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   2. AD RAS avec temps: 2971
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   3. OK: 1297
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   4. NOK: 1144
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   5. AD Non jointe: 619
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   6. UPR RAS: 240
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   7. AD Non trouvée: 175
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   8. Hors commune: 23
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   9. UPR NOK: 18
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   10. UPR OK: 16
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10952 - ✅ Acts data successfully mapped: 10 categories
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10953 -    Total Acts records processed: 14490
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10954 -    Acts categories: ['AD RAS sans temps', 'AD RAS avec temps', 'OK', 'NOK', 'AD Non jointe', 'UPR RAS', 'AD Non trouvée', 'Hors commune', 'UPR NOK', 'UPR OK']
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10955 -    Acts counts: [7987, 2971, 1297, 1144, 619, 240, 175, 23, 18, 16]
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10960 - Attempting to extract UPR tickets data from Suivi Global...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11542 - Extracting UPR data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11553 - UPR extraction: Using motif column 'Dépose Ticket UPR', date column 'Date Livraison'
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11614 - UPR extraction completed: 70 records processed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11615 -   UPR ticket counts: {'Créé': 11, 'Non': 59}
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11629 - UPR data mapped to chart order:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11631 -   1. Créé: 11
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11631 -   2. Non: 59
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10964 - ✅ UPR data successfully mapped: 2 categories
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10965 -    Total UPR records processed: 70
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10966 -    UPR categories: ['Créé', 'Non']
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10967 -    UPR counts: [11, 59]
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10972 - Attempting to extract 501/511 tickets data from Suivi Global...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11672 - Extracting 501/511 data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11682 - 501/511 extraction: Using deposit date column 'Date Dépose Ticket 501/511'
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11728 - 501/511 extraction completed: 55 records processed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11729 -   501/511 tickets count: 55
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10976 - ✅ 501/511 data successfully mapped: 1 categories
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10977 -    Total 501/511 records processed: 55
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10978 -    501/511 categories: ['501/511 Tickets']
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10979 -    501/511 counts: [55]
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10984 - Attempting to extract RIP (P0 P1) data from Suivi Global...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - WARNING - _extract_rip_data_for_dashboard:11758 - Sheet 'Traitement RIP' not found in global_suivi_data
+2025-07-23 23:59:04 - ui.modules.team_stats_module - WARNING - _map_stats_to_dashboard_categories:10993 - ❌ No RIP data extracted - using fallback values
+2025-07-23 23:59:04 - ui.modules.team_stats_module - WARNING - _update_html_elements_with_data:10404 - Data validation warnings:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - WARNING - _update_html_elements_with_data:10406 -   • Missing data for sections: RIP (P0 P1) - these will use fallback values
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10408 - Data validation summary: {'cm': {'values': [956, 10, 60], 'total': 1026, 'categories': ['RAF', 'MODIF', 'CREA']}, 'communes': {'values': [58, 12], 'total': 70, 'categories': ['Orange', 'RIP']}, 'acts': {'values': [7987, 2971, 1297, 1144, 619, 240, 175, 23, 18, 16], 'total': 14490, 'categories': ['AD RAS sans temps', 'AD RAS avec temps', 'OK', 'NOK', 'AD Non jointe', 'UPR RAS', 'AD Non trouvée', 'Hors commune', 'UPR NOK', 'UPR OK'], 'num_categories': 10}, 'upr': {'values': [11, 59], 'total': 70, 'categories': ['Créé', 'Non'], 'num_categories': 2}, 'tickets_501511': {'values': [55], 'total': 55, 'categories': ['501/511 Tickets'], 'num_categories': 1}}
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10417 - Updating CM HTML elements: RAF=956, MODIF=10, CREA=60, Total=1026
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10428 - ✅ CM title updated to: <h2>CM (1026)</h2>
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10454 - ✅ RAF value updated to: <span class="stat-value raf">956</span>
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10459 - ✅ MODIF value updated to: <span class="stat-value modif">10</span>
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10464 - ✅ CREA value updated to: <span class="stat-value crea">60</span>
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10468 - CM HTML elements update process completed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10478 - Updating Communes HTML elements: Orange=58, RIP=12, Total=70
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10503 - ✅ Communes title updated to: <h2>Communes Livrées (70)</h2>
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10508 - ✅ Orange value updated to: <span class="stat-value orange">58</span>
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10513 - ✅ RIP value updated to: <span class="stat-value rip">12</span>
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10517 - Communes HTML elements update process completed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10528 - Updating Acts HTML elements: Total=14490, Categories=10
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated AD RAS sans temps: 7,987 (55.1%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated AD RAS avec temps: 2,971 (20.5%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated OK: 1,297 (9.0%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated NOK: 1,144 (7.9%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated AD Non jointe: 619 (4.3%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated UPR RAS: 240 (1.7%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated AD Non trouvée: 175 (1.2%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated Hors commune: 23 (0.2%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated UPR NOK: 18 (0.1%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10560 -    Updated UPR OK: 16 (0.1%)
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10565 - ✅ Acts title updated to: <h2>Acts Traitement PA (14,490)</h2>
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10569 - Acts HTML elements update process completed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10580 - Updating UPR HTML elements: Créé tickets=11
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10589 -    Updated UPR Créé tickets: 11
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10593 - UPR HTML elements update process completed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10603 - Updating 501/511 HTML elements: Total tickets=55
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10611 -    Updated 501/511 tickets count: 55
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_html_elements_with_data:10615 - 501/511 HTML elements update process completed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - WARNING - _update_html_elements_with_data:10664 - No RIP data available for HTML element updates
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10706 - Updating Facturation section with detailed motif data...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10719 - PA (Acts) motif data for facturation:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    AD RAS sans temps: 7,987
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    AD RAS avec temps: 2,971
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    OK: 1,297
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    NOK: 1,144
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    AD Non jointe: 619
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    UPR RAS: 240
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    AD Non trouvée: 175
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    Hors commune: 23
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    UPR NOK: 18
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10722 -    UPR OK: 16
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10734 - CM motif data for facturation:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10749 - UPR motif data for facturation:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10752 -    Créé: 11
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10752 -    Non: 59
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10763 - 501/511 tickets data for facturation:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10765 -    Tickets 501/511: 55
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10783 - Facturation detailed data prepared:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10784 -    PA motifs=10, CM motifs=3
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10785 -    UPR motifs=2, 501/511 motifs=1
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10786 -    Total PA: 14,490, Total CM: 1,026
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_facturation_data:10787 -    Total UPR: 70, Total 501/511: 55
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _update_script_js_values:10824 - Mapping filtered statistics to dashboard categories...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10926 - Attempting to extract CM data from Suivi Global...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11066 - Extracting CM data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11080 - Using delivery date column H: 'Date livraison'
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11086 - CM extraction: Using motif column 'Motif Voie' and date column 'Date livraison'
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11129 - CM extraction completed: 1026 records processed, 3 unique motifs found
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   RIEN À FAIRE: 956
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   CRÉATION VOIE: 60
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_cm_data_for_dashboard:11133 -   MODIFICATION VOIE: 10
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11936 - Mapping motifs using predefined categories...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'RIEN À FAIRE' to category 'RAF' (pattern: 'RIEN À FAIRE')
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'RAF': 956 records
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'MODIFICATION VOIE' to category 'MODIF' (pattern: 'MODIF')
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'MODIF': 10 records
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11949 - Matched 'CRÉATION VOIE' to category 'CREA' (pattern: 'CRÉATION')
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11954 - CM category 'CREA': 60 records
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11984 - Final CM chart data: [956, 10, 60]
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11988 - CM mapping successful:
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   RAF: 956
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   MODIF: 10
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_motifs_to_cm_categories:11990 -   CREA: 60
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10930 - ✅ CM data successfully mapped: [956, 10, 60]
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10931 -    Total CM records processed: 1026
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10932 -    CM motif breakdown: {'RIEN À FAIRE': 956, 'CRÉATION VOIE': 60, 'MODIFICATION VOIE': 10}
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10937 - Attempting to extract Communes data from Suivi Global...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11179 - Extracting Communes data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11190 - Communes extraction: Using commune type column 'Domaine' and delivery date column 'Date Livraison'
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11252 - Communes extraction completed: 70 records processed
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11253 -   Orange: 58
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_communes_data_for_dashboard:11254 -   RIP: 12
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10941 - ✅ Communes data successfully mapped: [58, 12]
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10942 -    Total Communes records processed: 70
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10943 -    Communes breakdown: {'Orange': 58, 'RIP': 12}
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10948 - Attempting to extract Acts data from Suivi Global...
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11297 - Extracting Acts data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:04 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11309 - Acts extraction: Using motif column 'Motif', date column 'Date traitement', duration column 'Durée'
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11386 - Acts extraction completed: 14490 records processed
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11387 -   Unique motif categories found: 10
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD RAS sans temps: 7987
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD RAS avec temps: 2971
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     OK: 1297
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     NOK: 1144
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD Non jointe: 619
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR RAS: 240
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     AD Non trouvée: 175
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     Hors commune: 23
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR NOK: 18
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11391 -     UPR OK: 16
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11398 -   Debug - Specific categories:
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11399 -     NOK: 1144
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11400 -     UPR NOK: 18
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11401 -     UPR OK: 16
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11431 - Acts data mapped to chart order:
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   1. AD RAS sans temps: 7987
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   2. AD RAS avec temps: 2971
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   3. OK: 1297
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   4. NOK: 1144
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   5. AD Non jointe: 619
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   6. UPR RAS: 240
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   7. AD Non trouvée: 175
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   8. Hors commune: 23
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   9. UPR NOK: 18
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_acts_data_for_dashboard:11433 -   10. UPR OK: 16
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10952 - ✅ Acts data successfully mapped: 10 categories
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10953 -    Total Acts records processed: 14490
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10954 -    Acts categories: ['AD RAS sans temps', 'AD RAS avec temps', 'OK', 'NOK', 'AD Non jointe', 'UPR RAS', 'AD Non trouvée', 'Hors commune', 'UPR NOK', 'UPR OK']
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10955 -    Acts counts: [7987, 2971, 1297, 1144, 619, 240, 175, 23, 18, 16]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10960 - Attempting to extract UPR tickets data from Suivi Global...
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11542 - Extracting UPR data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11553 - UPR extraction: Using motif column 'Dépose Ticket UPR', date column 'Date Livraison'
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11614 - UPR extraction completed: 70 records processed
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11615 -   UPR ticket counts: {'Créé': 11, 'Non': 59}
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11629 - UPR data mapped to chart order:
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11631 -   1. Créé: 11
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_upr_data_for_dashboard:11631 -   2. Non: 59
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10964 - ✅ UPR data successfully mapped: 2 categories
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10965 -    Total UPR records processed: 70
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10966 -    UPR categories: ['Créé', 'Non']
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10967 -    UPR counts: [11, 59]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10972 - Attempting to extract 501/511 tickets data from Suivi Global...
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11672 - Extracting 501/511 data for period: 2025-07-02 to 2025-07-23
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11682 - 501/511 extraction: Using deposit date column 'Date Dépose Ticket 501/511'
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11728 - 501/511 extraction completed: 55 records processed
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _extract_501511_data_for_dashboard:11729 -   501/511 tickets count: 55
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10976 - ✅ 501/511 data successfully mapped: 1 categories
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10977 -    Total 501/511 records processed: 55
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10978 -    501/511 categories: ['501/511 Tickets']
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10979 -    501/511 counts: [55]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _map_stats_to_dashboard_categories:10984 - Attempting to extract RIP (P0 P1) data from Suivi Global...
+2025-07-23 23:59:05 - ui.modules.team_stats_module - WARNING - _extract_rip_data_for_dashboard:11758 - Sheet 'Traitement RIP' not found in global_suivi_data
+2025-07-23 23:59:05 - ui.modules.team_stats_module - WARNING - _map_stats_to_dashboard_categories:10993 - ❌ No RIP data extracted - using fallback values
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10826 - Dashboard mapping result: {'cm': {'data': [956, 10, 60], 'total_records': 1026, 'motif_breakdown': {'RIEN À FAIRE': 956, 'CRÉATION VOIE': 60, 'MODIFICATION VOIE': 10}}, 'communes': {'data': [58, 12], 'total_records': 70, 'commune_breakdown': {'Orange': 58, 'RIP': 12}}, 'acts': {'data': [7987, 2971, 1297, 1144, 619, 240, 175, 23, 18, 16], 'labels': ['AD RAS sans temps', 'AD RAS avec temps', 'OK', 'NOK', 'AD Non jointe', 'UPR RAS', 'AD Non trouvée', 'Hors commune', 'UPR NOK', 'UPR OK'], 'total_records': 14490, 'motif_breakdown': {'AD RAS avec temps': 2971, 'AD RAS sans temps': 7987, 'NOK': 1144, 'OK': 1297, 'AD Non jointe': 619, 'UPR RAS': 240, 'UPR NOK': 18, 'UPR OK': 16, 'Hors commune': 23, 'AD Non trouvée': 175}}, 'upr': {'data': [11, 59], 'labels': ['Créé', 'Non'], 'total_records': 70, 'upr_breakdown': {'Créé': 11, 'Non': 59}}, 'tickets_501511': {'data': [55], 'labels': ['501/511 Tickets'], 'total_records': 55, 'tickets_breakdown': {'501/511 Tickets': 55}}}
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10834 - Updating communes chart data: [58, 12]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_chart_data:12018 - Updated communesCtx data: [58, 12]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10842 - Updating CM chart data: [956, 10, 60]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_chart_data:12018 - Updated cmCtx data: [956, 10, 60]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10856 - Updating acts chart data: 10 categories
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10857 -    Acts data: [7987, 2971, 1297, 1144, 619, 240, 175, 23, 18, 16]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_chart_data:12018 - Updated actsCtx data: [7987, 2971, 1297, 1144, 619, 240, 175, 23, 18, 16]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10880 - Updating detailed facturation data in script.js:
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10881 -    PA motifs: 10 values
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10882 -    CM motifs: 3 values
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10883 -    UPR motifs: 2 values
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10884 -    501/511 motifs: 1 values
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10900 -    Added detailed facturation data update
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10901 -    PA data: [7987, 2971, 1297, 1144, 619, 240, 175, 23, 18, 16]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10902 -    CM data: [956, 10, 60]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10903 -    UPR data: [11, 59]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10904 -    501/511 data: [55]
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_script_js_values:10915 - Updated script.js with new statistical values
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _update_existing_dashboard_values:10369 - Updated dashboard values for period 2025-07-02 to 2025-07-23
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _inject_to_html_index:10175 - Successfully updated pres stats dashboard with filtered data
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _inject_statistics_to_stats_index:9624 - Statistics successfully injected into stats index
+2025-07-23 23:59:05 - ui.modules.team_stats_module - INFO - _open_stats_index_file:9653 - Opening stats index file: C:\Users\wzaouga\Desktop\pladria git\src\pres stats\index.html
+2025-07-24 00:01:45 - ui.modules.team_stats_module - INFO - _open_stats_index_file:9684 - Successfully opened stats index: index.html
+2025-07-24 00:01:45 - ui.modules.team_stats_module - INFO - on_success:9068 - Filtered statistics generated successfully

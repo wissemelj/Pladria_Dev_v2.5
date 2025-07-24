@@ -672,12 +672,24 @@ class DataViewerModule:
         """Setup keyboard shortcuts for this module."""
         try:
             if self.keyboard_manager:
-                self.keyboard_manager.bind_key('<F5>', self._refresh_data)
-                self.keyboard_manager.bind_key('<Control-r>', self._refresh_data)
-                self.keyboard_manager.bind_key('<Control-f>', lambda: self.search_var.set(''))
-                
+                # Utiliser register_shortcut au lieu de bind_key
+                self.keyboard_manager.register_shortcut('F5', self._refresh_data, "Actualiser les données")
+                self.keyboard_manager.register_shortcut('Control-r', self._refresh_data, "Actualiser les données")
+                self.keyboard_manager.register_shortcut('Control-f', lambda: self._focus_search(), "Focus recherche")
+
         except Exception as e:
             self.logger.error(f"Error setting up keyboard shortcuts: {e}")
+
+    def _focus_search(self):
+        """Focus sur le champ de recherche."""
+        try:
+            if hasattr(self, 'search_var') and self.search_var:
+                self.search_var.set('')
+            # Optionnel: focus sur le widget de recherche si disponible
+            if hasattr(self, 'search_entry') and self.search_entry:
+                self.search_entry.focus_set()
+        except Exception as e:
+            self.logger.error(f"Error focusing search: {e}")
     
     def _load_data(self):
         """Load data from the global Excel file."""
