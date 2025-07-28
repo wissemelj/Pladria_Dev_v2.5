@@ -1,0 +1,23 @@
+# Pladria v2.5 - Python Dependencies
+# Sofrecom Tunisie
+# Compatible versions tested and verified
+
+# Core data processing
+pandas>=1.5.0,<2.3.0
+
+# Excel file handling
+openpyxl>=3.0.0,<3.2.0
+
+# Image processing and GUI icons
+Pillow>=9.0.0,<11.0.0
+
+# Calendar widget for date selection
+tkcalendar>=1.6.0,<2.0.0
+
+# Build tool (will be managed by build script)
+# pyinstaller==5.13.2
+
+# System dependencies (usually included with Python)
+# tkinter (built-in with Python)
+# pathlib (built-in with Python 3.4+)
+# os, sys, datetime (built-in)

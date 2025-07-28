@@ -6,7 +6,7 @@
 # ===============================================================================
 
 # ===============================================================================
-# 1. FICHIERS DE CACHE PYTHON
+# 1. FICHIERS DE CACHE PYTHON ET AUTRES CACHES
 # ===============================================================================
 
 # Cache Python
@@ -16,15 +16,25 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.Python
+
+# Cache pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Cache setuptools
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Distribution / packaging
-.Python
 build/
 develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/
 lib/
 lib64/
 parts/
@@ -33,14 +43,29 @@ var/
 wheels/
 pip-wheel-metadata/
 share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
-# PyInstaller
+# Cache de compilation
+*.so
+*.dylib
+*.dll
+
+# Cache Jupyter
+.ipynb_checkpoints/
+
+# Cache mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Cache Pyre
+.pyre/
+
+# Cache pytype
+.pytype/
+
+# PyInstaller (keep spec files for this project)
 *.manifest
-*.spec
+# Note: *.spec files are kept for this project as they're needed for builds
 
 # Unit test / coverage reports
 htmlcov/
@@ -76,14 +101,27 @@ team_stats_*.log
 data_viewer_*.log
 
 # ===============================================================================
-# 3. FICHIERS MARKDOWN (AVEC EXCEPTION README.md)
+# 3. FICHIERS MARKDOWN (AVEC EXCEPTIONS)
 # ===============================================================================
 
 # Ignorer tous les fichiers Markdown
 *.md
 
-# EXCEPTION : Garder le README.md principal
+# EXCEPTIONS : Garder les fichiers README importants
 !README.md
+!readme.md
+!Readme.md
+!README.MD
+
+# Ignorer les fichiers markdown temporaires et générés
+*_temp.md
+*_tmp.md
+*_backup.md
+*_old.md
+notes.md
+todo.md
+NOTES.md
+TODO.md
 
 # ===============================================================================
 # 4. FICHIERS TEMPORAIRES ET SYSTÈME
@@ -151,22 +189,38 @@ venv.bak/
 # Fichiers de configuration locaux
 config/local_settings.py
 config/secrets.py
+.env.local
+.env.development
+.env.production
 
 # Fichiers de données temporaires
 temp_data/
 temp_files/
 cache/
+.cache/
+tmp/
+.tmp/
 
 # Fichiers Excel temporaires
 ~$*.xlsx
 ~$*.xls
 *.tmp.xlsx
 *.tmp.xls
+*_temp.xlsx
+*_temp.xls
 
-# Fichiers de test
+# Fichiers de test et développement
 test_*.xlsx
 test_*.xls
 test_output/
+test_data/
+sample_data/
+dev_data/
+
+# Fichiers de sortie temporaires
+output_temp/
+generated_temp/
+export_temp/
 
 # ===============================================================================
 # 7. DÉPENDANCES ET MODULES
@@ -187,11 +241,52 @@ build/
 dist/
 *.exe
 *.msi
+*.app
+*.dmg
 
 # Package spécifique Pladria
 Package/build/
 Package/dist/
+Package/build_*/
+Package/dist_*/
 Package/*.exe
+Package/build_temp/
+Package/dist_temp/
+Package/build_simple/
+Package/dist_simple/
+
+# Fichiers de build temporaires
+*.whl
+*.tar.gz
+*.zip
+
+# ===============================================================================
+# 9. CACHE ADDITIONNELS ET FICHIERS SYSTÈME
+# ===============================================================================
+
+# Cache Windows
+*.lnk
+*.url
+
+# Cache macOS
+*.app/
+.Spotlight-V100
+.Trashes
+
+# Cache Linux
+.thumbnails/
+
+# Cache navigateurs (si applicable)
+.chrome/
+.firefox/
+.safari/
+
+# Cache éditeurs de texte
+*.swp
+*.swo
+*~
+.#*
+\#*#
 
 # ===============================================================================
 # FIN DU FICHIER .gitignore

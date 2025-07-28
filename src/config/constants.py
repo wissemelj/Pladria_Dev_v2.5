@@ -159,7 +159,7 @@ class AppInfo:
     VERSION = "2.5"
     AUTHOR = "Equipe Plan Adressage - BLI"
     COPYRIGHT = "© 2025 Sofrecom Tunisie"
-    DESCRIPTION = "Pladria - Activité CMS Adresse & Plan Adressae"
+    DESCRIPTION = "Pladria - Activité Plan Adressae"
     FULL_DESCRIPTION = "Pladria : Une Initiative pour automatiser la génération des suivis pour l'activité CMS Adresse & Plan Adressage"
 
 # Logging configuration

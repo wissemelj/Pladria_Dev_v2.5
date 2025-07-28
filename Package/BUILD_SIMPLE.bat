@@ -1,46 +1,44 @@
 @echo off
-title Pladria v2.5 - Simple Build (Fallback)
+title Pladria v2.5 - Simple Build
 color 0A
 
 echo.
 echo ============================================================
-echo    PLADRIA v2.5 - SIMPLE BUILD (FALLBACK METHOD)
+echo    PLADRIA v2.5 - SIMPLE BUILD (NO VERIFICATION)
 echo ============================================================
 echo.
-echo This is a simplified build method that bypasses complex
-echo PyInstaller features and should work even with antivirus.
+echo This script skips verification and builds directly
 echo.
 
-REM Change to Package directory
 cd /d "%~dp0"
 
-echo Current directory: %CD%
-echo.
-
-REM Clean previous builds
-echo Cleaning previous builds...
-if exist build rmdir /s /q build
-if exist dist rmdir /s /q dist
-if exist build_temp rmdir /s /q build_temp
-if exist dist_temp rmdir /s /q dist_temp
-echo ✅ Cleanup complete
-echo.
-
-REM Install/update dependencies
-echo Installing dependencies...
-python -m pip install --upgrade pip >nul
-python -m pip uninstall pyinstaller -y >nul 2>&1
-python -m pip install --no-cache-dir pyinstaller>=6.0.0
-python -m pip install -r requirements.txt
+echo [1/4] Installing dependencies...
+pip install -r requirements.txt --quiet
 echo ✅ Dependencies installed
-echo.
 
-REM Simple PyInstaller command (no spec file)
-echo Building executable with simple method...
+echo.
+echo [2/4] Installing PyInstaller (Python 3.13 compatible)...
+pip uninstall pyinstaller -y >nul 2>&1
+echo Installing latest PyInstaller compatible with Python 3.13...
+pip install --no-cache-dir pyinstaller --quiet
+if errorlevel 1 (
+    echo ❌ Failed to install PyInstaller
+    echo Trying with --user flag...
+    pip install --user pyinstaller --quiet
+)
+echo ✅ PyInstaller ready
+
+echo.
+echo [3/4] Cleaning previous builds...
+if exist "dist" rmdir /s /q "dist" >nul 2>&1
+if exist "build" rmdir /s /q "build" >nul 2>&1
+echo ✅ Cleanup complete
+
+echo.
+echo [4/4] Building application...
 echo This may take several minutes...
-echo.
 
-pyinstaller ^
+python -m PyInstaller ^
     --name=Pladria ^
     --onedir ^
     --windowed ^
@@ -53,77 +51,29 @@ pyinstaller ^
     --hidden-import=pandas ^
     --hidden-import=openpyxl ^
     --hidden-import=PIL ^
-    --hidden-import=PIL.Image ^
-    --hidden-import=PIL.ImageTk ^
-    --hidden-import=tkinter ^
-    --hidden-import=tkinter.ttk ^
-    --hidden-import=tkinter.filedialog ^
-    --hidden-import=tkinter.messagebox ^
     --hidden-import=tkcalendar ^
-    --workpath=./build_simple ^
-    --distpath=./dist_simple ^
+    --exclude-module=matplotlib ^
+    --exclude-module=scipy ^
+    --exclude-module=pytest ^
     ../src/main.py
 
 if errorlevel 1 (
-    echo.
-    echo ❌ Simple build failed
-    echo Try running DIAGNOSE_BUILD_ISSUE.bat first
-    echo.
+    echo ❌ Build failed
+    echo Try running as administrator or check antivirus settings
     goto :end
 )
 
 echo.
-echo ✅ Simple build completed!
-echo.
-
-REM Move to standard locations
-if exist dist rmdir /s /q dist
-if exist dist_simple\Pladria (
-    move dist_simple dist
-    echo ✅ Moved to standard dist directory
+echo ✅ BUILD COMPLETED!
+if exist "dist\Pladria\Pladria.exe" (
+    echo.
+    echo Executable created: dist\Pladria\Pladria.exe
+    dir "dist\Pladria\Pladria.exe" | find "Pladria.exe"
+    echo.
+    echo To test: cd dist\Pladria && Pladria.exe
+) else (
+    echo ❌ Executable not found
 )
 
-REM Create portable package
-echo Creating portable package...
-if exist dist\Pladria_v2.5_Portable rmdir /s /q dist\Pladria_v2.5_Portable
-mkdir dist\Pladria_v2.5_Portable
-
-REM Copy all files
-xcopy /E /I /Q dist\Pladria\* dist\Pladria_v2.5_Portable\
-
-REM Create launcher
-echo @echo off > dist\Pladria_v2.5_Portable\Launch_Pladria.bat
-echo title Pladria v2.5 >> dist\Pladria_v2.5_Portable\Launch_Pladria.bat
-echo echo Starting Pladria... >> dist\Pladria_v2.5_Portable\Launch_Pladria.bat
-echo "Pladria.exe" >> dist\Pladria_v2.5_Portable\Launch_Pladria.bat
-
-REM Create README
-echo # Pladria v2.5 > dist\Pladria_v2.5_Portable\README.txt
-echo. >> dist\Pladria_v2.5_Portable\README.txt
-echo Double-click Pladria.exe to run the application >> dist\Pladria_v2.5_Portable\README.txt
-echo Or use Launch_Pladria.bat for convenience >> dist\Pladria_v2.5_Portable\README.txt
-
-echo ✅ Portable package created!
-echo.
-
-REM Test the executable
-echo Testing executable...
-start /wait /min dist\Pladria_v2.5_Portable\Pladria.exe
-timeout /t 3 >nul
-taskkill /f /im Pladria.exe >nul 2>&1
-
-echo.
-echo ============================================================
-echo BUILD COMPLETED SUCCESSFULLY!
-echo ============================================================
-echo.
-echo Your application is ready in:
-echo dist\Pladria_v2.5_Portable\
-echo.
-echo Files created:
-dir /b dist\Pladria_v2.5_Portable\
-echo.
-
 :end
-echo Press any key to close...
-pause >nul
+pause

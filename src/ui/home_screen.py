@@ -89,8 +89,9 @@ class HomeScreen:
         root_window = parent.winfo_toplevel()
 
         # Hero section taking absolute full width - no padding, no margins
-        hero_card = tk.Frame(parent, relief='flat', bd=0, highlightthickness=0, bg=COLORS['BG'])
+        hero_card = tk.Frame(parent, relief='flat', bd=0, highlightthickness=0, bg=COLORS['BG'], height=400)
         hero_card.pack(fill=tk.X, pady=0, padx=0, ipady=0, ipadx=0)
+        hero_card.pack_propagate(False)  # Maintain fixed height
 
         # Force the hero to extend beyond any container constraints
         hero_card.pack_propagate(False)
@@ -114,28 +115,15 @@ class HomeScreen:
         canvas = self._set_hero_background(hero_card, root_window)
 
         if canvas:
-            # Create content frame on the canvas - inherit canvas background
-            hero_content = tk.Frame(canvas)
-            # Make the frame transparent by not setting any background
-            hero_content.configure(bg=canvas.cget('bg'))
-            # Place the content frame on the canvas - centered horizontally and vertically
-            canvas_window = canvas.create_window(100, 80, anchor=tk.NW, window=hero_content)
+            # Add overlay content on the background image with a small delay
+            canvas.after(100, lambda: self._create_hero_overlay_content(canvas, hero_card))
 
-            # Function to center content when canvas resizes
-            def center_content(event):
-                canvas_width = event.width
-                # Center the content horizontally with some left margin
-                x_pos = max(50, (canvas_width - 800) // 2)  # 800px content width, min 50px margin
-                canvas.coords(canvas_window, x_pos, 80)
-
-            canvas.bind('<Configure>', center_content)
         else:
             # Fallback: create content frame directly on hero_card
             hero_content = tk.Frame(hero_card, bg=COLORS['PRIMARY'])
             hero_content.pack(fill=tk.X, padx=50, pady=40)
-
-        # Create hero content
-        self._create_hero_content(hero_content)
+            # Create hero content for fallback only
+            self._create_hero_content(hero_content)
 
     def _create_hero_content(self, hero_content):
         """Create the content for the hero section."""
@@ -148,34 +136,129 @@ class HomeScreen:
             from PIL import Image, ImageTk
             import os
 
-            # Path to the background image
-            background_path = os.path.join("src", "background.png")
+            # Path to the background image - check multiple locations
+            import os
+            current_dir = os.getcwd()
+            self.logger.info(f"Current working directory: {current_dir}")
 
-            if os.path.exists(background_path):
+            background_paths = [
+                "Background.png",  # Root directory
+                "../Background.png",  # Parent directory (since we're in src)
+                os.path.join("..", "Background.png"),  # Explicit parent
+                os.path.join("src", "background.png"),  # Original location
+                "background.png"  # Current directory fallback
+            ]
+
+            background_path = None
+            for path in background_paths:
+                abs_path = os.path.abspath(path)
+                self.logger.info(f"Checking background path: {path} -> {abs_path} (exists: {os.path.exists(path)})")
+                if os.path.exists(path):
+                    background_path = path
+                    self.logger.info(f"Found background image at: {background_path}")
+                    break
+
+            if background_path and os.path.exists(background_path):
+                self.logger.info(f"Loading background image from: {background_path}")
                 # Load the background image
                 bg_image = Image.open(background_path)
+                self.logger.info(f"Image loaded successfully. Original size: {bg_image.size}")
 
-                # Get actual window width for true full-width hero
+                # Get the original image dimensions
+                img_width, img_height = bg_image.size
+                self.logger.info(f"Original image size: {img_width}x{img_height}")
+
+                # Get actual window dimensions for full coverage
                 if root_window:
                     try:
-                        # Get the actual window width
+                        # Get the actual window dimensions
                         root_window.update_idletasks()
-                        hero_width = max(1920, root_window.winfo_width())  # At least Full HD, or window width
+                        window_width = root_window.winfo_width()
+                        window_height = root_window.winfo_height()
+
+                        # Leave 15cm (approximately 567px at 96 DPI) for content below
+                        cm_to_pixels = 567  # 15 cm ≈ 567 pixels at standard 96 DPI
+                        max_hero_height = window_height - cm_to_pixels
+
+                        # Use full window dimensions for target area
+                        target_width = window_width
+                        target_height = max_hero_height
+
+                        # Calculate scaling to fill entire area (crop to fill approach)
+                        scale_x = target_width / img_width
+                        scale_y = target_height / img_height
+                        scale = max(scale_x, scale_y)  # Use larger scale to fill entire area
+
+                        # Calculate new dimensions after scaling
+                        scaled_width = int(img_width * scale)
+                        scaled_height = int(img_height * scale)
+
+                        # Resize image with scaling that fills the area
+                        bg_image_scaled = bg_image.resize((scaled_width, scaled_height), Image.Resampling.LANCZOS)
+
+                        # Crop to exact target dimensions if needed (center crop)
+                        if scaled_width > target_width or scaled_height > target_height:
+                            left = (scaled_width - target_width) // 2
+                            top = (scaled_height - target_height) // 2
+                            right = left + target_width
+                            bottom = top + target_height
+                            bg_image = bg_image_scaled.crop((left, top, right, bottom))
+                        else:
+                            bg_image = bg_image_scaled
+
                     except:
-                        hero_width = 1920  # Fallback
+                        # Fallback: use window dimensions or defaults
+                        target_width = window_width if window_width > 0 else 1400
+                        target_height = (window_height - 567) if window_height > 567 else 600
+
+                        # Apply same crop-to-fill logic for fallback
+                        scale_x = target_width / img_width
+                        scale_y = target_height / img_height
+                        scale = max(scale_x, scale_y)
+
+                        scaled_width = int(img_width * scale)
+                        scaled_height = int(img_height * scale)
+                        bg_image_scaled = bg_image.resize((scaled_width, scaled_height), Image.Resampling.LANCZOS)
+
+                        if scaled_width > target_width or scaled_height > target_height:
+                            left = (scaled_width - target_width) // 2
+                            top = (scaled_height - target_height) // 2
+                            right = left + target_width
+                            bottom = top + target_height
+                            bg_image = bg_image_scaled.crop((left, top, right, bottom))
+                        else:
+                            bg_image = bg_image_scaled
                 else:
-                    hero_width = 1920  # Fallback
+                    # Fallback: use window dimensions or defaults
+                    target_width = window_width if window_width > 0 else 1400
+                    target_height = (window_height - 567) if window_height > 567 else 600
 
-                hero_height = 400  # Even taller height for better visual impact
+                    # Apply same crop-to-fill logic for fallback
+                    scale_x = target_width / img_width
+                    scale_y = target_height / img_height
+                    scale = max(scale_x, scale_y)
 
-                # Resize image to fit hero section
-                bg_image = bg_image.resize((hero_width, hero_height), Image.Resampling.LANCZOS)
+                    scaled_width = int(img_width * scale)
+                    scaled_height = int(img_height * scale)
+                    bg_image_scaled = bg_image.resize((scaled_width, scaled_height), Image.Resampling.LANCZOS)
+
+                    if scaled_width > target_width or scaled_height > target_height:
+                        left = (scaled_width - target_width) // 2
+                        top = (scaled_height - target_height) // 2
+                        right = left + target_width
+                        bottom = top + target_height
+                        bg_image = bg_image_scaled.crop((left, top, right, bottom))
+                    else:
+                        bg_image = bg_image_scaled
+
+                # Store the PIL image for glassmorphism effects
+                self.hero_image_pil = bg_image.copy()
 
                 # Convert to PhotoImage
                 self.hero_bg_photo = ImageTk.PhotoImage(bg_image)
 
                 # Debug: Print image dimensions
-                self.logger.info(f"Hero image resized to: {hero_width}x{hero_height}")
+                self.logger.info(f"Hero image processed to: {bg_image.width}x{bg_image.height} (crop-to-fill applied)")
 
                 # Set the background image directly on the hero card
                 hero_card.configure(bg='white')  # Fallback color
@@ -186,8 +269,9 @@ class HomeScreen:
                     highlightthickness=0,
                     bd=0,
                     relief='flat',
-                    width=hero_width,
-                    height=hero_height
+                    width=target_width,
+                    height=target_height,
+                    bg='white'  # Set a background color to ensure visibility
                 )
                 canvas.pack(fill=tk.BOTH, expand=True, padx=0, pady=0, ipady=0, ipadx=0)
 
@@ -195,13 +279,19 @@ class HomeScreen:
                 canvas.pack_propagate(False)
 
                 # Ensure the hero_card has the right height
-                hero_card.configure(height=hero_height)
+                hero_card.configure(height=target_height)
 
-                self.logger.info(f"Canvas created with dimensions: {hero_width}x{hero_height}")
+                self.logger.info(f"Canvas created with dimensions: {target_width}x{target_height}")
 
                 # Add the background image to the canvas, centered both horizontally and vertically
-                image_id = canvas.create_image(hero_width//2, hero_height//2, anchor=tk.CENTER, image=self.hero_bg_photo)
-                self.logger.info(f"Image added to canvas with ID: {image_id} at position ({hero_width//2}, {hero_height//2})")
+                image_id = canvas.create_image(target_width//2, target_height//2, anchor=tk.CENTER, image=self.hero_bg_photo)
+                self.logger.info(f"Image added to canvas with ID: {image_id} at position ({target_width//2}, {target_height//2})")
+
+                # Ensure the image is visible by bringing it to front
+                canvas.tag_lower(image_id)  # Put image at the back so content can go on top
+
+                # Force canvas update
+                canvas.update_idletasks()
 
                 # Bind canvas resize to update image position and extend beyond scrollbar
                 def on_canvas_configure(event):
@@ -212,10 +302,10 @@ class HomeScreen:
                         # Extend canvas to full window width
                         canvas.configure(width=window_width)
                         # Center the image both horizontally and vertically
-                        canvas.coords(canvas.find_all()[0], window_width//2, hero_height//2)
+                        canvas.coords(canvas.find_all()[0], window_width//2, target_height//2)
                     except:
                         # Fallback to canvas width
-                        canvas.coords(canvas.find_all()[0], canvas_width//2, hero_height//2)
+                        canvas.coords(canvas.find_all()[0], canvas_width//2, target_height//2)
 
                 canvas.bind('<Configure>', on_canvas_configure)
 
@@ -234,7 +324,7 @@ class HomeScreen:
                             if hero_card.winfo_exists():
                                 hero_card.configure(width=window_width)
                             if canvas.winfo_exists() and canvas.find_all():
-                                canvas.coords(canvas.find_all()[0], window_width//2, hero_height//2)
+                                canvas.coords(canvas.find_all()[0], window_width//2, target_height//2)
                     except Exception as e:
                         # Silently ignore errors when widgets are destroyed
                         pass
@@ -257,7 +347,7 @@ class HomeScreen:
                             canvas.configure(width=window_width)
                             hero_card.configure(width=window_width)
                             if canvas.find_all():
-                                canvas.coords(canvas.find_all()[0], window_width//2, hero_height//2)
+                                canvas.coords(canvas.find_all()[0], window_width//2, max_hero_height//2)
                     except:
                         pass
 
@@ -270,7 +360,7 @@ class HomeScreen:
             else:
                 # Fallback to solid color if image not found
                 hero_card.configure(bg=COLORS['PRIMARY'])
-                self.logger.warning(f"Background image not found at {background_path}, using solid color")
+                self.logger.warning(f"Background image not found at any of the expected locations: {background_paths}, using solid color")
                 return None
 
         except Exception as e:
@@ -278,38 +368,260 @@ class HomeScreen:
             hero_card.configure(bg=COLORS['PRIMARY'])
             self.logger.error(f"Error loading background image: {e}")
             return None
-    
+
+    def _create_hero_overlay_content(self, canvas, hero_card):
+        """Create overlay content on the hero background image."""
+        try:
+            from config.constants import COLORS, UIConfig, AppInfo
+
+            # Get canvas dimensions with better fallback
+            canvas.update_idletasks()
+            canvas_width = canvas.winfo_width()
+            canvas_height = canvas.winfo_height()
+
+            # Use more reliable dimensions
+            if canvas_width <= 1:
+                canvas_width = 1200  # Default width
+            if canvas_height <= 1:
+                canvas_height = 226  # Default height
+
+            # Calculate center position first (needed for glassmorphism calculations)
+            center_x = max(canvas_width // 2, 300)  # Ensure minimum positioning
+            center_y = max(canvas_height // 2, 100)  # Ensure minimum positioning
+
+            # Create a glassmorphism overlay with transparent background
+            overlay_frame = tk.Frame(
+                canvas,
+                bg='#FFFFFF',  # White background for glassmorphism
+                relief='flat',
+                bd=0,
+                highlightthickness=0
+            )
+
+            # Create a glassmorphism background using PIL for better transparency simulation
+            try:
+                from PIL import Image, ImageDraw, ImageFilter, ImageTk
+
+                # Try to create a true glassmorphism effect with background blur
+                if hasattr(self, 'hero_image_pil') and self.hero_image_pil:
+                    # Calculate the region of the background image that will be behind the overlay
+                    overlay_x = max(0, center_x - 225)  # Half of overlay width (450/2)
+                    overlay_y = max(0, center_y - 70)   # Half of overlay height (140/2)
+
+                    # Ensure coordinates are within image bounds
+                    img_width, img_height = self.hero_image_pil.size
+                    overlay_x = min(overlay_x, img_width - 450) if img_width > 450 else 0
+                    overlay_y = min(overlay_y, img_height - 140) if img_height > 140 else 0
+
+                    # Extract the region that will be behind the overlay
+                    try:
+                        # Ensure we don't go beyond image boundaries
+                        crop_right = min(overlay_x + 450, img_width)
+                        crop_bottom = min(overlay_y + 140, img_height)
+
+                        region = self.hero_image_pil.crop((
+                            overlay_x, overlay_y,
+                            crop_right, crop_bottom
+                        ))
+
+                        # Resize to exact overlay dimensions
+                        region = region.resize((450, 140), Image.Resampling.LANCZOS)
+
+                        # Apply blur effect for glassmorphism
+                        blurred_region = region.filter(ImageFilter.GaussianBlur(radius=15))
+
+                        # Create a glassmorphism overlay with proper transparency
+                        # Use a more sophisticated gradient for better glassmorphism effect
+                        glass_overlay = Image.new('RGBA', (450, 140), (0, 0, 0, 0))
+                        draw = ImageDraw.Draw(glass_overlay)
+
+                        # Create a radial gradient effect for glassmorphism
+                        for y in range(140):
+                            for x in range(450):
+                                # Calculate distance from center for radial effect
+                                center_dist = ((x - 225) ** 2 + (y - 70) ** 2) ** 0.5
+                                max_dist = (225 ** 2 + 70 ** 2) ** 0.5
+
+                                # Create gradient based on distance from center
+                                gradient_factor = 1 - min(center_dist / max_dist, 1)
+
+                                # Base alpha with gradient
+                                alpha = int(80 + (gradient_factor * 60))  # 80-140 alpha range
+                                alpha = max(60, min(140, alpha))
+
+                                # Add some noise for more realistic glass effect
+                                noise = (x + y) % 3 - 1  # Simple noise pattern
+                                alpha += noise * 5
+                                alpha = max(50, min(150, alpha))
+
+                                draw.point((x, y), fill=(255, 255, 255, alpha))
+
+                        # Add subtle border for definition
+                        draw.rectangle([0, 0, 449, 139], outline=(255, 255, 255, 120), width=1)
+
+                        # Add inner highlight for glass effect
+                        draw.rectangle([1, 1, 448, 138], outline=(255, 255, 255, 80), width=1)
+
+                        # Composite the blurred background with the glass overlay
+                        glassmorphism_bg = Image.alpha_composite(
+                            blurred_region.convert('RGBA'),
+                            glass_overlay
+                        )
+
+                        # Convert to PhotoImage
+                        glass_photo = ImageTk.PhotoImage(glassmorphism_bg)
+
+                        # Create background label with glassmorphism
+                        glass_bg = tk.Label(overlay_frame, image=glass_photo, bd=0, highlightthickness=0)
+                        glass_bg.place(x=0, y=0, relwidth=1, relheight=1)
+
+                        # Store reference to prevent garbage collection
+                        overlay_frame.glass_photo = glass_photo
+
+                        # NOW ADD TEXT DIRECTLY ON TOP OF THE GLASS BACKGROUND
+                        self._add_text_to_glass_overlay(overlay_frame)
+
+                        self.logger.info("Advanced glassmorphism effect applied successfully")
+
+                    except Exception as crop_error:
+                        self.logger.warning(f"Advanced glassmorphism failed: {crop_error}, using simple version")
+                        raise Exception(f"Crop error: {crop_error}")
+
+                else:
+                    # Create a simple gradient glassmorphism background when no background image
+                    self._create_simple_glassmorphism(overlay_frame)
+
+            except Exception as e:
+                # Fallback: create simple glassmorphism effect
+                self.logger.info(f"Advanced glassmorphism failed, using simple version: {e}")
+                self._create_simple_glassmorphism(overlay_frame)
+
+            self.logger.info("About to create overlay window...")
+
+            # Position the overlay frame in the center of the main canvas
+            overlay_window = canvas.create_window(
+                center_x, center_y,  # Center positioning
+                window=overlay_frame,
+                anchor=tk.CENTER,
+                width=450,  # Fixed width for consistency
+                height=140   # Fixed height for consistency
+            )
+
+            self.logger.info(f"Overlay window created with ID: {overlay_window}")
+            self.logger.info("Glassmorphism overlay positioned successfully")
+
+            # Store overlay reference for potential updates
+            self.hero_overlay = overlay_window
+
+            self.logger.info("Hero overlay content created successfully")
+
+        except Exception as e:
+            self.logger.error(f"Error creating hero overlay content: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _create_simple_glassmorphism(self, overlay_frame):
+        """Create a simple glassmorphism effect when advanced version fails."""
+        try:
+            from PIL import Image, ImageDraw, ImageTk
+
+            # Create a simple gradient glassmorphism background
+            glass_img = Image.new('RGBA', (450, 140), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(glass_img)
+
+            # Create a subtle gradient effect
+            for y in range(140):
+                # Create vertical gradient
+                alpha = int(120 - (y * 0.2))  # Subtle gradient
+                alpha = max(80, min(140, alpha))  # Keep in visible range
+
+                # Add horizontal variation for more realistic effect
+                for x in range(450):
+                    x_factor = abs(x - 225) / 225  # Distance from center horizontally
+                    final_alpha = int(alpha * (1 - x_factor * 0.2))  # Slight horizontal fade
+                    final_alpha = max(70, min(130, final_alpha))
+
+                    draw.point((x, y), fill=(255, 255, 255, final_alpha))
+
+            # Add subtle border
+            draw.rectangle([0, 0, 449, 139], outline=(255, 255, 255, 100), width=1)
+
+            # Add inner highlight
+            draw.rectangle([2, 2, 447, 137], outline=(255, 255, 255, 60), width=1)
+
+            # Convert to PhotoImage
+            glass_photo = ImageTk.PhotoImage(glass_img)
+
+            # Create background label with glassmorphism
+            glass_bg = tk.Label(overlay_frame, image=glass_photo, bd=0, highlightthickness=0)
+            glass_bg.place(x=0, y=0, relwidth=1, relheight=1)
+
+            # Store reference to prevent garbage collection
+            overlay_frame.glass_photo = glass_photo
+
+            # NOW ADD TEXT DIRECTLY ON TOP OF THE GLASS BACKGROUND
+            self._add_text_to_glass_overlay(overlay_frame)
+
+            self.logger.info("Simple glassmorphism effect applied successfully")
+
+        except Exception as e:
+            self.logger.warning(f"Simple glassmorphism also failed: {e}")
+            # Ultimate fallback: semi-transparent white background
+            overlay_frame.configure(bg='#FFFFFF')  # Solid white fallback
+            # Still add text even with fallback
+            self._add_text_to_glass_overlay(overlay_frame)
+
+    def _add_text_to_glass_overlay(self, overlay_frame):
+        """Add only title and subtitle text floating over glassmorphism - no background cards."""
+        try:
+            # Create title label - pure text floating over glass, no background
+            title_label = tk.Label(
+                overlay_frame,
+                text="Bienvenue sur Pladria",
+                font=("Segoe UI", 16, "bold"),
+                fg="#000000",  # Black text
+                relief='flat',
+                bd=0,
+                highlightthickness=0
+            )
+            title_label.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
+
+            # Create subtitle label - pure text floating over glass, no background
+            subtitle_label = tk.Label(
+                overlay_frame,
+                text="Système de contrôle qualité pour l'activité Plan Adressage",
+                font=("Segoe UI", 10, "normal"),
+                fg="#333333",  # Dark gray for subtitle
+                relief='flat',
+                bd=0,
+                highlightthickness=0,
+                wraplength=400
+            )
+            subtitle_label.place(relx=0.5, rely=0.65, anchor=tk.CENTER)
+
+            self.logger.info("Pure floating text added to glassmorphism overlay successfully")
+
+        except Exception as e:
+            self.logger.error(f"Error adding text to glassmorphism overlay: {e}")
+            # Fallback: create a simple text label
+            fallback_label = tk.Label(
+                overlay_frame,
+                text="Bienvenue sur Pladria",
+                font=("Segoe UI", 14, "bold"),
+                fg="#000000",  # Black text
+                relief='flat',
+                bd=0,
+                highlightthickness=0
+            )
+            fallback_label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
     def _create_modern_features_section(self, parent: tk.Widget):
         """Create modern features section with professional card design."""
         # Modern section header
         header_section = tk.Frame(parent, bg=COLORS['BG'])
         header_section.pack(fill=tk.X, pady=(0, 30))
 
-        # Section title with modern typography
-        title_frame = tk.Frame(header_section, bg=COLORS['BG'])
-        title_frame.pack(anchor=tk.W)
-
-        header_label = tk.Label(
-            title_frame,
-            text="Modules Disponibles",
-            font=("Segoe UI", 22, "bold"),
-            fg=COLORS['PRIMARY'],
-            bg=COLORS['BG']
-        )
-        header_label.pack(side=tk.LEFT)
-
-        # Modern accent line
-        accent_line = tk.Frame(title_frame, bg=COLORS['SECONDARY'], height=4, width=60)
-        accent_line.pack(side=tk.LEFT, padx=(15, 0), anchor=tk.CENTER)
-
-        subtitle_label = tk.Label(
-            header_section,
-            text="Sélectionnez un module pour accéder aux fonctionnalités avancées",
-            font=("Segoe UI", 12),
-            fg=COLORS['TEXT_SECONDARY'],
-            bg=COLORS['BG']
-        )
-        subtitle_label.pack(anchor=tk.W, pady=(8, 0))
+        # Title and subtitle removed as requested
 
         # Modern features grid with enhanced cards
         features_container = tk.Frame(parent, bg=COLORS['BG'])
@@ -385,21 +697,27 @@ class HomeScreen:
         self._create_modern_teams_section(parent)
 
     def _create_modern_feature_card(self, parent, title, subtitle, icon, color, command, features):
-        """Create a modern feature card with enhanced design and animations."""
-        # Card container with shadow effect
+        """Create a modern feature card with enhanced design and glassmorphism effects."""
+        # Card container with enhanced shadow effect
         card_container = tk.Frame(parent, bg=COLORS['BG'])
 
-        # Main card with modern styling
-        card = tk.Frame(card_container, bg=COLORS['WHITE'], relief='flat', bd=0)
-        card.pack(fill=tk.BOTH, expand=True, padx=3, pady=3)
+        # Main card with modern glassmorphism styling
+        card = tk.Frame(card_container, bg=COLORS['WHITE'], relief='solid', bd=1)
+        card.pack(fill=tk.BOTH, expand=True, padx=4, pady=4)
 
-        # Add shadow effect
-        shadow = tk.Frame(card_container, bg='#E0E0E0', height=2)
-        shadow.pack(fill=tk.X, side=tk.BOTTOM)
+        # Enhanced shadow effect with gradient-like appearance
+        shadow1 = tk.Frame(card_container, bg='#D0D0D0', height=1)
+        shadow1.pack(fill=tk.X, side=tk.BOTTOM)
+        shadow2 = tk.Frame(card_container, bg='#E8E8E8', height=1)
+        shadow2.pack(fill=tk.X, side=tk.BOTTOM)
 
-        # Card header with colored accent
-        header = tk.Frame(card, bg=color, height=6)
+        # Card header with colored accent and gradient effect
+        header = tk.Frame(card, bg=color, height=8)
         header.pack(fill=tk.X)
+
+        # Add a subtle accent line below the header
+        accent_frame = tk.Frame(card, bg=COLORS['LIGHT'], height=1)
+        accent_frame.pack(fill=tk.X)
 
         # Card content with smaller padding for horizontal layout
         content = tk.Frame(card, bg=COLORS['WHITE'])
@@ -522,37 +840,40 @@ class HomeScreen:
         shadow2.pack(fill=tk.X)
 
     def _create_modern_teams_section(self, parent):
-        """Create modern Teams access section."""
+        """Create modern Teams access section with compact design."""
         teams_container = tk.Frame(parent, bg=COLORS['BG'])
-        teams_container.pack(fill=tk.X, pady=(20, 0))
+        teams_container.pack(pady=(20, 0))
 
-        # Modern Teams card
-        teams_card = tk.Frame(teams_container, bg=COLORS['ACCENT'], relief='flat', bd=0)
-        teams_card.pack(fill=tk.X, padx=20, pady=10)
+        # Compact Teams card with fixed width
+        teams_card = tk.Frame(teams_container, bg=COLORS['ACCENT'], relief='flat', bd=0, width=600, height=80)
+        teams_card.pack(padx=20, pady=10)
+        teams_card.pack_propagate(False)  # Maintain fixed size
 
         teams_content = tk.Frame(teams_card, bg=COLORS['ACCENT'])
-        teams_content.pack(fill=tk.X, padx=30, pady=20)
+        teams_content.pack(fill=tk.BOTH, expand=True, padx=20, pady=15)
 
-        # Teams icon and text
+        # Teams icon and text in horizontal layout
         teams_header = tk.Frame(teams_content, bg=COLORS['ACCENT'])
         teams_header.pack(fill=tk.X)
 
+        # Smaller icon
         teams_icon = tk.Label(
             teams_header,
             text="🗂️",
-            font=("Segoe UI", 24),
+            font=("Segoe UI", 18),
             fg=COLORS['PRIMARY'],
             bg=COLORS['ACCENT']
         )
-        teams_icon.pack(side=tk.LEFT, padx=(0, 15))
+        teams_icon.pack(side=tk.LEFT, padx=(0, 12))
 
+        # Compact text section
         teams_text_frame = tk.Frame(teams_header, bg=COLORS['ACCENT'])
         teams_text_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
         teams_title = tk.Label(
             teams_text_frame,
             text="Accès Direct au Canal Teams",
-            font=("Segoe UI", 10, "bold"),
+            font=("Segoe UI", 9, "bold"),
             fg=COLORS['PRIMARY'],
             bg=COLORS['ACCENT']
         )
@@ -560,28 +881,28 @@ class HomeScreen:
 
         teams_subtitle = tk.Label(
             teams_text_frame,
-            text="Ouvrir le dossier Teams synchronisé pour accéder aux fichiers partagés",
-            font=("Segoe UI", 8),
+            text="Ouvrir le dossier Teams synchronisé",
+            font=("Segoe UI", 7),
             fg=COLORS['TEXT_SECONDARY'],
             bg=COLORS['ACCENT']
         )
-        teams_subtitle.pack(anchor=tk.W, pady=(2, 0))
+        teams_subtitle.pack(anchor=tk.W, pady=(1, 0))
 
-        # Modern Teams button
+        # Compact Teams button
         teams_button = tk.Button(
             teams_header,
             text="Ouvrir Teams",
-            font=("Segoe UI", 11, "bold"),
+            font=("Segoe UI", 9, "bold"),
             bg=COLORS['PRIMARY'],
             fg=COLORS['WHITE'],
             relief='flat',
             bd=0,
-            padx=25,
-            pady=10,
+            padx=20,
+            pady=8,
             cursor='hand2',
             command=self._open_teams_folder_directly
         )
-        teams_button.pack(side=tk.RIGHT, padx=(20, 0))
+        teams_button.pack(side=tk.RIGHT, padx=(15, 0))
 
         # Add hover effect to Teams button
         def on_teams_enter(event):

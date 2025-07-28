@@ -6,11 +6,11 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[('../Icone_App.png', '.'), ('../Icone_App_Sharp.ico', '.'), ('../logo_Sofrecom.png', '.')],
-    hiddenimports=['pandas', 'openpyxl', 'PIL', 'PIL.Image', 'PIL.ImageTk', 'tkinter', 'tkinter.ttk', 'tkinter.filedialog', 'tkinter.messagebox', 'tkcalendar'],
+    hiddenimports=['pandas', 'openpyxl', 'PIL', 'tkcalendar'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    excludes=['matplotlib', 'scipy', 'pytest'],
     noarchive=False,
     optimize=0,
 )
