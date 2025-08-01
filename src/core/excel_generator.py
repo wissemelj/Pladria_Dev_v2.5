@@ -164,6 +164,7 @@ class ExcelGenerator:
             Modified Plan Adressage DataFrame
         """
         pd = get_pandas()
+        from datetime import datetime
 
         # Create a copy of the original DataFrame
         df_plan = plan_df.copy()
@@ -172,6 +173,34 @@ class ExcelGenerator:
         num_rows = len(df_plan)
         df_plan.insert(0, 'Insee', [project_info['insee']] * num_rows)
         df_plan.insert(0, 'Nom commune', [project_info['nom_commune']] * num_rows)
+
+        # Auto-populate Date traitement and Durée for specific motifs
+        # Motifs that should get automatic values (case-insensitive matching)
+        auto_motifs_patterns = [
+            "ad non trouvee", "ad non trouvée",  # Variations de "Ad Non Trouvée"
+            "sans geometrie", "sans géométrie",   # Variations de "Sans Géométrie"
+            "ad non joint", "ad non jointe"       # Variations de "Ad Non Jointe"
+        ]
+        current_date = datetime.now().strftime("%d/%m/%Y")
+
+        # Check if we have the required columns
+        if 'Date traitement' in df_plan.columns and 'Durée' in df_plan.columns and 'Motif' in df_plan.columns:
+            for index, row in df_plan.iterrows():
+                motif_original = str(row['Motif']).strip() if pd.notna(row['Motif']) else ''
+                motif_normalized = motif_original.lower().replace('é', 'e').replace('è', 'e')
+
+                # Check if motif matches any of the auto-motifs patterns (case-insensitive)
+                should_auto_populate = False
+                for pattern in auto_motifs_patterns:
+                    pattern_normalized = pattern.lower().replace('é', 'e').replace('è', 'e')
+                    if pattern_normalized in motif_normalized or motif_normalized in pattern_normalized:
+                        should_auto_populate = True
+                        break
+
+                if should_auto_populate:
+                    df_plan.at[index, 'Date traitement'] = current_date
+                    df_plan.at[index, 'Durée'] = 0
+                    self.logger.info(f"Auto-populated row {index + 1}: Motif '{motif_original}' -> Date: {current_date}, Durée: 0")
 
         return df_plan
 
@@ -724,6 +753,28 @@ class ExcelGenerator:
 
             worksheet = writer.sheets[sheet_name]
             columns = plan_df.columns.tolist()
+
+            # Add validation for 'Motif' column (column I) if it exists
+            if len(columns) >= 9:  # Ensure we have at least 9 columns (A-I)
+                # Column I is index 8 (0-based), so column letter is I
+                motif_col_letter = 'I'
+
+                # Use reference to validation sheet for Motif
+                motif_list_length = len(VALIDATION_LISTS["Motif"])
+                motif_range = f"ValidationLists!${self._get_validation_column_letter('Motif')}$2:${self._get_validation_column_letter('Motif')}${motif_list_length + 1}"
+
+                motif_validation = DataValidation(
+                    type="list",
+                    formula1=motif_range,
+                    allow_blank=True
+                )
+                motif_validation.error = 'Valeur non valide pour Motif'
+                motif_validation.errorTitle = 'Erreur de validation'
+
+                # Apply to all data rows in column I
+                range_str = f"{motif_col_letter}2:{motif_col_letter}{len(plan_df) + 1}"
+                motif_validation.add(range_str)
+                worksheet.add_data_validation(motif_validation)
 
             # Add validation for 'Collaborateur' column if it exists
             if 'Collaborateur' in columns:

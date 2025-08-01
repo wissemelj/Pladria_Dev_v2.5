@@ -1786,6 +1786,10 @@ class TeamStatsModule:
             # Analyze the data
             self._analyze_team_statistics()
 
+            # Clear daily durations cache when data is reloaded
+            if hasattr(self, '_daily_durations_cache'):
+                delattr(self, '_daily_durations_cache')
+
             self.status_label.config(text="Mise à jour de l'affichage...")
             self.progress_var.set(90)
 
@@ -3179,6 +3183,11 @@ class TeamStatsModule:
                 no_data_label.pack(anchor=tk.W, pady=8)  # Reduced padding
                 return
 
+            # Build daily durations cache for performance optimization
+            self.status_label.config(text="Calcul des durées journalières...")
+            self.parent.update_idletasks()
+            self._build_daily_durations_cache()
+
             # Overall Team Averages Section (at the top)
             if self.overall_averages:
                 self._create_overall_averages_section()
@@ -3190,7 +3199,7 @@ class TeamStatsModule:
             # Title for individual KPIs
             title_label = tk.Label(
                 self.stats_display,
-                text="📊 KPIs par Collaborateur - DMT & CTJ:",
+                text="📊 KPIs par Collaborateur - Durée Journalier & CTJ:",
                 font=UIConfig.FONT_SUBTITLE,
                 fg=COLORS['PRIMARY'],
                 bg=COLORS['CARD']
@@ -3198,6 +3207,8 @@ class TeamStatsModule:
             title_label.pack(anchor=tk.W, pady=(0, 8))  # Reduced padding
 
             # Create collaborator cards
+            self.status_label.config(text="Affichage des statistiques...")
+            self.parent.update_idletasks()
             for collaborator, stats in self.collaborator_stats.items():
                 self._create_collaborator_card(collaborator, stats)
 
@@ -3391,29 +3402,30 @@ class TeamStatsModule:
         kpi_grid.pack(fill=tk.X)
 
         # Configure grid for 1 row x 5 columns - optimized sizing
-        kpi_grid.grid_columnconfigure(0, weight=1, minsize=140)  # DMT original - reduced
-        kpi_grid.grid_columnconfigure(1, weight=1, minsize=140)  # DMT PA - reduced
-        kpi_grid.grid_columnconfigure(2, weight=1, minsize=140)  # DMT CM - reduced
+        kpi_grid.grid_columnconfigure(0, weight=1, minsize=140)  # Durée Journalier Total - reduced
+        kpi_grid.grid_columnconfigure(1, weight=1, minsize=140)  # Durée Journalier CM - reduced
+        kpi_grid.grid_columnconfigure(2, weight=1, minsize=140)  # Durée Journalier PA - reduced
         kpi_grid.grid_columnconfigure(3, weight=1, minsize=160)  # CTJ PA - reduced
         kpi_grid.grid_columnconfigure(4, weight=1, minsize=160)  # CTJ CM - reduced
 
-        # Get DMT values from dmt_data if available
-        dmt_pa_value = "N/A"
-        dmt_cm_value = "N/A"
+        # Calculate daily durations for this collaborator
+        daily_duration_total = self._calculate_daily_duration_total(collaborator)
+        daily_duration_pa = self._calculate_daily_duration_pa(collaborator)
+        daily_duration_cm = self._calculate_daily_duration_cm(collaborator)
 
-        if hasattr(self, 'dmt_data') and self.dmt_data and collaborator in self.dmt_data:
-            dmt_pa_value = f"{self.dmt_data[collaborator]['dmt_pa']} min"
-            dmt_cm_value = f"{self.dmt_data[collaborator]['dmt_cm']} min"
+        # Format daily duration values
+        daily_total_value = self._format_duration(daily_duration_total)
+        daily_pa_value = self._format_duration(daily_duration_pa)
+        daily_cm_value = self._format_duration(daily_duration_cm)
 
-        # Original DMT and CTJ values
-        dmt_original_value = self._format_duration(stats.get('dmt', 0))
+        # CTJ values remain the same
         ctj_pa_value = f"{stats.get('ctj_today', 0)} éléments"
         ctj_cm_value = f"{stats.get('ctj_cm_today', 0)} éléments"
 
-        # Display DMT original, DMT PA, DMT CM, CTJ PA and CTJ CM
-        self._create_mini_stat(kpi_grid, 0, 0, "⏱️ DMT", dmt_original_value, highlight=True)
-        self._create_mini_stat(kpi_grid, 0, 1, "📋 DMT PA", dmt_pa_value, highlight=True)
-        self._create_mini_stat(kpi_grid, 0, 2, "🏠 DMT CM", dmt_cm_value, highlight=True)
+        # Display daily durations instead of DMT averages - CM before PA
+        self._create_mini_stat(kpi_grid, 0, 0, "⏱️ Durée Journalier Total", daily_total_value, highlight=True)
+        self._create_mini_stat(kpi_grid, 0, 1, "🏠 Durée Journalier CM", daily_cm_value, highlight=True)
+        self._create_mini_stat(kpi_grid, 0, 2, "📋 Durée Journalier PA", daily_pa_value, highlight=True)
         self._create_mini_stat(kpi_grid, 0, 3, "📈 CTJ PA", ctj_pa_value, highlight=False)
         self._create_mini_stat(kpi_grid, 0, 4, "🏠 CTJ CM", ctj_cm_value, highlight=False)
 
@@ -3457,6 +3469,391 @@ class TeamStatsModule:
 
         # Always display in minutes only
         return f"{int(minutes)} min"
+
+    def _calculate_daily_duration_total(self, collaborator):
+        """Calculate total daily duration for a collaborator (optimized version)."""
+        try:
+            # Check if we should use direct calculation or cache
+            if not hasattr(self, '_daily_durations_cache'):
+                self._build_daily_durations_cache()
+
+            # Use direct calculation for small datasets
+            if hasattr(self, '_use_direct_calculation') and self._use_direct_calculation:
+                return self._calculate_daily_duration_direct(collaborator)
+
+            # Use cache for large datasets
+            cache_key = collaborator
+            if cache_key in self._daily_durations_cache:
+                cached_data = self._daily_durations_cache[cache_key]
+                total = cached_data['pa'] + cached_data['cm'] + cached_data['qgis'] + cached_data['optimum']
+                return total
+
+            return 0
+
+        except Exception as e:
+            self.logger.error(f"Error calculating daily duration total for {collaborator}: {e}")
+            return 0
+
+    def _calculate_daily_duration_pa(self, collaborator):
+        """Calculate daily PA duration for a collaborator (optimized version)."""
+        try:
+            # Check if we should use direct calculation or cache
+            if not hasattr(self, '_daily_durations_cache'):
+                self._build_daily_durations_cache()
+
+            # Use direct calculation for small datasets
+            if hasattr(self, '_use_direct_calculation') and self._use_direct_calculation:
+                return self._calculate_daily_duration_pa_direct(collaborator)
+
+            # Use cache for large datasets
+            cache_key = collaborator
+            if cache_key in self._daily_durations_cache:
+                return self._daily_durations_cache[cache_key]['pa']
+
+            return 0
+
+        except Exception as e:
+            self.logger.error(f"Error calculating daily PA duration for {collaborator}: {e}")
+            return 0
+
+    def _calculate_daily_duration_cm(self, collaborator):
+        """Calculate daily CM duration for a collaborator (optimized version)."""
+        try:
+            # Check if we should use direct calculation or cache
+            if not hasattr(self, '_daily_durations_cache'):
+                self._build_daily_durations_cache()
+
+            # Use direct calculation for small datasets
+            if hasattr(self, '_use_direct_calculation') and self._use_direct_calculation:
+                return self._calculate_daily_duration_cm_direct(collaborator)
+
+            # Use cache for large datasets
+            cache_key = collaborator
+            if cache_key in self._daily_durations_cache:
+                return self._daily_durations_cache[cache_key]['cm']
+
+            return 0
+
+        except Exception as e:
+            self.logger.error(f"Error calculating daily CM duration for {collaborator}: {e}")
+            return 0
+
+    def _build_daily_durations_cache(self):
+        """Build optimized cache for all daily duration calculations."""
+        try:
+            from datetime import datetime
+            pd = get_pandas()
+            today = datetime.now().strftime('%Y-%m-%d')
+
+            self._daily_durations_cache = {}
+
+            # Get all collaborators from the main statistics
+            if not hasattr(self, 'collaborator_stats') or not self.collaborator_stats:
+                return
+
+            # Check if we should use cache based on data size
+            total_records = 0
+            if 'Traitement PA' in self.global_suivi_data:
+                total_records += len(self.global_suivi_data['Traitement PA'])
+            if 'Traitement CMS Adr' in self.global_suivi_data:
+                total_records += len(self.global_suivi_data['Traitement CMS Adr'])
+            if 'Suivi Tickets' in self.global_suivi_data:
+                total_records += len(self.global_suivi_data['Suivi Tickets'])
+
+            # If dataset is small, use direct calculation instead of cache
+            if total_records < 1000:
+                self.logger.debug(f"Small dataset ({total_records} records), using direct calculation")
+                self._use_direct_calculation = True
+                return
+
+            self._use_direct_calculation = False
+            self.logger.debug(f"Large dataset ({total_records} records), building cache")
+
+            for collaborator in self.collaborator_stats.keys():
+                self._daily_durations_cache[collaborator] = {
+                    'pa': 0,
+                    'cm': 0,
+                    'qgis': 0,
+                    'optimum': 0
+                }
+
+            # Process PA data (Traitement PA)
+            if 'Traitement PA' in self.global_suivi_data:
+                df_pa = self.global_suivi_data['Traitement PA']
+                if not df_pa.empty and 'Collaborateur' in df_pa.columns:
+                    # Find date column
+                    date_column = None
+                    for col in df_pa.columns:
+                        if 'date' in col.lower() and 'traitement' in col.lower():
+                            date_column = col
+                            break
+
+                    if date_column:
+                        # Filter for today and sum by collaborator
+                        for _, row in df_pa.iterrows():
+                            try:
+                                collaborator = row.get('Collaborateur')
+                                if collaborator and collaborator in self._daily_durations_cache:
+                                    date_value = row.get(date_column)
+                                    if pd.notna(date_value):
+                                        try:
+                                            parsed_date = pd.to_datetime(date_value).strftime('%Y-%m-%d')
+                                            if parsed_date == today:
+                                                duration = self._parse_duration_value(row.get('Durée', 0))
+                                                self._daily_durations_cache[collaborator]['pa'] += duration
+                                        except:
+                                            continue
+                            except:
+                                continue
+
+            # Process CM data (Traitement CMS Adr)
+            if 'Traitement CMS Adr' in self.global_suivi_data:
+                df_cm = self.global_suivi_data['Traitement CMS Adr']
+                if not df_cm.empty and 'Collaborateur' in df_cm.columns:
+                    # Find date column
+                    date_column = None
+                    for col in df_cm.columns:
+                        if 'date' in col.lower() and 'traitement' in col.lower():
+                            date_column = col
+                            break
+
+                    if date_column:
+                        # Filter for today and sum by collaborator
+                        for _, row in df_cm.iterrows():
+                            try:
+                                collaborator = row.get('Collaborateur')
+                                if collaborator and collaborator in self._daily_durations_cache:
+                                    date_value = row.get(date_column)
+                                    if pd.notna(date_value):
+                                        try:
+                                            parsed_date = pd.to_datetime(date_value).strftime('%Y-%m-%d')
+                                            if parsed_date == today:
+                                                duration = self._parse_duration_value(row.get('Durée', 0))
+                                                self._daily_durations_cache[collaborator]['cm'] += duration
+                                        except:
+                                            continue
+                            except:
+                                continue
+
+            # Process Suivi Tickets data for QGIS and Optimum
+            if 'Suivi Tickets' in self.global_suivi_data:
+                df_tickets = self.global_suivi_data['Suivi Tickets']
+                if not df_tickets.empty and 'Collaborateur' in df_tickets.columns:
+                    # Find date columns
+                    affectation_column = None
+                    livraison_column = None
+                    for col in df_tickets.columns:
+                        if 'affectation' in col.lower():
+                            affectation_column = col
+                        elif 'livraison' in col.lower():
+                            livraison_column = col
+
+                    for _, row in df_tickets.iterrows():
+                        try:
+                            collaborator = row.get('Collaborateur')
+                            if collaborator and collaborator in self._daily_durations_cache:
+                                # Check QGIS prep for affectations today
+                                if affectation_column:
+                                    affectation_date = row.get(affectation_column)
+                                    if pd.notna(affectation_date):
+                                        try:
+                                            parsed_date = pd.to_datetime(affectation_date).strftime('%Y-%m-%d')
+                                            if parsed_date == today:
+                                                qgis_duration = self._parse_duration_value(row.get('Temps préparation QGis', 0))
+                                                self._daily_durations_cache[collaborator]['qgis'] += qgis_duration
+                                        except:
+                                            pass
+
+                                # Check Optimum for deliveries today
+                                if livraison_column:
+                                    livraison_date = row.get(livraison_column)
+                                    if pd.notna(livraison_date):
+                                        try:
+                                            parsed_date = pd.to_datetime(livraison_date).strftime('%Y-%m-%d')
+                                            if parsed_date == today:
+                                                optimum_duration = self._parse_duration_value(row.get('Traitement Optimum', 0))
+                                                self._daily_durations_cache[collaborator]['optimum'] += optimum_duration
+                                        except:
+                                            pass
+                        except:
+                            continue
+
+            self.logger.info(f"Built daily durations cache for {len(self._daily_durations_cache)} collaborators")
+
+        except Exception as e:
+            self.logger.error(f"Error building daily durations cache: {e}")
+            self._daily_durations_cache = {}
+
+    def _parse_duration_value(self, duration_value):
+        """Parse duration value from various formats to minutes."""
+        try:
+            pd = get_pandas()
+            if pd.notna(duration_value) and duration_value != '':
+                if isinstance(duration_value, (int, float)):
+                    return float(duration_value)
+                elif isinstance(duration_value, str):
+                    duration_str = duration_value.strip()
+                    if ':' in duration_str:
+                        parts = duration_str.split(':')
+                        if len(parts) == 2:
+                            hours = int(parts[0])
+                            minutes = int(parts[1])
+                            return (hours * 60) + minutes
+                    else:
+                        return float(duration_str)
+            return 0
+        except:
+            return 0
+
+    def _calculate_daily_duration_direct(self, collaborator):
+        """Direct calculation for small datasets (no cache overhead)."""
+        try:
+            from datetime import datetime
+            pd = get_pandas()
+            today = datetime.now().strftime('%Y-%m-%d')
+
+            total_duration = 0
+
+            # PA duration
+            if 'Traitement PA' in self.global_suivi_data:
+                df_pa = self.global_suivi_data['Traitement PA']
+                if not df_pa.empty and 'Collaborateur' in df_pa.columns:
+                    pa_today = df_pa[(df_pa['Collaborateur'] == collaborator)]
+                    for _, row in pa_today.iterrows():
+                        try:
+                            date_col = None
+                            for col in df_pa.columns:
+                                if 'date' in col.lower() and 'traitement' in col.lower():
+                                    date_col = col
+                                    break
+                            if date_col and pd.notna(row.get(date_col)):
+                                parsed_date = pd.to_datetime(row[date_col]).strftime('%Y-%m-%d')
+                                if parsed_date == today:
+                                    total_duration += self._parse_duration_value(row.get('Durée', 0))
+                        except:
+                            continue
+
+            # CM duration
+            if 'Traitement CMS Adr' in self.global_suivi_data:
+                df_cm = self.global_suivi_data['Traitement CMS Adr']
+                if not df_cm.empty and 'Collaborateur' in df_cm.columns:
+                    cm_today = df_cm[(df_cm['Collaborateur'] == collaborator)]
+                    for _, row in cm_today.iterrows():
+                        try:
+                            date_col = None
+                            for col in df_cm.columns:
+                                if 'date' in col.lower() and 'traitement' in col.lower():
+                                    date_col = col
+                                    break
+                            if date_col and pd.notna(row.get(date_col)):
+                                parsed_date = pd.to_datetime(row[date_col]).strftime('%Y-%m-%d')
+                                if parsed_date == today:
+                                    total_duration += self._parse_duration_value(row.get('Durée', 0))
+                        except:
+                            continue
+
+            # QGIS and Optimum from Suivi Tickets
+            if 'Suivi Tickets' in self.global_suivi_data:
+                df_tickets = self.global_suivi_data['Suivi Tickets']
+                if not df_tickets.empty and 'Collaborateur' in df_tickets.columns:
+                    tickets_collab = df_tickets[(df_tickets['Collaborateur'] == collaborator)]
+                    for _, row in tickets_collab.iterrows():
+                        try:
+                            # QGIS prep for affectations today
+                            affectation_col = None
+                            for col in df_tickets.columns:
+                                if 'affectation' in col.lower():
+                                    affectation_col = col
+                                    break
+                            if affectation_col and pd.notna(row.get(affectation_col)):
+                                parsed_date = pd.to_datetime(row[affectation_col]).strftime('%Y-%m-%d')
+                                if parsed_date == today:
+                                    total_duration += self._parse_duration_value(row.get('Temps préparation QGis', 0))
+
+                            # Optimum for deliveries today
+                            livraison_col = None
+                            for col in df_tickets.columns:
+                                if 'livraison' in col.lower():
+                                    livraison_col = col
+                                    break
+                            if livraison_col and pd.notna(row.get(livraison_col)):
+                                parsed_date = pd.to_datetime(row[livraison_col]).strftime('%Y-%m-%d')
+                                if parsed_date == today:
+                                    total_duration += self._parse_duration_value(row.get('Traitement Optimum', 0))
+                        except:
+                            continue
+
+            return total_duration
+
+        except Exception as e:
+            self.logger.error(f"Error in direct calculation for {collaborator}: {e}")
+            return 0
+
+    def _calculate_daily_duration_pa_direct(self, collaborator):
+        """Direct PA calculation for small datasets."""
+        try:
+            from datetime import datetime
+            pd = get_pandas()
+            today = datetime.now().strftime('%Y-%m-%d')
+
+            total_duration = 0
+
+            if 'Traitement PA' in self.global_suivi_data:
+                df_pa = self.global_suivi_data['Traitement PA']
+                if not df_pa.empty and 'Collaborateur' in df_pa.columns:
+                    pa_today = df_pa[(df_pa['Collaborateur'] == collaborator)]
+                    for _, row in pa_today.iterrows():
+                        try:
+                            date_col = None
+                            for col in df_pa.columns:
+                                if 'date' in col.lower() and 'traitement' in col.lower():
+                                    date_col = col
+                                    break
+                            if date_col and pd.notna(row.get(date_col)):
+                                parsed_date = pd.to_datetime(row[date_col]).strftime('%Y-%m-%d')
+                                if parsed_date == today:
+                                    total_duration += self._parse_duration_value(row.get('Durée', 0))
+                        except:
+                            continue
+
+            return total_duration
+
+        except Exception as e:
+            self.logger.error(f"Error in direct PA calculation for {collaborator}: {e}")
+            return 0
+
+    def _calculate_daily_duration_cm_direct(self, collaborator):
+        """Direct CM calculation for small datasets."""
+        try:
+            from datetime import datetime
+            pd = get_pandas()
+            today = datetime.now().strftime('%Y-%m-%d')
+
+            total_duration = 0
+
+            if 'Traitement CMS Adr' in self.global_suivi_data:
+                df_cm = self.global_suivi_data['Traitement CMS Adr']
+                if not df_cm.empty and 'Collaborateur' in df_cm.columns:
+                    cm_today = df_cm[(df_cm['Collaborateur'] == collaborator)]
+                    for _, row in cm_today.iterrows():
+                        try:
+                            date_col = None
+                            for col in df_cm.columns:
+                                if 'date' in col.lower() and 'traitement' in col.lower():
+                                    date_col = col
+                                    break
+                            if date_col and pd.notna(row.get(date_col)):
+                                parsed_date = pd.to_datetime(row[date_col]).strftime('%Y-%m-%d')
+                                if parsed_date == today:
+                                    total_duration += self._parse_duration_value(row.get('Durée', 0))
+                        except:
+                            continue
+
+            return total_duration
+
+        except Exception as e:
+            self.logger.error(f"Error in direct CM calculation for {collaborator}: {e}")
+            return 0
 
     def _refresh_statistics(self):
         """Refresh the statistics by reloading data."""

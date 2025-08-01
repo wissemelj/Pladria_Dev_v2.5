@@ -9,6 +9,8 @@ import logging
 
 from config.constants import COLORS, UIConfig, AppInfo
 from ui.styles import create_card_frame, create_section_header
+from core.update_manager import UpdateManager
+from ui.components.update_dialog import UpdateDialog
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +29,10 @@ class SettingsScreen:
         self.parent = parent
         self.navigation_manager = navigation_manager
         self.logger = logging.getLogger(__name__)
+
+        # Initialize update system
+        self.update_manager = UpdateManager()
+        self.update_dialog = UpdateDialog(parent, self.update_manager)
 
         self._create_about_screen()
     
@@ -129,6 +135,15 @@ class SettingsScreen:
         action_frame = tk.Frame(parent, bg=COLORS['BG'])
         action_frame.pack(fill=tk.X, pady=(10, 0))
 
+        # Update button
+        update_btn = ttk.Button(
+            action_frame,
+            text="🔄 Vérifier les mises à jour",
+            command=self._check_for_updates,
+            style='Secondary.TButton'
+        )
+        update_btn.pack(side=tk.LEFT)
+
         # Back button
         back_btn = ttk.Button(
             action_frame,
@@ -138,6 +153,20 @@ class SettingsScreen:
         )
         back_btn.pack(side=tk.RIGHT)
     
+    def _check_for_updates(self):
+        """Check for application updates."""
+        try:
+            self.logger.info("User initiated update check")
+            self.update_dialog.check_for_updates(show_no_updates=True)
+        except Exception as e:
+            self.logger.error(f"Error checking for updates: {e}")
+            from tkinter import messagebox
+            messagebox.showerror(
+                "Erreur",
+                f"Impossible de vérifier les mises à jour:\n{str(e)}",
+                icon='error'
+            )
+
     def _go_back(self):
         """Go back to home screen."""
         if self.navigation_manager:

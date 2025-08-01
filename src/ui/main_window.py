@@ -26,6 +26,8 @@ from .navigation import NavigationManager, NavigationState
 from .home_screen import HomeScreen
 from .settings_screen import SettingsScreen
 from .modules import SuiviGeneratorModule, SuiviGlobalModule, TeamStatsModule, DataViewerModule, QualityControlModule
+from core.update_manager import UpdateManager, UpdateScheduler
+from ui.components.update_dialog import UpdateNotification
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +53,10 @@ class MainWindow:
 
         # UI components
         self.style_manager = None
+
+        # Update system
+        self.update_manager = UpdateManager()
+        self.update_scheduler = UpdateScheduler(self.update_manager)
 
         self._setup_window()
         self._setup_responsive_fonts()
@@ -185,6 +191,9 @@ class MainWindow:
         else:
             # Ensure the window layout is properly updated for maximized state
             self.root.update_idletasks()
+
+        # Start update system after UI is ready
+        self.root.after(5000, self._start_update_system)  # Start after 5 seconds
 
         self.logger.info("Main window initialization complete")
 
@@ -365,6 +374,48 @@ class MainWindow:
         except Exception as e:
             self.logger.debug(f"Windows API icon setting failed: {e}")
             # This is optional, so don't fail the application
+
+    def _start_update_system(self):
+        """Start the automatic update system."""
+        try:
+            self.logger.info("Starting update system...")
+
+            # Start periodic update checks
+            self.update_scheduler.start_periodic_checks()
+
+            # Check for updates immediately (silently)
+            def silent_update_check():
+                try:
+                    update_info = self.update_manager.check_for_updates()
+                    if update_info:
+                        # Show notification for available update
+                        self._show_update_notification(update_info)
+                except Exception as e:
+                    self.logger.error(f"Error in silent update check: {e}")
+
+            # Run silent check in background thread
+            import threading
+            thread = threading.Thread(target=silent_update_check, daemon=True)
+            thread.start()
+
+        except Exception as e:
+            self.logger.error(f"Error starting update system: {e}")
+
+    def _show_update_notification(self, update_info):
+        """Show update notification to user."""
+        try:
+            def on_update_click():
+                # Import and show update dialog
+                from ui.components.update_dialog import UpdateDialog
+                update_dialog = UpdateDialog(self.root, self.update_manager)
+                update_dialog._show_update_available_dialog()
+
+            # Show notification
+            notification = UpdateNotification(self.root, update_info, on_update_click)
+            notification.show()
+
+        except Exception as e:
+            self.logger.error(f"Error showing update notification: {e}")
 
     def run(self):
         """Start the application main loop."""

@@ -79,11 +79,14 @@ class QualityControlModule:
         self.qgis_info_label = None
         self.suivi_info_label = None
 
-        # Boutons d'interface
-        self.analyze_button = None
+        # Boutons d'interface (analyse automatique - plus de bouton analyser)
         self.export_button = None
         self.results_label = None
         self.results_frame = None
+
+        # Variables de contrôle pour éviter les conflits d'affichage et boucles
+        self._updating_results = False
+        self._analysis_triggered = False
 
         # Variables du visualiseur
         self.viewer_data = None
@@ -1292,50 +1295,48 @@ class QualityControlModule:
         tk.Label(c4_frame, text="AD à Analyser", font=("Segoe UI", 7),
                 fg=COLORS['TEXT_PRIMARY'], bg=COLORS['LIGHT']).pack(side=tk.LEFT, padx=(3, 0))
 
-        # Boutons d'action
+        # Bouton d'export uniquement (analyse automatique)
         buttons_frame = tk.Frame(content, bg=COLORS['CARD'])
         buttons_frame.pack(fill=tk.X, pady=(3, 0))
 
         from tkinter import ttk
-        self.analyze_button = ttk.Button(buttons_frame, text="🔍 Analyser",
-                                       command=self._run_quality_analysis,
-                                       style='CompactWarning.TButton', state='disabled')
-        self.analyze_button.pack(side=tk.LEFT, padx=(0, 3))
-
+        # Note: Analyse automatique - plus besoin du bouton analyser
         self.export_button = ttk.Button(buttons_frame, text="📤 Exporter",
                                       command=self._export_qc_report,
                                       style='Compact.TButton', state='disabled')
         self.export_button.pack(side=tk.LEFT)
 
+        # Indicateur d'analyse automatique
+        auto_analysis_label = tk.Label(content, text="🔄 Analyse automatique activée",
+                                     font=("Segoe UI", 7), fg=COLORS['INFO'],
+                                     bg=COLORS['CARD'])
+        auto_analysis_label.pack(pady=(2, 0))
+
     def _create_results_quadrant(self, parent: tk.Widget, row: int, col: int):
-        """Quadrant 4: Résultats ultra-compact."""
+        """Quadrant 4: Tableau Écarts Plan Adressage."""
         frame = tk.Frame(parent, bg=COLORS['CARD'], relief='flat', bd=1)
         frame.grid(row=row, column=col, sticky="nsew", padx=1, pady=1)
         frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
 
-        # Titre compact
+        # Titre compact avec icône spécialisée
         title_frame = tk.Frame(frame, bg=COLORS['ACCENT'], height=25)
         title_frame.pack(fill=tk.X)
         title_frame.pack_propagate(False)
 
-        tk.Label(title_frame, text="📊 Résultats",
+        tk.Label(title_frame, text="📋 Écarts Plan Adressage",
                 font=("Segoe UI", 9, "bold"), fg=COLORS['PRIMARY'],
                 bg=COLORS['ACCENT']).pack(pady=3)
 
-        # Zone de résultats
-        self.results_frame = tk.Frame(frame, bg=COLORS['CARD'])
-        self.results_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=3)
+        # Zone de résultats - maintenant dédiée au tableau des écarts
+        # Utiliser un nom unique pour éviter les conflits
+        self.ecarts_results_frame = tk.Frame(frame, bg=COLORS['CARD'])
+        self.ecarts_results_frame.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
 
-        # Message initial ultra-compact
-        self.results_label = tk.Label(
-            self.results_frame,
-            text="⏳ En attente\n\nChargez les fichiers\net lancez l'analyse",
-            font=("Segoe UI", 8),
-            fg=COLORS['TEXT_SECONDARY'],
-            bg=COLORS['CARD'],
-            justify=tk.CENTER
-        )
-        self.results_label.pack(expand=True)
+        # Assigner à results_frame pour compatibilité
+        self.results_frame = self.ecarts_results_frame
+
+        # Créer le tableau des écarts plan adressage (initial)
+        self._create_ecarts_plan_adressage_table(self.ecarts_results_frame)
 
     def _create_ultra_compact_status(self):
         """Crée la barre de statut ultra-compacte."""
@@ -1772,7 +1773,7 @@ class QualityControlModule:
 
         # Critère 0
         self._create_criteria_info(criteria_frame, "0", "Écart Plan Adressage",
-                                  "Compare les motifs spécifiques: AD RAS, OK, NOK, UPR RAS, UPR OK, UPR NOK, Hors Commune")
+                                  "Compare les motifs spécifiques: AD RAS, OK, NOK, UPR RAS, UPR OK, UPR NOK, Ad Import Ok")
 
         # Critère 2
         self._create_criteria_info(criteria_frame, "2", "Oubli Ticket UPR et 501/511",
@@ -1790,21 +1791,35 @@ class QualityControlModule:
         self._create_criteria_info(criteria_frame, "5", "Motif Incorrect",
                                   "Détecte les motifs non conformes (différents des 7 motifs autorisés)")
 
-        # Bouton d'analyse moderne
-        button_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
-        button_frame.pack(fill=tk.X, pady=(15, 0))
+        # Indicateur d'analyse automatique moderne
+        auto_frame = tk.Frame(content_frame, bg=COLORS['ACCENT'], relief='flat', bd=1)
+        auto_frame.pack(fill=tk.X, pady=(15, 8))
+        auto_frame.config(highlightbackground=COLORS['PRIMARY'], highlightthickness=1)
 
         from tkinter import ttk
-        self.analyze_button = ttk.Button(
-            button_frame,
-            text="🔍 Lancer Analyse Qualité",
-            command=self._run_quality_analysis,
-            style='CompactWarning.TButton',
-            state='disabled'
+        auto_label = tk.Label(
+            auto_frame,
+            text="🔄 Analyse Automatique",
+            font=("Segoe UI", 9, "bold"),
+            fg=COLORS['PRIMARY'],
+            bg=COLORS['ACCENT']
         )
-        self.analyze_button.pack(side=tk.LEFT)
+        auto_label.pack(pady=(8, 2))
 
-        # Bouton d'export
+        auto_desc = tk.Label(
+            auto_frame,
+            text="L'analyse se déclenche automatiquement dès que les deux fichiers sont chargés",
+            font=("Segoe UI", 8),
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['ACCENT'],
+            wraplength=300
+        )
+        auto_desc.pack(pady=(0, 8))
+
+        # Bouton d'export uniquement
+        button_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        button_frame.pack(fill=tk.X, pady=(8, 0))
+
         self.export_button = ttk.Button(
             button_frame,
             text="📤 Exporter Rapport",
@@ -1812,7 +1827,7 @@ class QualityControlModule:
             style='Compact.TButton',
             state='disabled'
         )
-        self.export_button.pack(side=tk.LEFT, padx=(10, 0))
+        self.export_button.pack(side=tk.LEFT)
 
         # Zone de résultats
         self._create_results_display(content_frame)
@@ -1863,35 +1878,38 @@ class QualityControlModule:
         desc_label.pack(anchor=tk.W, pady=(5, 0))
 
     def _create_results_display(self, parent: tk.Widget):
-        """Crée la zone d'affichage des résultats."""
+        """Crée la zone d'affichage des résultats - DÉSACTIVÉE pour éviter les conflits."""
+        # Cette méthode est désactivée car nous utilisons maintenant exclusivement
+        # le tableau des écarts plan adressage dans les quadrants
+
         # Séparateur
         separator = tk.Frame(parent, height=1, bg=COLORS['BORDER'])
         separator.pack(fill=tk.X, pady=(20, 15))
 
-        # Titre des résultats
+        # Titre des résultats modifié
         results_title = tk.Label(
             parent,
-            text="📊 Résultats de l'Analyse",
+            text="📋 Tableau des Écarts Plan Adressage",
             font=UIConfig.FONT_CARD_TITLE,
             fg=COLORS['PRIMARY'],
             bg=COLORS['CARD']
         )
         results_title.pack(anchor=tk.W, pady=(0, 10))
 
-        # Zone de résultats (sera remplie après analyse)
-        self.results_frame = tk.Frame(parent, bg=COLORS['CARD'])
-        self.results_frame.pack(fill=tk.BOTH, expand=True)
+        # Zone de résultats - utiliser un nom différent pour éviter les conflits
+        self.legacy_results_frame = tk.Frame(parent, bg=COLORS['CARD'])
+        self.legacy_results_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Message initial
-        self.results_label = tk.Label(
-            self.results_frame,
-            text="⏳ Aucune analyse effectuée\n\nChargez les fichiers requis et cliquez sur 'Lancer Analyse Qualité'",
+        # Message indiquant que le tableau est dans les quadrants
+        info_label = tk.Label(
+            self.legacy_results_frame,
+            text="📋 Tableau des Écarts Plan Adressage\n\nLe tableau détaillé des écarts est affiché\ndans le Quadrant 4 (coin inférieur droit)\n\nL'analyse se lance automatiquement\ndès que les fichiers sont chargés",
             font=UIConfig.FONT_SMALL,
-            fg=COLORS['TEXT_SECONDARY'],
+            fg=COLORS['INFO'],
             bg=COLORS['CARD'],
             justify=tk.CENTER
         )
-        self.results_label.pack(expand=True, pady=20)
+        info_label.pack(expand=True, pady=20)
 
     def _create_modern_status_section(self, parent: tk.Widget):
         """Crée la section moderne de statut et progression."""
@@ -2043,6 +2061,10 @@ class QualityControlModule:
                 self.qgis_data = df
                 self.current_qgis_file_path = file_path
                 filename = os.path.basename(file_path)
+
+                # Réinitialiser le flag d'analyse car nouveau fichier
+                self._analysis_triggered = False
+
                 self.qgis_info_label.config(
                     text=f"✅ {filename} ({len(df)} lignes)",
                     fg=COLORS['SUCCESS']
@@ -2135,6 +2157,9 @@ class QualityControlModule:
                 self.suivi_data = df
                 self.current_suivi_file_path = file_path
                 self.detected_info = detected_info
+
+                # Réinitialiser le flag d'analyse car nouveau fichier
+                self._analysis_triggered = False
 
                 # Mettre à jour l'affichage des informations détectées
                 self.collaborator_var.set(detected_info.get('collaborateur', 'Non détecté'))
@@ -2510,7 +2535,7 @@ class QualityControlModule:
             }
     
     def _check_analysis_ready(self):
-        """Vérifie si tous les éléments sont prêts pour lancer l'analyse."""
+        """Vérifie si tous les éléments sont prêts pour lancer l'analyse automatiquement."""
         ready = (
             self.qgis_data is not None and
             self.suivi_data is not None and
@@ -2519,13 +2544,226 @@ class QualityControlModule:
         )
 
         if ready:
-            self.analyze_button.config(state='normal')
-            self._update_status("success", "Prêt pour l'analyse qualité")
+            # Activer le bouton d'export
+            if hasattr(self, 'export_button'):
+                self.export_button.config(state='normal')
+            self._update_status("success", "Fichiers chargés - Prêt pour l'analyse")
+
+            # Déclencher l'analyse automatiquement SEULEMENT si pas déjà fait
+            if not hasattr(self, '_analysis_triggered') or not self._analysis_triggered:
+                self._analysis_triggered = True
+                self.logger.info("Déclenchement de l'analyse automatique")
+                self.parent.after(500, self._run_quality_analysis)  # Délai de 500ms pour l'UI
         else:
-            self.analyze_button.config(state='disabled')
+            # Désactiver le bouton d'export si pas prêt
+            if hasattr(self, 'export_button'):
+                self.export_button.config(state='disabled')
+            # Réinitialiser le flag si les conditions ne sont plus remplies
+            self._analysis_triggered = False
 
         return ready
-    
+
+    def _create_ecarts_plan_adressage_table(self, parent_frame: tk.Widget):
+        """Crée le tableau des écarts plan adressage avec style Sofrecom."""
+        try:
+            # Vérifier si nous avons des résultats d'analyse
+            if not hasattr(self, 'qc_results') or not self.qc_results:
+                # Afficher un message d'attente
+                waiting_label = tk.Label(
+                    parent_frame,
+                    text="⏳ En attente de l'analyse\n\nLe tableau des écarts s'affichera\naprès le chargement des fichiers",
+                    font=("Segoe UI", 9),
+                    fg=COLORS['TEXT_SECONDARY'],
+                    bg=COLORS['CARD'],
+                    justify=tk.CENTER
+                )
+                waiting_label.pack(expand=True, pady=20)
+                return
+
+            # Récupérer les données du critère 0 (écarts plan adressage)
+            critere_0 = self.qc_results.get('critere_0', {})
+            ecart_data = critere_0.get('ecart_plan_adressage', {})
+
+            if not ecart_data:
+                # Aucun écart détecté
+                no_ecart_label = tk.Label(
+                    parent_frame,
+                    text="✅ Aucun écart détecté\n\nTous les motifs sont cohérents\nentre QGis et Suivi Commune",
+                    font=("Segoe UI", 9),
+                    fg=COLORS['SUCCESS'],
+                    bg=COLORS['CARD'],
+                    justify=tk.CENTER
+                )
+                no_ecart_label.pack(expand=True, pady=20)
+                return
+
+            # Créer le tableau avec en-tête
+            table_frame = tk.Frame(parent_frame, bg=COLORS['CARD'])
+            table_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+            # En-tête du tableau avec style Sofrecom
+            header_frame = tk.Frame(table_frame, bg=COLORS['PRIMARY'], height=30)
+            header_frame.pack(fill=tk.X)
+            header_frame.pack_propagate(False)
+
+            # Colonnes: Motif, Suivi, QGis, Écart, Statut
+            headers = ["Motif", "Suivi", "QGis", "Écart", "Statut"]
+            col_widths = [120, 60, 60, 60, 80]
+
+            for i, (header, width) in enumerate(zip(headers, col_widths)):
+                header_label = tk.Label(
+                    header_frame,
+                    text=header,
+                    font=("Segoe UI", 8, "bold"),
+                    fg='white',
+                    bg=COLORS['PRIMARY'],
+                    width=width//8  # Approximation pour la largeur en caractères
+                )
+                header_label.pack(side=tk.LEFT, padx=1, pady=2)
+
+            # Conteneur scrollable pour les données
+            canvas = tk.Canvas(table_frame, bg=COLORS['CARD'], highlightthickness=0)
+            scrollbar = tk.Scrollbar(table_frame, orient="vertical", command=canvas.yview)
+            scrollable_frame = tk.Frame(canvas, bg=COLORS['CARD'])
+
+            scrollable_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            # Ajouter les lignes de données
+            for i, (motif, data) in enumerate(ecart_data.items()):
+                suivi_count = data.get('suivi_count', 0)
+                qgis_count = data.get('qgis_count', 0)
+                difference = data.get('difference', 0)
+                has_ecart = data.get('has_ecart', False)
+
+                # Couleur de fond alternée
+                bg_color = COLORS['LIGHT'] if i % 2 == 0 else COLORS['CARD']
+
+                # Statut et couleur
+                if has_ecart:
+                    if difference > 0:
+                        statut = f"+{difference}"
+                        statut_color = COLORS['WARNING']
+                    else:
+                        statut = str(difference)
+                        statut_color = COLORS['ERROR']
+                else:
+                    statut = "✅ OK"
+                    statut_color = COLORS['SUCCESS']
+
+                row_frame = tk.Frame(scrollable_frame, bg=bg_color, height=25)
+                row_frame.pack(fill=tk.X, pady=1)
+                row_frame.pack_propagate(False)
+
+                # Données de la ligne
+                row_data = [motif, str(suivi_count), str(qgis_count), str(difference), statut]
+                row_colors = [COLORS['TEXT_PRIMARY']] * 4 + [statut_color]
+
+                for j, (data_text, width, color) in enumerate(zip(row_data, col_widths, row_colors)):
+                    data_label = tk.Label(
+                        row_frame,
+                        text=data_text,
+                        font=("Segoe UI", 8),
+                        fg=color,
+                        bg=bg_color,
+                        width=width//8
+                    )
+                    data_label.pack(side=tk.LEFT, padx=1, pady=2)
+
+            # Pack du canvas et scrollbar
+            canvas.pack(side="left", fill="both", expand=True)
+            scrollbar.pack(side="right", fill="y")
+
+            # Résumé en bas
+            summary_frame = tk.Frame(parent_frame, bg=COLORS['ACCENT'], height=40)
+            summary_frame.pack(fill=tk.X, side=tk.BOTTOM)
+            summary_frame.pack_propagate(False)
+
+            total_ecarts = sum(1 for data in ecart_data.values() if data.get('has_ecart', False))
+            total_motifs = len(ecart_data)
+
+            summary_text = f"📊 Résumé: {total_ecarts} écart(s) sur {total_motifs} motif(s) analysé(s)"
+            summary_label = tk.Label(
+                summary_frame,
+                text=summary_text,
+                font=("Segoe UI", 8, "bold"),
+                fg=COLORS['PRIMARY'],
+                bg=COLORS['ACCENT']
+            )
+            summary_label.pack(expand=True, pady=8)
+
+        except Exception as e:
+            self.logger.error(f"Erreur création tableau écarts: {e}")
+            # Affichage d'erreur
+            error_label = tk.Label(
+                parent_frame,
+                text=f"❌ Erreur d'affichage\n\n{str(e)}",
+                font=("Segoe UI", 9),
+                fg=COLORS['ERROR'],
+                bg=COLORS['CARD'],
+                justify=tk.CENTER
+            )
+            error_label.pack(expand=True, pady=20)
+
+    def _refresh_ecarts_table(self):
+        """Rafraîchit le tableau des écarts plan adressage après une analyse."""
+        # Éviter les mises à jour concurrentes
+        if getattr(self, '_updating_results', False):
+            self.logger.debug("Mise à jour déjà en cours, ignorée")
+            return
+
+        try:
+            self._updating_results = True
+
+            # Utiliser le frame spécifique aux écarts pour éviter les conflits
+            target_frame = None
+            if hasattr(self, 'ecarts_results_frame') and self.ecarts_results_frame and self.ecarts_results_frame.winfo_exists():
+                target_frame = self.ecarts_results_frame
+            elif hasattr(self, 'ecarts_results_frame_enhanced') and self.ecarts_results_frame_enhanced and self.ecarts_results_frame_enhanced.winfo_exists():
+                target_frame = self.ecarts_results_frame_enhanced
+            elif hasattr(self, 'results_frame') and self.results_frame and self.results_frame.winfo_exists():
+                target_frame = self.results_frame
+
+            if target_frame:
+                # Nettoyer le contenu actuel de manière sécurisée
+                for widget in target_frame.winfo_children():
+                    try:
+                        widget.destroy()
+                    except tk.TclError:
+                        pass  # Widget déjà détruit
+
+                # Petite pause pour éviter les conflits
+                target_frame.after_idle(lambda: self._create_ecarts_plan_adressage_table(target_frame))
+
+                self.logger.info("Tableau des écarts plan adressage rafraîchi avec succès")
+            else:
+                self.logger.warning("Aucun frame de résultats trouvé pour le rafraîchissement")
+
+        except Exception as e:
+            self.logger.error(f"Erreur lors du rafraîchissement du tableau: {e}")
+            # En cas d'erreur, afficher un message d'erreur simple
+            try:
+                if target_frame:
+                    error_label = tk.Label(
+                        target_frame,
+                        text=f"❌ Erreur de rafraîchissement\n{str(e)}",
+                        font=("Segoe UI", 9),
+                        fg=COLORS['ERROR'],
+                        bg=COLORS['CARD'],
+                        justify=tk.CENTER
+                    )
+                    error_label.pack(expand=True, pady=20)
+            except:
+                pass
+        finally:
+            # Réinitialiser le flag après un délai
+            self.parent.after(100, lambda: setattr(self, '_updating_results', False))
+
     def _run_quality_analysis(self):
         """Lance l'analyse de contrôle qualité."""
         # Log du mode utilisé
@@ -2562,9 +2800,15 @@ class QualityControlModule:
 
             def on_success(results):
                 self.qc_results = results
-                self._display_compact_results(results)
+
+                # Rafraîchir le tableau des écarts plan adressage UNIQUEMENT
+                self._refresh_ecarts_table()
+
+                # Note: Plus d'appel à _display_compact_results pour éviter les conflits d'affichage
                 self.export_button.config(state='normal')
-                self._update_status("success", "Analyse terminée avec succès")
+                self._update_status("success", "Analyse terminée - Tableau des écarts mis à jour")
+
+                # NE PAS réinitialiser le flag ici - il sera réinitialisé seulement lors du changement de fichiers
 
                 # Mettre à jour les indicateurs de statut
                 if hasattr(self, 'analysis_status'):
@@ -2604,14 +2848,14 @@ class QualityControlModule:
         """
         Critère 0: Incohérence entre fichier Résultats QGis et suivi commune.
         Compare le nombre des motifs spécifiés dans les deux fichiers.
-        Motifs à vérifier: AD RAS, OK, NOK, UPR RAS, UPR OK, UPR NOK, Hors Commune
+        Motifs à vérifier: AD RAS, OK, NOK, UPR RAS, UPR OK, UPR NOK, Ad Import Ok
         """
         try:
             pd = get_pandas()
 
             # Motifs spécifiques à analyser pour l'écart Plan Adressage
             motifs_plan_adressage = [
-                'AD RAS', 'OK', 'NOK', 'UPR RAS', 'UPR OK', 'UPR NOK', 'HORS COMMUNE'
+                'AD RAS', 'OK', 'NOK', 'UPR RAS', 'UPR OK', 'UPR NOK', 'AD IMPORT OK'
             ]
 
             # Extraire les motifs du fichier QGis (colonne J - index 9)
@@ -3202,7 +3446,7 @@ class QualityControlModule:
 
             # Motifs autorisés (liste de référence)
             motifs_autorises = [
-                'AD RAS', 'OK', 'NOK', 'UPR RAS', 'UPR OK', 'UPR NOK', 'HORS COMMUNE'
+                'AD RAS', 'OK', 'NOK', 'UPR RAS', 'UPR OK', 'UPR NOK', 'AD IMPORT OK'
             ]
 
             # Vérifier que les colonnes requises existent
@@ -3671,7 +3915,7 @@ class QualityControlModule:
                 # Titre occupe uniquement la colonne A
                 ['INFORMATIONS GÉNÉRALES', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
                 ['Nom de commune', 'ID tâche Plan Adressage', 'Code INSEE', 'Domaine', 'AFFECTATION', 'Contrôleur', '', '', '', '', '', '', '', '', '', ''],
-                [commune, id_tache, insee, domaine, collaborateur, '', '', '', '', '', '', '', '', '', '', ''],  # Contrôleur sera rempli par validation
+                [commune, id_tache, insee, domaine, collaborateur, '', '', '', '', '', '', '', '', '', '', ''],  # Contrôleur en F3 sera rempli par validation
 
                 # Espacement de 1 ligne entre tableaux
                 ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
@@ -3723,22 +3967,22 @@ class QualityControlModule:
                 ecart_data = critere_0.get('ecart_plan_adressage', {})
 
                 # Motifs dans l'ordre d'affichage
-                motifs_ordre = ['AD RAS', 'OK', 'NOK', 'UPR RAS', 'UPR OK', 'UPR NOK', 'HORS COMMUNE']
+                motifs_ordre = ['AD RAS', 'OK', 'NOK', 'UPR RAS', 'UPR OK', 'UPR NOK', 'AD IMPORT OK']
 
                 for motif in motifs_ordre:
                     if motif in ecart_data:
                         data = ecart_data[motif]
                         suivi_count = data['suivi_count']
                         qgis_count = data['qgis_count']
-                        motif_display = motif.title() if motif != 'HORS COMMUNE' else 'Hors Commune'
+                        motif_display = motif.title() if motif != 'AD IMPORT OK' else 'Ad Import Ok'
                         # Garder les valeurs en format numérique pour les formules Excel
                         motifs_data.append([motif_display, suivi_count, qgis_count])
                     else:
-                        motif_display = motif.title() if motif != 'HORS COMMUNE' else 'Hors Commune'
+                        motif_display = motif.title() if motif != 'AD IMPORT OK' else 'Ad Import Ok'
                         motifs_data.append([motif_display, 0, 0])
             else:
                 # Pas de données d'analyse, afficher les motifs avec valeurs numériques 0
-                motifs_ordre = ['AD RAS', 'OK', 'NOK', 'UPR RAS', 'UPR OK', 'UPR NOK', 'Hors Commune']
+                motifs_ordre = ['AD RAS', 'OK', 'NOK', 'UPR RAS', 'UPR OK', 'UPR NOK', 'Ad Import Ok']
                 for motif in motifs_ordre:
                     motifs_data.append([motif, 0, 0])
 
@@ -3900,11 +4144,11 @@ class QualityControlModule:
 
             # En-tête de la feuille Ecart
             ecart_data = [
-                ['ANALYSE DES ÉCARTS ENTRE FICHIERS QGIS ET SUIVI COMMUNE', '', '', '', '', ''],
-                ['', '', '', '', '', ''],
-                ['📊 SECTION 1: RÉSUMÉ PAR MOTIF', '', '', '', '', ''],
-                ['Type d\'Écart', 'Fichier QGis', 'Suivi Commune', 'Différence', 'Détails', 'Statut'],
-                ['', '', '', '', '', '']
+                ['ANALYSE DES ÉCARTS ENTRE FICHIERS QGIS ET SUIVI COMMUNE', '', '', ''],
+                ['', '', '', ''],
+                ['📊 SECTION 1: RÉSUMÉ PAR MOTIF', '', '', ''],
+                ['Type d\'Écart', 'Fichier QGis', 'Suivi Commune', 'Statut'],
+                ['', '', '', '']
             ]
 
             # Récupérer les résultats du critère 0 (Écart Plan Adressage)
@@ -3939,13 +4183,11 @@ class QualityControlModule:
                         f"Motif: {motif}",
                         str(count_qgis),
                         str(count_suivi),
-                        str(difference) if difference != 0 else "0",
-                        details,
                         statut
                     ])
 
                 # Ajouter une ligne de séparation
-                ecart_data.append(['', '', '', '', '', ''])
+                ecart_data.append(['', '', '', ''])
 
                 # Résumé des écarts par motif
                 total_ecarts = len([e for e in ecarts_detectes if e.get('difference', 0) != 0])
@@ -3953,18 +4195,16 @@ class QualityControlModule:
                     'RÉSUMÉ MOTIFS',
                     f"Total écarts détectés: {total_ecarts}",
                     '',
-                    '',
-                    '',
                     '✅ OK' if total_ecarts == 0 else '❌ ATTENTION'
                 ])
 
                 # Ajouter des lignes de séparation avant la section détaillée
                 ecart_data.extend([
-                    ['', '', '', '', '', ''],
-                    ['', '', '', '', '', ''],
-                    ['🔍 SECTION 2: ANALYSE DÉTAILLÉE PAR IMB', '', '', '', '', ''],
-                    ['Code IMB', 'Motif QGis', 'Motif Suivi', 'Statut Comparaison', 'Détails', 'Action'],
-                    ['', '', '', '', '', '']
+                    ['', '', '', ''],
+                    ['', '', '', ''],
+                    ['🔍 SECTION 2: ANALYSE DÉTAILLÉE PAR IMB', '', '', ''],
+                    ['Code IMB', 'Motif QGis', 'Motif Suivi', 'Statut Comparaison'],
+                    ['', '', '', '']
                 ])
 
                 # Ajouter l'analyse détaillée par IMB et récupérer les statistiques
@@ -3975,10 +4215,10 @@ class QualityControlModule:
                     self.logger.error(f"Erreur analyse IMB détaillée: {e}")
                     # Ajouter un message d'erreur propre au lieu de planter
                     ecart_data.extend([
-                        ['⚠️ ERREUR ANALYSE IMB', '', '', '', '', ''],
-                        [f'Impossible d\'analyser les écarts IMB: {str(e)}', '', '', '', '', ''],
-                        ['Vérifiez les fichiers et relancez l\'analyse', '', '', '', '', ''],
-                        ['', '', '', '', '', '']
+                        ['⚠️ ERREUR ANALYSE IMB', '', '', ''],
+                        [f'Impossible d\'analyser les écarts IMB: {str(e)}', '', '', ''],
+                        ['Vérifiez les fichiers et relancez l\'analyse', '', '', ''],
+                        ['', '', '', '']
                     ])
                     imb_analysis = []
                     imb_stats = {}
@@ -3996,8 +4236,6 @@ class QualityControlModule:
                                 'RÉSUMÉ MOTIFS',
                                 f"Total écarts détectés: {total_ecarts_reel} (Manquants: {nb_donnees_manquantes}, Différents: {nb_motifs_differents})",
                                 '',
-                                '',
-                                '',
                                 '✅ OK' if total_ecarts_reel == 0 else '❌ ATTENTION'
                             ]
                             break
@@ -4008,18 +4246,16 @@ class QualityControlModule:
                     'ERREUR',
                     'Analyse par motif non effectuée',
                     '',
-                    '',
-                    'Veuillez d\'abord lancer l\'analyse qualité',
                     '⚠️ PENDING'
                 ])
 
                 # Ajouter des lignes de séparation avant la section détaillée
                 ecart_data.extend([
-                    ['', '', '', '', '', ''],
-                    ['', '', '', '', '', ''],
-                    ['🔍 SECTION 2: ANALYSE DÉTAILLÉE PAR IMB', '', '', '', '', ''],
-                    ['Code IMB', 'Motif QGis', 'Motif Suivi', 'Statut Comparaison', 'Détails', 'Action'],
-                    ['', '', '', '', '', '']
+                    ['', '', '', ''],
+                    ['', '', '', ''],
+                    ['🔍 SECTION 2: ANALYSE DÉTAILLÉE PAR IMB', '', '', ''],
+                    ['Code IMB', 'Motif QGis', 'Motif Suivi', 'Statut Comparaison'],
+                    ['', '', '', '']
                 ])
 
                 # Ajouter l'analyse détaillée par IMB même sans critère 0
@@ -4028,7 +4264,7 @@ class QualityControlModule:
 
             # Ajouter des lignes vides pour compléter
             while len(ecart_data) < 25:
-                ecart_data.append(['', '', '', '', '', ''])
+                ecart_data.append(['', '', '', ''])
 
             return ecart_data
 
@@ -4036,10 +4272,10 @@ class QualityControlModule:
             self.logger.error(f"Erreur préparation données feuille Ecart: {e}")
             # Retourner une feuille d'erreur basique
             return [
-                ['ERREUR GÉNÉRATION FEUILLE ÉCART', '', '', '', '', ''],
-                ['', '', '', '', '', ''],
-                [f'Erreur: {str(e)}', '', '', '', '', ''],
-                ['', '', '', '', '', '']
+                ['ERREUR GÉNÉRATION FEUILLE ÉCART', '', '', ''],
+                ['', '', '', ''],
+                [f'Erreur: {str(e)}', '', '', ''],
+                ['', '', '', '']
             ]
 
     def _analyze_imb_level_gaps(self):
@@ -4126,72 +4362,60 @@ class QualityControlModule:
                     qgis_motif = qgis_motifs[0] if qgis_motifs else ''
                     suivi_motif = suivi_motifs[0] if suivi_motifs else ''
 
-                    if qgis_motif == suivi_motif:
-                        # Motifs identiques
-                        statut = '✅ MATCH'
-                        details = 'Motifs identiques'
-                        action = 'Aucune'
+                    # Ignorer les motifs vides - ne pas les traiter comme des problèmes
+                    qgis_motif_vide = not qgis_motif or qgis_motif.strip() == ''
+                    suivi_motif_vide = not suivi_motif or suivi_motif.strip() == ''
+
+                    if qgis_motif_vide or suivi_motif_vide:
+                        # Motifs vides ignorés - ne pas afficher
+                        matches += 1  # Compter comme match pour les statistiques
+                        continue
+
+                    elif qgis_motif == suivi_motif:
+                        # Motifs identiques et non vides
+                        statut = 'Match'
                         matches += 1
 
-                        # Gérer les doublons pour les MATCH
+                        # Gérer les doublons pour les MATCH (ne pas afficher les MATCH simples)
                         if len(qgis_motifs) > 1 or len(suivi_motifs) > 1:
-                            details += f' (QGis: {len(qgis_motifs)} entrées, Suivi: {len(suivi_motifs)} entrées)'
-                            statut = '⚠️ MATCH+DOUBLONS'
-                            action = 'Vérifier doublons'
-                            # Ajouter seulement les MATCH avec doublons (pas les MATCH simples)
-                            imb_analysis_data.append([
-                                imb_code,
-                                qgis_motif,
-                                suivi_motif,
-                                statut,
-                                details,
-                                action
-                            ])
-                        # Ne pas ajouter les MATCH simples (sans doublons) à la liste
+                            statut = 'Match+Doublons'
+                            # Ne pas afficher les MATCH avec doublons non plus selon la demande
+                        # NE PAS AFFICHER: MATCH simples ou avec doublons
 
                     else:
-                        # Motifs différents
-                        statut = '❌ MISMATCH'
-                        details = f'Motifs différents'
-                        action = 'Vérifier et corriger'
+                        # Motifs différents et non vides
+                        statut = 'Mismatch'
                         mismatches += 1
 
-                        # Gérer les doublons pour les MISMATCH
-                        if len(qgis_motifs) > 1 or len(suivi_motifs) > 1:
-                            details += f' (QGis: {len(qgis_motifs)} entrées, Suivi: {len(suivi_motifs)} entrées)'
-
+                        # AFFICHER: MISMATCH (format 4 colonnes)
                         imb_analysis_data.append([
                             imb_code,
                             qgis_motif,
                             suivi_motif,
-                            statut,
-                            details,
-                            action
+                            statut
                         ])
 
                 # Cas 2: IMB présent seulement dans QGis
                 elif qgis_motifs and not suivi_motifs:
                     qgis_motif = qgis_motifs[0] if qgis_motifs else ''
+                    # AFFICHER: Manquant dans Suivi (format 4 colonnes)
                     imb_analysis_data.append([
                         imb_code,
                         qgis_motif,
                         'ABSENT',
-                        '⚠️ MANQUANT SUIVI',
-                        'IMB présent dans QGis mais absent du Suivi Commune',
-                        'Ajouter dans Suivi'
+                        'Manquant Suivi'
                     ])
                     missing_in_suivi += 1
 
                 # Cas 3: IMB présent seulement dans Suivi Commune
                 elif not qgis_motifs and suivi_motifs:
                     suivi_motif = suivi_motifs[0] if suivi_motifs else ''
+                    # AFFICHER: Manquant dans QGis (format 4 colonnes)
                     imb_analysis_data.append([
                         imb_code,
                         'ABSENT',
                         suivi_motif,
-                        '⚠️ MANQUANT QGIS',
-                        'IMB présent dans Suivi Commune mais absent de QGis',
-                        'Ajouter dans QGis'
+                        'Manquant QGIS'
                     ])
                     missing_in_qgis += 1
 
@@ -4203,19 +4427,19 @@ class QualityControlModule:
             # Ajouter un résumé de l'analyse détaillée
             if imb_analysis_data:
                 imb_analysis_data.extend([
-                    ['', '', '', '', '', ''],
-                    ['=== RÉSUMÉ ANALYSE IMB ===', '', '', '', '', ''],
-                    [f'Total IMB analysés: {len(all_imb_codes)}', '', '', '', '', ''],
-                    [f'✅ Matches parfaits: {matches} (non affichés)', '', '', '', '', ''],
-                    [f'❌ Mismatches: {mismatches}', '', '', '', '', ''],
-                    [f'⚠️ Manquants QGis: {missing_in_qgis}', '', '', '', '', ''],
-                    [f'⚠️ Manquants Suivi: {missing_in_suivi}', '', '', '', '', ''],
-                    ['', '', '', '', '', ''],
-                    [f'📊 ÉLÉMENTS AFFICHÉS: Seuls les problèmes sont listés ci-dessus', '', '', '', '', ''],
-                    [f'📊 TOTAL ÉCARTS: {total_ecarts_reel} (Manquants: {nb_donnees_manquantes}, Différents: {nb_motifs_differents})', '', '', '', '', '']
+                    ['', '', '', ''],
+                    ['=== RÉSUMÉ ANALYSE IMB ===', '', '', ''],
+                    [f'Total IMB analysés: {len(all_imb_codes)}', '', '', ''],
+                    [f'✅ Matches parfaits: {matches} (non affichés)', '', '', ''],
+                    [f'🔵 Mismatches: {mismatches} (affichés)', '', '', ''],
+                    [f'🟠 Manquants QGis: {missing_in_qgis} (affichés)', '', '', ''],
+                    [f'🟠 Manquants Suivi: {missing_in_suivi} (affichés)', '', '', ''],
+                    ['', '', '', ''],
+                    [f'📊 FILTRAGE: Seuls les MISMATCH et MANQUANT sont affichés', '', '', ''],
+                    [f'📊 TOTAL PROBLÈMES: {total_ecarts_reel}', '', '', '']
                 ])
             else:
-                imb_analysis_data.append(['Aucun problème détecté - Tous les IMB sont en MATCH parfait', '', '', '', '', ''])
+                imb_analysis_data.append(['Aucun problème détecté - Tous les IMB sont parfaits', '', '', ''])
 
             # Préparer les statistiques pour le retour
             stats = {
@@ -4259,7 +4483,7 @@ class QualityControlModule:
             df_page1 = pd.DataFrame(page1_data_clean, columns=page1_columns)
             df_page2 = pd.DataFrame(page2_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5'])  # 5 colonnes selon nouvelle structure CMS
             df_page3 = pd.DataFrame(page3_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6', 'Col7', 'Col8'])  # 8 colonnes maintenant (ajout colonne Batiment)
-            df_page4 = pd.DataFrame(page4_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4', 'Col5', 'Col6'])  # 6 colonnes pour la feuille Ecart
+            df_page4 = pd.DataFrame(page4_data_clean, columns=['Col1', 'Col2', 'Col3', 'Col4'])  # 4 colonnes pour la feuille Ecart
 
             self.logger.info("DataFrames créés pour 4 feuilles")
 
@@ -4407,11 +4631,10 @@ class QualityControlModule:
             title_fill = PatternFill(start_color='2F4F4F', end_color='2F4F4F', fill_type='solid')  # Gris foncé
             header_fill = PatternFill(start_color='4682B4', end_color='4682B4', fill_type='solid')  # Bleu acier
 
-            # Couleurs selon les spécifications
-            match_fill = PatternFill(start_color='90EE90', end_color='90EE90', fill_type='solid')  # Vert pour ✅ MATCH
-            match_doublons_fill = PatternFill(start_color='FFFF00', end_color='FFFF00', fill_type='solid')  # Jaune pour ⚠️ MATCH+DOUBLONS
-            mismatch_fill = PatternFill(start_color='FFA500', end_color='FFA500', fill_type='solid')  # Orangé pour ❌ MISMATCH
-            manquant_fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type='solid')  # Rouge pour ⚠️ MANQUANT
+            # Couleurs selon votre spécification
+            mismatch_fill = PatternFill(start_color='B4C6E7', end_color='B4C6E7', fill_type='solid')  # Bleu pour Mismatch
+            manquant_fill = PatternFill(start_color='F8CBAD', end_color='F8CBAD', fill_type='solid')  # Orange pour Manquant
+            match_fill = PatternFill(start_color='FFFFFF', end_color='FFFFFF', fill_type='solid')  # Blanc pour Match (non affiché)
 
             center_alignment = Alignment(horizontal='center', vertical='center')
             left_alignment = Alignment(horizontal='left', vertical='center')
@@ -4424,7 +4647,7 @@ class QualityControlModule:
             )
 
             # Titre principal (ligne 1)
-            for col in range(1, 7):  # A à F
+            for col in range(1, 5):  # A à D (4 colonnes)
                 cell = worksheet.cell(row=1, column=col)
                 cell.font = title_font
                 cell.fill = title_fill
@@ -4432,14 +4655,14 @@ class QualityControlModule:
                 cell.border = thin_border
 
             # Fusionner les cellules du titre
-            worksheet.merge_cells('A1:F1')
+            worksheet.merge_cells('A1:D1')
 
             # Identifier et formater les en-têtes de sections
             for row_num in range(1, worksheet.max_row + 1):
                 cell_value = worksheet.cell(row=row_num, column=1).value
                 if cell_value and ('===' in str(cell_value) or 'Type d\'Écart' in str(cell_value) or 'Code IMB' in str(cell_value)):
                     # C'est un en-tête de section ou de colonne
-                    for col in range(1, 7):
+                    for col in range(1, 5):  # A à D (4 colonnes)
                         cell = worksheet.cell(row=row_num, column=col)
                         if 'SECTION' in str(cell_value):
                             # En-tête de section
@@ -4460,7 +4683,10 @@ class QualityControlModule:
                 if cell_value and ('===' in str(cell_value) or 'Type d\'Écart' in str(cell_value) or 'Code IMB' in str(cell_value)):
                     continue
 
-                for col in range(1, 7):
+                # Vérifier si c'est une ligne de données IMB (contient un code IMB)
+                is_imb_row = cell_value and str(cell_value).startswith('IMB/')
+
+                for col in range(1, 5):  # A à D (4 colonnes)
                     cell = worksheet.cell(row=row_num, column=col)
                     cell.font = data_font
                     cell.border = thin_border
@@ -4471,33 +4697,33 @@ class QualityControlModule:
                     else:
                         cell.alignment = center_alignment
 
-                    # Coloration selon le statut (colonnes F et D pour les différentes sections)
-                    if col in [4, 6]:  # Colonnes de statut
+                    # Coloration selon le statut pour les lignes IMB (colonne D - Statut Comparaison)
+                    if is_imb_row and col == 4:  # Colonne Statut Comparaison
                         if cell.value:
                             cell_val = str(cell.value)
 
-                            # Appliquer les couleurs selon les spécifications
-                            if '✅' in cell_val and 'MATCH' in cell_val and 'DOUBLONS' not in cell_val:
-                                # Vert pour ✅ MATCH (sans doublons)
-                                cell.fill = match_fill
-                            elif '⚠️' in cell_val and 'MATCH+DOUBLONS' in cell_val:
-                                # Jaune pour ⚠️ MATCH+DOUBLONS
-                                cell.fill = match_doublons_fill
-                            elif '❌' in cell_val and 'MISMATCH' in cell_val:
-                                # Orangé pour ❌ MISMATCH
+                            # Appliquer les couleurs selon votre spécification
+                            if 'Mismatch' in cell_val:
+                                # Bleu pour Mismatch
                                 cell.fill = mismatch_fill
-                            elif '⚠️' in cell_val and 'MANQUANT' in cell_val:
-                                # Rouge pour ⚠️ MANQUANT
+                                # Appliquer la couleur à toute la ligne
+                                for c in range(1, 5):
+                                    worksheet.cell(row=row_num, column=c).fill = mismatch_fill
+                            elif 'Manquant' in cell_val:
+                                # Orange pour Manquant (Suivi ou QGIS)
                                 cell.fill = manquant_fill
-                            elif '❌' in cell_val and 'ÉCART' in cell_val:
-                                # Orangé pour les écarts de la section 1
+                                # Appliquer la couleur à toute la ligne
+                                for c in range(1, 5):
+                                    worksheet.cell(row=row_num, column=c).fill = manquant_fill
+
+                    # Coloration pour les autres sections (section 1)
+                    elif not is_imb_row and col == 6:  # Ancienne colonne de statut pour section 1
+                        if cell.value:
+                            cell_val = str(cell.value)
+                            if '❌' in cell_val and 'ÉCART' in cell_val:
                                 cell.fill = mismatch_fill
                             elif '✅' in cell_val and 'OK' in cell_val:
-                                # Vert pour les OK de la section 1
                                 cell.fill = match_fill
-                            elif '❌' in cell_val and 'ATTENTION' in cell_val:
-                                # Rouge pour les résumés d'attention
-                                cell.fill = manquant_fill
 
             # Ajuster la largeur des colonnes automatiquement (auto-fit précis)
             for column in worksheet.columns:
@@ -4831,6 +5057,7 @@ class QualityControlModule:
             worksheet.freeze_panes = 'A2'
 
             # Ajouter une validation des données pour la cellule Contrôleur (F3)
+            self.logger.info("Appel de _add_controleur_validation pour la cellule F3")
             self._add_controleur_validation(worksheet)
 
             # Appliquer le formatage des pourcentages aux cellules avec formules
@@ -4856,6 +5083,8 @@ class QualityControlModule:
             # Importer la liste des collaborateurs depuis constants.py
             from config.constants import VALIDATION_LISTS
             collaborateurs_list = VALIDATION_LISTS.get("Collaborateur", [])
+
+            self.logger.info(f"Ajout validation contrôleur - {len(collaborateurs_list)} collaborateurs trouvés")
 
             if not collaborateurs_list:
                 self.logger.warning("Liste des collaborateurs vide, validation ignorée")
@@ -5105,11 +5334,11 @@ class QualityControlModule:
             from openpyxl.worksheet.datavalidation import DataValidation
 
             # Validation pour Motif Corrigé (colonne F)
-            motif_options = '"AD RAS,OK,NOK,UPR RAS,UPR OK,UPR NOK,Hors Commune"'
+            motif_options = '"AD RAS,OK,NOK,UPR RAS,UPR OK,UPR NOK,Ad Import Ok"'
             dv_motif = DataValidation(type="list", formula1=motif_options, allow_blank=True)
             dv_motif.error = "Veuillez sélectionner un motif valide"
             dv_motif.errorTitle = "Motif incorrect"
-            dv_motif.prompt = "Sélectionnez: AD RAS, OK, NOK, UPR RAS, UPR OK, UPR NOK, Hors Commune"
+            dv_motif.prompt = "Sélectionnez: AD RAS, OK, NOK, UPR RAS, UPR OK, UPR NOK, Ad Import Ok"
             dv_motif.promptTitle = "Motif Corrigé"
             dv_motif.add(f"F2:F22")
             worksheet.add_data_validation(dv_motif)
@@ -7041,35 +7270,33 @@ class QualityControlModule:
         )
         criteria_label.pack(pady=6)
 
+        # Indicateur d'analyse automatique avec design amélioré
+        auto_frame = tk.Frame(content, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        auto_frame.pack(fill=tk.X, pady=(5, 8))
+        auto_frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+
+        auto_label = tk.Label(
+            auto_frame,
+            text="🔄 Analyse Automatique Activée",
+            font=("Segoe UI", 9, "bold"),
+            fg=COLORS['INFO'],
+            bg=COLORS['LIGHT']
+        )
+        auto_label.pack(pady=6)
+
+        auto_desc = tk.Label(
+            auto_frame,
+            text="L'analyse se lance automatiquement dès que les deux fichiers sont chargés",
+            font=("Segoe UI", 8),
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['LIGHT'],
+            wraplength=200
+        )
+        auto_desc.pack(pady=(0, 6))
+
         # Boutons d'action avec design amélioré
         buttons_frame = tk.Frame(content, bg=COLORS['CARD'])
         buttons_frame.pack(fill=tk.X, pady=(5, 0))
-
-        # Bouton Analyser avec style Sofrecom
-        self.analyze_button = tk.Button(
-            buttons_frame,
-            text="🔍 Analyser",
-            font=("Segoe UI", 9, "bold"),
-            fg='white',
-            bg=COLORS['PRIMARY'],
-            activebackground=COLORS['PRIMARY_LIGHT'],
-            activeforeground='white',
-            relief='flat',
-            padx=12,
-            pady=4,
-            cursor='hand2',
-            command=self._run_quality_analysis
-        )
-        self.analyze_button.pack(side=tk.LEFT, padx=(0, 6))
-
-        # Effet hover Sofrecom
-        def on_analyze_enter(e):
-            self.analyze_button.config(bg=COLORS['PRIMARY_LIGHT'])
-        def on_analyze_leave(e):
-            self.analyze_button.config(bg=COLORS['PRIMARY'])
-
-        self.analyze_button.bind("<Enter>", on_analyze_enter)
-        self.analyze_button.bind("<Leave>", on_analyze_leave)
 
         # Bouton Export avec style Sofrecom secondaire
         self.export_button = tk.Button(
@@ -7128,44 +7355,38 @@ class QualityControlModule:
         frame.pack(fill=tk.BOTH, expand=True, padx=1, pady=1)
         frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
 
-        # En-tête avec couleur distinctive
-        title_frame = tk.Frame(frame, bg=COLORS['INFO'], height=35)
+        # En-tête avec couleur distinctive pour les écarts
+        title_frame = tk.Frame(frame, bg=COLORS['PRIMARY'], height=35)
         title_frame.pack(fill=tk.X)
         title_frame.pack_propagate(False)
 
         title_label = tk.Label(
             title_frame,
-            text="📊 Résultats d'Analyse",
+            text="📋 Tableau des Écarts Plan Adressage",
             font=("Segoe UI", 11, "bold"),
             fg='white',
-            bg=COLORS['INFO']
+            bg=COLORS['PRIMARY']
         )
         title_label.pack(expand=True)
 
-        # Contenu avec scrollbar pour les résultats
+        # Contenu pour le tableau des écarts
         content = tk.Frame(frame, bg=COLORS['CARD'])
-        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=10)
+        content.pack(fill=tk.BOTH, expand=True, padx=8, pady=8)
 
-        # Zone de résultats avec style amélioré
-        results_container = tk.Frame(content, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        # Zone de résultats dédiée au tableau des écarts
+        results_container = tk.Frame(content, bg=COLORS['CARD'], relief='flat', bd=1)
         results_container.pack(fill=tk.BOTH, expand=True)
         results_container.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
 
-        # Créer le results_frame pour compatibilité avec les méthodes d'affichage
-        self.results_frame = tk.Frame(results_container, bg=COLORS['LIGHT'])
-        self.results_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        # Créer le results_frame pour le tableau des écarts avec nom unique
+        self.ecarts_results_frame_enhanced = tk.Frame(results_container, bg=COLORS['CARD'])
+        self.ecarts_results_frame_enhanced.pack(fill=tk.BOTH, expand=True, padx=3, pady=3)
 
-        # Label de résultats avec style modernisé
-        self.results_label = tk.Label(
-            self.results_frame,
-            text="🔄 En attente d'analyse...\n\n💡 Chargez les fichiers et lancez l'analyse pour voir les résultats détaillés",
-            font=("Segoe UI", 9),
-            fg=COLORS['TEXT_SECONDARY'],
-            bg=COLORS['LIGHT'],
-            wraplength=300,
-            justify=tk.CENTER
-        )
-        self.results_label.pack(expand=True, pady=20)
+        # Assigner à results_frame pour compatibilité
+        self.results_frame = self.ecarts_results_frame_enhanced
+
+        # Créer le tableau des écarts plan adressage (initial)
+        self._create_ecarts_plan_adressage_table(self.ecarts_results_frame_enhanced)
 
     def _create_enhanced_status_bar(self):
         """Crée la barre de statut compacte avec style Sofrecom."""

@@ -536,16 +536,18 @@ class DataViewerModule:
         tree_container = tk.Frame(table_frame, bg=COLORS['CARD'])
         tree_container.pack(fill=tk.BOTH, expand=True, padx=3, pady=(0, 3))  # Ultra minimal padding
         
-        # Define columns (A, B, C, D, I, N, O, P, U) - Added column C for Code INSEE
-        columns = ('A', 'B', 'C', 'D', 'I', 'N', 'O', 'P', 'U')
+        # Define columns (A, B, C, D, E, F, I, O, N, P, U) - Added columns E and F, swapped N and O positions
+        columns = ('A', 'B', 'C', 'D', 'E', 'F', 'I', 'O', 'N', 'P', 'U')
         column_names = {
             'A': '🏘️ Commune',
             'B': '🆔 ID Tâche',
             'C': '📍 INSEE',
             'D': '🏢 Domaine',
+            'E': '🛣️ Nbr voies CM',
+            'F': '🏠 Nbr IMB PA',
             'I': '📅 Affectation',
-            'N': '⏱️ Durée',
             'O': '📦 Livraison',
+            'N': '⏱️ Durée',
             'P': '📋 État',
             'U': '👤 Collaborateur'
         }
@@ -566,7 +568,9 @@ class DataViewerModule:
                 self.tree.column(col, width=130, minwidth=100)
             elif col in ['C']:  # Code INSEE column
                 self.tree.column(col, width=90, minwidth=70)
-            elif col in ['I', 'O']:  # Date columns
+            elif col in ['E', 'F']:  # Number columns (Nbr voies CM, Nbr IMB PA)
+                self.tree.column(col, width=110, minwidth=90)
+            elif col in ['I', 'O']:  # Date columns (Affectation, Livraison)
                 self.tree.column(col, width=120, minwidth=100)
             else:
                 self.tree.column(col, width=100, minwidth=80)
@@ -821,7 +825,7 @@ class DataViewerModule:
             # Get column mappings
             columns = list(self.data_df.columns)
             
-            # Map to expected columns (A, B, C, D, I, N, O, P, U)
+            # Map to expected columns (A, B, C, D, E, F, I, N, O, P, U)
             col_mapping = {}
             if len(columns) >= 21:  # Ensure we have enough columns
                 col_mapping = {
@@ -829,6 +833,8 @@ class DataViewerModule:
                     'B': columns[1],   # ID Tâche
                     'C': columns[2] if len(columns) > 2 else None,   # Code INSEE
                     'D': columns[3] if len(columns) > 3 else None,   # Domaine
+                    'E': columns[6] if len(columns) > 6 else None,   # Nbr des voies CM
+                    'F': columns[7] if len(columns) > 7 else None,   # Nbr des IMB PA
                     'I': columns[8] if len(columns) > 8 else None,   # Date Affectation
                     'N': columns[13] if len(columns) > 13 else None, # Durée Finale
                     'O': columns[14] if len(columns) > 14 else None, # Date Livraison
@@ -929,6 +935,8 @@ class DataViewerModule:
                     'B': columns[1],   # ID Tâche
                     'C': columns[2] if len(columns) > 2 else None,   # Code INSEE
                     'D': columns[3] if len(columns) > 3 else None,   # Domaine
+                    'E': columns[6] if len(columns) > 6 else None,   # Nbr des voies CM
+                    'F': columns[7] if len(columns) > 7 else None,   # Nbr des IMB PA
                     'I': columns[8] if len(columns) > 8 else None,   # Date Affectation
                     'N': columns[13] if len(columns) > 13 else None, # Durée Finale
                     'O': columns[14] if len(columns) > 14 else None, # Date Livraison
@@ -939,14 +947,24 @@ class DataViewerModule:
             # Add filtered data to tree
             for index, row in self.filtered_data.iterrows():
                 values = []
-                for col_key in ['A', 'B', 'C', 'D', 'I', 'N', 'O', 'P', 'U']:
+                for col_key in ['A', 'B', 'C', 'D', 'E', 'F', 'I', 'O', 'N', 'P', 'U']:
                     col_name = col_mapping.get(col_key)
                     if col_name and col_name in row:
                         pd = get_pandas()
                         value = str(row[col_name]) if pd.notna(row[col_name]) else ""
 
+                        # Format numbers without decimals for Nbr voies CM and Nbr IMB PA
+                        if col_key in ['E', 'F'] and value and value != "":
+                            try:
+                                # Convert to float first, then to int to remove decimals
+                                numeric_value = float(value)
+                                if pd.notna(numeric_value):
+                                    value = str(int(numeric_value))
+                            except:
+                                pass  # Keep original value if parsing fails
+
                         # Format dates to YYYY-MM-DD (ISO format) if it's a date column
-                        if col_key in ['I', 'O'] and value and value != "":
+                        elif col_key in ['I', 'O'] and value and value != "":
                             try:
                                 # Try to parse and format the date
                                 date_obj = pd.to_datetime(value, errors='coerce')
@@ -1139,15 +1157,17 @@ class DataViewerModule:
                 self.tree.move(child, '', index)
 
             # Update column headers to show sort direction
-            columns = ('A', 'B', 'C', 'D', 'I', 'N', 'O', 'P', 'U')
+            columns = ('A', 'B', 'C', 'D', 'E', 'F', 'I', 'O', 'N', 'P', 'U')
             column_names = {
                 'A': '🏘️ Commune',
                 'B': '🆔 ID Tâche',
                 'C': '📍 INSEE',
                 'D': '🏢 Domaine',
+                'E': '🛣️ Nbr voies CM',
+                'F': '🏠 Nbr IMB PA',
                 'I': '📅 Affectation',
-                'N': '⏱️ Durée',
                 'O': '📦 Livraison',
+                'N': '⏱️ Durée',
                 'P': '📋 État',
                 'U': '👤 Collaborateur'
             }

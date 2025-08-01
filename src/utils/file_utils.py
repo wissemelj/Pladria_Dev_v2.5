@@ -45,6 +45,16 @@ def get_logo_path() -> str:
     return get_resource_path("logo_Sofrecom.png")
 
 
+def get_background_path() -> str:
+    """
+    Get the path to the background image.
+
+    Returns:
+        Path to background image file
+    """
+    return get_resource_path("Background.png")
+
+
 def get_icon_path() -> str:
     """
     Get the path to the application icon.

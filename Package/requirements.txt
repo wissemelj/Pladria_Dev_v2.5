@@ -14,8 +14,16 @@ Pillow>=9.0.0,<11.0.0
 # Calendar widget for date selection
 tkcalendar>=1.6.0,<2.0.0
 
+# OTA Update system dependencies
+requests>=2.25.0,<3.0.0
+packaging>=21.0,<25.0
+
+# Build and compatibility dependencies
+setuptools>=75.8.2
+wheel>=0.37.0
+
 # Build tool (will be managed by build script)
-# pyinstaller==5.13.2
+# pyinstaller (latest version compatible with Python 3.13)
 
 # System dependencies (usually included with Python)
 # tkinter (built-in with Python)

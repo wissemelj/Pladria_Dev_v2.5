@@ -134,29 +134,12 @@ class HomeScreen:
         """Set the background image for the hero section."""
         try:
             from PIL import Image, ImageTk
+            from utils.file_utils import get_background_path
             import os
 
-            # Path to the background image - check multiple locations
-            import os
-            current_dir = os.getcwd()
-            self.logger.info(f"Current working directory: {current_dir}")
-
-            background_paths = [
-                "Background.png",  # Root directory
-                "../Background.png",  # Parent directory (since we're in src)
-                os.path.join("..", "Background.png"),  # Explicit parent
-                os.path.join("src", "background.png"),  # Original location
-                "background.png"  # Current directory fallback
-            ]
-
-            background_path = None
-            for path in background_paths:
-                abs_path = os.path.abspath(path)
-                self.logger.info(f"Checking background path: {path} -> {abs_path} (exists: {os.path.exists(path)})")
-                if os.path.exists(path):
-                    background_path = path
-                    self.logger.info(f"Found background image at: {background_path}")
-                    break
+            # Get the background image path using the utility function
+            background_path = get_background_path()
+            self.logger.info(f"Background image path: {background_path}")
 
             if background_path and os.path.exists(background_path):
                 self.logger.info(f"Loading background image from: {background_path}")
@@ -360,7 +343,7 @@ class HomeScreen:
             else:
                 # Fallback to solid color if image not found
                 hero_card.configure(bg=COLORS['PRIMARY'])
-                self.logger.warning(f"Background image not found at any of the expected locations: {background_paths}, using solid color")
+                self.logger.warning(f"Background image not found at: {background_path}, using solid color")
                 return None
 
         except Exception as e:

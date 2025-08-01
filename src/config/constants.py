@@ -36,6 +36,7 @@ VALIDATION_LISTS = {
     "Type de Commune": ["Classique", "Fusionné"],
     "Type de base": ["Mono-Base", "Multi-Base"],
     "Motif Voie": ["Création Voie", "Modification Voie", "Rien à faire"],
+    "Motif": ["Ad Import Ok", "Ad RAS", "NOk", "Ok", "UPR NOk", "UPR Ok", "UPR RAS"],
     "STATUT Ticket": ["Traité", "En Cours", "En Attente", "Bloqué", "Rejeté"],
     "Etat": ["Traité", "En Cours", "En Attente", "Bloqué", "Rejeté"],
     "Depose Ticket UPR": ["Non Créé", "Créé"],
@@ -156,7 +157,7 @@ class FileConfig:
 class AppInfo:
     """Application information"""
 
-    VERSION = "2.5"
+    VERSION = "2.5.2"  # Semantic versioning for better update management
     AUTHOR = "Equipe Plan Adressage - BLI"
     COPYRIGHT = "© 2025 Sofrecom Tunisie"
     DESCRIPTION = "Pladria - Activité Plan Adressae"
