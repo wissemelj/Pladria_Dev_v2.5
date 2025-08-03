@@ -375,11 +375,11 @@ class HomeScreen:
             # Create a glassmorphism overlay with transparent background
             overlay_frame = tk.Frame(
                 canvas,
-                bg='#FFFFFF',  # White background for glassmorphism
                 relief='flat',
                 bd=0,
                 highlightthickness=0
             )
+            # Don't set bg here - let the glassmorphism background handle it
 
             # Create a glassmorphism background using PIL for better transparency simulation
             try:
@@ -388,19 +388,19 @@ class HomeScreen:
                 # Try to create a true glassmorphism effect with background blur
                 if hasattr(self, 'hero_image_pil') and self.hero_image_pil:
                     # Calculate the region of the background image that will be behind the overlay
-                    overlay_x = max(0, center_x - 225)  # Half of overlay width (450/2)
-                    overlay_y = max(0, center_y - 70)   # Half of overlay height (140/2)
+                    overlay_x = max(0, center_x - 190)  # Half of overlay width (380/2)
+                    overlay_y = max(0, center_y - 60)   # Half of overlay height (120/2)
 
                     # Ensure coordinates are within image bounds
                     img_width, img_height = self.hero_image_pil.size
-                    overlay_x = min(overlay_x, img_width - 450) if img_width > 450 else 0
-                    overlay_y = min(overlay_y, img_height - 140) if img_height > 140 else 0
+                    overlay_x = min(overlay_x, img_width - 380) if img_width > 380 else 0
+                    overlay_y = min(overlay_y, img_height - 120) if img_height > 120 else 0
 
                     # Extract the region that will be behind the overlay
                     try:
                         # Ensure we don't go beyond image boundaries
-                        crop_right = min(overlay_x + 450, img_width)
-                        crop_bottom = min(overlay_y + 140, img_height)
+                        crop_right = min(overlay_x + 380, img_width)
+                        crop_bottom = min(overlay_y + 120, img_height)
 
                         region = self.hero_image_pil.crop((
                             overlay_x, overlay_y,
@@ -408,22 +408,22 @@ class HomeScreen:
                         ))
 
                         # Resize to exact overlay dimensions
-                        region = region.resize((450, 140), Image.Resampling.LANCZOS)
+                        region = region.resize((380, 120), Image.Resampling.LANCZOS)
 
                         # Apply blur effect for glassmorphism
                         blurred_region = region.filter(ImageFilter.GaussianBlur(radius=15))
 
                         # Create a glassmorphism overlay with proper transparency
                         # Use a more sophisticated gradient for better glassmorphism effect
-                        glass_overlay = Image.new('RGBA', (450, 140), (0, 0, 0, 0))
+                        glass_overlay = Image.new('RGBA', (380, 120), (0, 0, 0, 0))
                         draw = ImageDraw.Draw(glass_overlay)
 
                         # Create a radial gradient effect for glassmorphism
-                        for y in range(140):
-                            for x in range(450):
+                        for y in range(120):
+                            for x in range(380):
                                 # Calculate distance from center for radial effect
-                                center_dist = ((x - 225) ** 2 + (y - 70) ** 2) ** 0.5
-                                max_dist = (225 ** 2 + 70 ** 2) ** 0.5
+                                center_dist = ((x - 190) ** 2 + (y - 60) ** 2) ** 0.5
+                                max_dist = (190 ** 2 + 60 ** 2) ** 0.5
 
                                 # Create gradient based on distance from center
                                 gradient_factor = 1 - min(center_dist / max_dist, 1)
@@ -440,10 +440,10 @@ class HomeScreen:
                                 draw.point((x, y), fill=(255, 255, 255, alpha))
 
                         # Add subtle border for definition
-                        draw.rectangle([0, 0, 449, 139], outline=(255, 255, 255, 120), width=1)
+                        draw.rectangle([0, 0, 379, 119], outline=(255, 255, 255, 120), width=1)
 
                         # Add inner highlight for glass effect
-                        draw.rectangle([1, 1, 448, 138], outline=(255, 255, 255, 80), width=1)
+                        draw.rectangle([1, 1, 378, 118], outline=(255, 255, 255, 80), width=1)
 
                         # Composite the blurred background with the glass overlay
                         glassmorphism_bg = Image.alpha_composite(
@@ -451,18 +451,18 @@ class HomeScreen:
                             glass_overlay
                         )
 
-                        # Convert to PhotoImage
-                        glass_photo = ImageTk.PhotoImage(glassmorphism_bg)
+                        # Add text directly to the glassmorphism image before converting to PhotoImage
+                        glassmorphism_with_text = self._add_text_to_glass_image(glassmorphism_bg)
 
-                        # Create background label with glassmorphism
+                        # Convert to PhotoImage
+                        glass_photo = ImageTk.PhotoImage(glassmorphism_with_text)
+
+                        # Create background label with glassmorphism and text
                         glass_bg = tk.Label(overlay_frame, image=glass_photo, bd=0, highlightthickness=0)
                         glass_bg.place(x=0, y=0, relwidth=1, relheight=1)
 
                         # Store reference to prevent garbage collection
                         overlay_frame.glass_photo = glass_photo
-
-                        # NOW ADD TEXT DIRECTLY ON TOP OF THE GLASS BACKGROUND
-                        self._add_text_to_glass_overlay(overlay_frame)
 
                         self.logger.info("Advanced glassmorphism effect applied successfully")
 
@@ -486,8 +486,8 @@ class HomeScreen:
                 center_x, center_y,  # Center positioning
                 window=overlay_frame,
                 anchor=tk.CENTER,
-                width=450,  # Fixed width for consistency
-                height=140   # Fixed height for consistency
+                width=380,  # Fixed width for consistency - smaller size
+                height=120   # Fixed height for consistency - smaller size
             )
 
             self.logger.info(f"Overlay window created with ID: {overlay_window}")
@@ -509,94 +509,136 @@ class HomeScreen:
             from PIL import Image, ImageDraw, ImageTk
 
             # Create a simple gradient glassmorphism background
-            glass_img = Image.new('RGBA', (450, 140), (0, 0, 0, 0))
+            glass_img = Image.new('RGBA', (380, 120), (0, 0, 0, 0))
             draw = ImageDraw.Draw(glass_img)
 
             # Create a subtle gradient effect
-            for y in range(140):
+            for y in range(120):
                 # Create vertical gradient
                 alpha = int(120 - (y * 0.2))  # Subtle gradient
                 alpha = max(80, min(140, alpha))  # Keep in visible range
 
                 # Add horizontal variation for more realistic effect
-                for x in range(450):
-                    x_factor = abs(x - 225) / 225  # Distance from center horizontally
+                for x in range(380):
+                    x_factor = abs(x - 190) / 190  # Distance from center horizontally
                     final_alpha = int(alpha * (1 - x_factor * 0.2))  # Slight horizontal fade
                     final_alpha = max(70, min(130, final_alpha))
 
                     draw.point((x, y), fill=(255, 255, 255, final_alpha))
 
             # Add subtle border
-            draw.rectangle([0, 0, 449, 139], outline=(255, 255, 255, 100), width=1)
+            draw.rectangle([0, 0, 379, 119], outline=(255, 255, 255, 100), width=1)
 
             # Add inner highlight
-            draw.rectangle([2, 2, 447, 137], outline=(255, 255, 255, 60), width=1)
+            draw.rectangle([2, 2, 377, 117], outline=(255, 255, 255, 60), width=1)
+
+            # Add text directly to the glassmorphism image before converting to PhotoImage
+            glass_with_text = self._add_text_to_glass_image(glass_img)
 
             # Convert to PhotoImage
-            glass_photo = ImageTk.PhotoImage(glass_img)
+            glass_photo = ImageTk.PhotoImage(glass_with_text)
 
-            # Create background label with glassmorphism
+            # Create background label with glassmorphism and text
             glass_bg = tk.Label(overlay_frame, image=glass_photo, bd=0, highlightthickness=0)
             glass_bg.place(x=0, y=0, relwidth=1, relheight=1)
 
             # Store reference to prevent garbage collection
             overlay_frame.glass_photo = glass_photo
 
-            # NOW ADD TEXT DIRECTLY ON TOP OF THE GLASS BACKGROUND
-            self._add_text_to_glass_overlay(overlay_frame)
-
             self.logger.info("Simple glassmorphism effect applied successfully")
 
         except Exception as e:
             self.logger.warning(f"Simple glassmorphism also failed: {e}")
-            # Ultimate fallback: semi-transparent white background
+            # Ultimate fallback: semi-transparent white background with text
             overlay_frame.configure(bg='#FFFFFF')  # Solid white fallback
-            # Still add text even with fallback
-            self._add_text_to_glass_overlay(overlay_frame)
+            # Add simple text fallback
+            self._add_fallback_text(overlay_frame)
 
-    def _add_text_to_glass_overlay(self, overlay_frame):
-        """Add only title and subtitle text floating over glassmorphism - no background cards."""
+    def _add_text_to_glass_image(self, glass_image):
+        """Add text directly to the glassmorphism PIL image for perfect transparency."""
         try:
-            # Create title label - pure text floating over glass, no background
-            title_label = tk.Label(
-                overlay_frame,
-                text="Bienvenue sur Pladria",
-                font=("Segoe UI", 16, "bold"),
-                fg="#000000",  # Black text
-                relief='flat',
-                bd=0,
-                highlightthickness=0
-            )
-            title_label.place(relx=0.5, rely=0.35, anchor=tk.CENTER)
+            from PIL import ImageDraw, ImageFont
 
-            # Create subtitle label - pure text floating over glass, no background
-            subtitle_label = tk.Label(
-                overlay_frame,
-                text="Système de contrôle qualité pour l'activité Plan Adressage",
-                font=("Segoe UI", 10, "normal"),
-                fg="#333333",  # Dark gray for subtitle
-                relief='flat',
-                bd=0,
-                highlightthickness=0,
-                wraplength=400
-            )
-            subtitle_label.place(relx=0.5, rely=0.65, anchor=tk.CENTER)
+            # Create a copy of the glass image to draw on
+            text_image = glass_image.copy()
+            draw = ImageDraw.Draw(text_image)
 
-            self.logger.info("Pure floating text added to glassmorphism overlay successfully")
+            # Try to load a nice font, fallback to default if not available
+            try:
+                title_font = ImageFont.truetype("segoeui.ttf", 16)
+                subtitle_font = ImageFont.truetype("segoeui.ttf", 10)
+            except:
+                try:
+                    title_font = ImageFont.truetype("arial.ttf", 16)
+                    subtitle_font = ImageFont.truetype("arial.ttf", 10)
+                except:
+                    # Ultimate fallback to default font
+                    title_font = ImageFont.load_default()
+                    subtitle_font = ImageFont.load_default()
+
+            # Calculate text positions
+            image_width, image_height = text_image.size
+            center_x = image_width // 2
+            title_y = int(image_height * 0.35)
+            subtitle_y = int(image_height * 0.65)
+
+            # Title text
+            title_text = "Bienvenue sur Pladria"
+            title_bbox = draw.textbbox((0, 0), title_text, font=title_font)
+            title_width = title_bbox[2] - title_bbox[0]
+            title_x = center_x - title_width // 2
+
+            # Draw title with shadow for better visibility
+            draw.text((title_x + 1, title_y + 1), title_text, font=title_font, fill=(128, 128, 128, 180))  # Shadow
+            draw.text((title_x, title_y), title_text, font=title_font, fill=(0, 0, 0, 255))  # Main text
+
+            # Subtitle text
+            subtitle_text = "Système de contrôle qualité pour l'activité Plan Adressage"
+            subtitle_bbox = draw.textbbox((0, 0), subtitle_text, font=subtitle_font)
+            subtitle_width = subtitle_bbox[2] - subtitle_bbox[0]
+            subtitle_x = center_x - subtitle_width // 2
+
+            # Draw subtitle with shadow for better visibility
+            draw.text((subtitle_x + 1, subtitle_y + 1), subtitle_text, font=subtitle_font, fill=(128, 128, 128, 180))  # Shadow
+            draw.text((subtitle_x, subtitle_y), subtitle_text, font=subtitle_font, fill=(51, 51, 51, 255))  # Main text
+
+            self.logger.info("Text added directly to glassmorphism image successfully")
+            return text_image
 
         except Exception as e:
-            self.logger.error(f"Error adding text to glassmorphism overlay: {e}")
-            # Fallback: create a simple text label
+            self.logger.error(f"Error adding text to glass image: {e}")
+            # Return original image if text addition fails
+            return glass_image
+
+    def _add_fallback_text(self, overlay_frame):
+        """Add fallback text when glass background method fails."""
+        try:
+            # Get the overlay frame background color or use white as fallback
+            try:
+                bg_color = overlay_frame.cget('bg')
+                if not bg_color:
+                    bg_color = '#FFFFFF'
+            except:
+                bg_color = '#FFFFFF'
+
             fallback_label = tk.Label(
                 overlay_frame,
-                text="Bienvenue sur Pladria",
+                text="CMS Adresse & Plan Adressage",
                 font=("Segoe UI", 14, "bold"),
                 fg="#000000",  # Black text
+                bg=bg_color,   # Use proper background color
                 relief='flat',
                 bd=0,
                 highlightthickness=0
             )
             fallback_label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
+            # Store reference
+            overlay_frame.fallback_label = fallback_label
+            self.logger.info("Fallback text added successfully")
+
+        except Exception as e:
+            self.logger.error(f"Even fallback text failed: {e}")
 
     def _create_modern_features_section(self, parent: tk.Widget):
         """Create modern features section with professional card design."""
@@ -618,44 +660,39 @@ class HomeScreen:
         # Modern feature cards with enhanced design
         modules_data = [
             {
-                'title': 'Générateur Suivi Production',
-                'subtitle': 'Génération automatisée de fichiers Excel par commune',
+                'title': ' Suivi Commune',
+                'subtitle': 'Génération Unifiée des Suivi Excel par Commune',
                 'icon': '📊',
                 'color': COLORS['PRIMARY'],
-                'command': self._open_suivi_generator,
-                'features': ['Excel automatisé', 'Multi-communes', 'Templates avancés']
+                'command': self._open_suivi_generator
             },
             {
-                'title': 'Suivi Global Tickets',
+                'title': 'Suivi Tickets Global',
                 'subtitle': 'Gestion centralisée et mise à jour du suivi global',
                 'icon': '🌐',
                 'color': COLORS['SUCCESS'],
-                'command': self._open_suivi_global,
-                'features': ['Vue globale', 'Synchronisation', 'Reporting avancé']
+                'command': self._open_suivi_global
             },
             {
-                'title': 'Statistiques Équipe',
-                'subtitle': 'Analyse des performances et métriques d\'équipe',
-                'icon': '📈',
-                'color': COLORS['SECONDARY'],
-                'command': self._open_team_stats,
-                'features': ['Analytics avancés', 'Tableaux de bord', 'KPIs temps réel']
-            },
-            {
-                'title': 'Visualiseur de Données',
-                'subtitle': 'Exploration interactive des données Global Tickets',
+                'title': 'Visualiseur Communes',
+                'subtitle': 'Exploration Interactive Des Données Global',
                 'icon': '📊',
                 'color': COLORS['INFO'],
-                'command': self._open_data_viewer,
-                'features': ['Visualisation interactive', 'Filtres avancés', 'Export données']
+                'command': self._open_data_viewer
+            },
+            {
+                'title': 'Pilotage Équipe',
+                'subtitle': 'Analyse des Performances & Qualité Des Données ',
+                'icon': '📈',
+                'color': COLORS['SECONDARY'],
+                'command': self._open_team_stats
             },
             {
                 'title': 'Contrôle Qualité',
-                'subtitle': 'Système d\'analyse et validation qualité des données',
+                'subtitle': 'Génération Unifiée des Etats Lieu Excel Par Commune',
                 'icon': '🔍',
                 'color': COLORS['DANGER'],
                 'command': self._open_quality_control,
-                'features': ['Validation automatique', 'Rapports qualité', 'Analyses critères'],
                 'span': True
             }
         ]
@@ -669,7 +706,7 @@ class HomeScreen:
                 module['icon'],
                 module['color'],
                 module['command'],
-                module['features']
+                module.get('features', [])  # Use empty list if features not present
             )
 
             # Place all cards in a single row
@@ -746,20 +783,21 @@ class HomeScreen:
         )
         subtitle_label.pack(fill=tk.X, pady=(3, 0))
 
-        # Features list with smaller text
-        features_frame = tk.Frame(content, bg=COLORS['WHITE'])
-        features_frame.pack(fill=tk.X, pady=(8, 12))
+        # Features list with smaller text (only if features exist)
+        if features:  # Only create features section if there are features
+            features_frame = tk.Frame(content, bg=COLORS['WHITE'])
+            features_frame.pack(fill=tk.X, pady=(8, 12))
 
-        for feature in features:
-            feature_label = tk.Label(
-                features_frame,
-                text=f"• {feature}",
-                font=("Segoe UI", 7),
-                fg=COLORS['INFO'],
-                bg=COLORS['WHITE'],
-                anchor=tk.W
-            )
-            feature_label.pack(fill=tk.X, pady=1)
+            for feature in features:
+                feature_label = tk.Label(
+                    features_frame,
+                    text=f"• {feature}",
+                    font=("Segoe UI", 7),
+                    fg=COLORS['INFO'],
+                    bg=COLORS['WHITE'],
+                    anchor=tk.W
+                )
+                feature_label.pack(fill=tk.X, pady=1)
 
         # Action button
         button_frame = tk.Frame(content, bg=COLORS['WHITE'])

@@ -294,19 +294,8 @@ class UpdateDialog:
 
         def install_update_thread():
             try:
-                # Create backup
-                if not self.update_manager.create_backup():
-                    self.parent.after(0, lambda: self._show_error_message("Échec de la sauvegarde"))
-                    return
-
-                # Download update
-                download_path = self.update_manager.download_update(self.update_info)
-                if not download_path:
-                    self.parent.after(0, lambda: self._show_error_message("Échec du téléchargement"))
-                    return
-
-                # Install update
-                if self.update_manager.install_update(download_path):
+                # Use quick update method for faster installation
+                if self.update_manager.perform_quick_update(self.update_info):
                     # Success - offer to restart
                     self.parent.after(0, lambda: self._show_restart_dialog())
                 else:
@@ -314,7 +303,8 @@ class UpdateDialog:
 
             except Exception as e:
                 self.logger.error(f"Error during update installation: {e}")
-                self.parent.after(0, lambda: self._show_error_message(str(e)))
+                error_msg = f"Erreur lors de la mise à jour: {str(e)}"
+                self.parent.after(0, lambda: self._show_error_message(error_msg))
             finally:
                 # Re-enable cancel button
                 self.parent.after(0, lambda: self.cancel_button.config(state=tk.NORMAL))

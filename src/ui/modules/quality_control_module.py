@@ -248,30 +248,13 @@ class QualityControlModule:
         buttons_frame.pack(fill=tk.X, pady=(0, 10))
 
         # Access button - primary action
-        access_button = tk.Button(
+        access_button = ttk.Button(
             buttons_frame,
             text="🔑 Accéder au Visualiseur",
-            font=UIConfig.FONT_BUTTON,
-            bg=COLORS['PRIMARY'],
-            fg=COLORS['WHITE'],
-            relief=tk.FLAT,
-            bd=0,
-            padx=25,
-            pady=12,
             command=self._request_viewer_access,
-            cursor='hand2'
+            style='Primary.TButton'
         )
         access_button.pack(side=tk.RIGHT, padx=(10, 0))
-
-        # Add hover effects
-        def on_access_enter(e):
-            access_button.config(bg=COLORS['PRIMARY_DARK'])
-
-        def on_access_leave(e):
-            access_button.config(bg=COLORS['PRIMARY'])
-
-        access_button.bind('<Enter>', on_access_enter)
-        access_button.bind('<Leave>', on_access_leave)
 
     def _request_viewer_access(self):
         """Demande l'authentification pour accéder au visualiseur."""
@@ -359,16 +342,12 @@ class QualityControlModule:
         )
         title_label.pack(side=tk.LEFT, padx=10, pady=10)
 
-        # Bouton actualiser
-        refresh_btn = tk.Button(
+        # Refresh button
+        refresh_btn = ttk.Button(
             header_frame,
             text="🔄 Actualiser",
             command=self._refresh_viewer_data,
-            bg=COLORS['ACCENT'],
-            fg="white",
-            font=("Segoe UI", 9, "bold"),
-            relief=tk.FLAT,
-            padx=15
+            style='Compact.TButton'
         )
         refresh_btn.pack(side=tk.RIGHT, padx=10, pady=8)
 
@@ -419,15 +398,12 @@ class QualityControlModule:
         statut_combo.set('Tous')
         statut_combo.pack(side=tk.LEFT, padx=(0,8))
 
-        # Bouton appliquer filtres
-        apply_btn = tk.Button(
+        # Filter button
+        apply_btn = ttk.Button(
             filters_row,
             text="🔍 Filtrer",
             command=self._apply_viewer_filters,
-            bg=COLORS['SUCCESS'],
-            fg="white",
-            font=("Segoe UI", 9),
-            relief=tk.FLAT
+            style='Success.TButton'
         )
         apply_btn.pack(side=tk.RIGHT, padx=5)
 
@@ -1007,14 +983,12 @@ class QualityControlModule:
             text_widget.insert(tk.END, debug_message)
             text_widget.config(state=tk.DISABLED)
 
-            # Bouton fermer
-            close_btn = tk.Button(
+            # Close button
+            close_btn = ttk.Button(
                 debug_window,
                 text="Fermer",
                 command=debug_window.destroy,
-                bg=COLORS['ACCENT'],
-                fg="white",
-                font=("Segoe UI", 10, "bold")
+                style='Compact.TButton'
             )
             close_btn.pack(pady=10)
 
@@ -1028,16 +1002,12 @@ class QualityControlModule:
         """Configure l'onglet d'analyse qualité."""
         try:
             # Layout en grille pour maximiser l'espace
-            self.analysis_tab.grid_rowconfigure(0, weight=0)  # Header compact
-            self.analysis_tab.grid_rowconfigure(1, weight=1)  # Contenu principal
-            self.analysis_tab.grid_rowconfigure(2, weight=0)  # Status compact
+            self.analysis_tab.grid_rowconfigure(0, weight=1)  # Contenu principal
+            self.analysis_tab.grid_rowconfigure(1, weight=0)  # Status compact
             self.analysis_tab.grid_columnconfigure(0, weight=1)
 
-            # Interface utilisateur modernisée et améliorée
-            self._create_enhanced_header()
-
-            # Contenu principal en grille 2x2 avec design amélioré
-            self._create_enhanced_main_content()
+            # Contenu principal en layout vertical
+            self._create_vertical_main_content()
 
             # Barre de statut modernisée
             self._create_enhanced_status_bar()
@@ -2005,7 +1975,7 @@ class QualityControlModule:
         qgis_loaded = self.qgis_data is not None
         suivi_loaded = self.suivi_data is not None
 
-        if hasattr(self, 'files_status'):
+        if hasattr(self, 'files_status') and self.files_status:
             if qgis_loaded and suivi_loaded:
                 self.files_status.config(text="📁 Fichiers: ✅ Tous chargés", fg=COLORS['SUCCESS'])
             elif qgis_loaded or suivi_loaded:
@@ -2058,56 +2028,76 @@ class QualityControlModule:
                 return df
 
             def on_success(df):
-                self.qgis_data = df
-                self.current_qgis_file_path = file_path
-                filename = os.path.basename(file_path)
+                # S'assurer que les mises à jour UI se font dans le thread principal
+                def update_ui():
+                    self.qgis_data = df
+                    self.current_qgis_file_path = file_path
+                    filename = os.path.basename(file_path)
 
-                # Réinitialiser le flag d'analyse car nouveau fichier
-                self._analysis_triggered = False
+                    # Réinitialiser le flag d'analyse car nouveau fichier
+                    self._analysis_triggered = False
 
-                self.qgis_info_label.config(
-                    text=f"✅ {filename} ({len(df)} lignes)",
-                    fg=COLORS['SUCCESS']
-                )
-                # Utiliser les nouvelles améliorations visuelles si disponibles
-                try:
-                    self._update_status_with_animation("Fichier QGis chargé avec succès", "✅", COLORS['SUCCESS'])
-                    self._update_progress_bar(100)
-                    # Réinitialiser la barre après un délai
-                    if self.main_frame and self.main_frame.winfo_exists():
-                        self.main_frame.after(2000, lambda: self._update_progress_bar(0))
-                except:
-                    # Fallback vers l'ancienne méthode
-                    self._update_status("success", "Fichier QGis chargé avec succès")
+                    # Mettre à jour le label de statut s'il existe
+                    if hasattr(self, 'qgis_info_label') and self.qgis_info_label:
+                        self.qgis_info_label.config(
+                            text=f"✅ {filename} ({len(df)} lignes)",
+                            fg=COLORS['SUCCESS']
+                        )
+                    # Utiliser les nouvelles améliorations visuelles si disponibles
+                    try:
+                        self._update_status_with_animation("Fichier QGis chargé avec succès", "✅", COLORS['SUCCESS'])
+                        self._update_progress_bar(100)
+                        # Réinitialiser la barre après un délai
+                        if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                            self.analysis_tab.after(2000, lambda: self._update_progress_bar(0))
+                    except:
+                        # Fallback vers l'ancienne méthode
+                        self._update_status("success", "Fichier QGis chargé avec succès")
 
-                # Mettre à jour les indicateurs de statut
-                if hasattr(self, 'files_status'):
-                    self.files_status.config(text="📁 Fichiers: QGis chargé", fg=COLORS['SUCCESS'])
+                    # Mettre à jour les indicateurs de statut
+                    if hasattr(self, 'files_status') and self.files_status:
+                        self.files_status.config(text="📁 Fichiers: QGis chargé", fg=COLORS['SUCCESS'])
 
-                self._update_file_indicators()
-                self._check_analysis_ready()
-                self.logger.info(f"Fichier QGis chargé: {filename}")
+                    self._update_file_indicators()
+                    self._check_analysis_ready()
+                    self.logger.info(f"Fichier QGis chargé: {filename}")
+
+                # Exécuter dans le thread principal
+                if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                    self.analysis_tab.after(0, update_ui)
+                else:
+                    update_ui()
 
             def on_error(error):
-                self.qgis_info_label.config(
-                    text="❌ Erreur de chargement",
-                    fg=COLORS['ERROR']
-                )
-                # Utiliser les nouvelles améliorations visuelles si disponibles
-                try:
-                    self._update_status_with_animation("Erreur lors du chargement QGis", "❌", COLORS['ERROR'])
-                    self._update_progress_bar(0)
-                except:
-                    # Fallback vers l'ancienne méthode
-                    self._update_status("error", "Erreur lors du chargement QGis")
+                # S'assurer que les mises à jour UI se font dans le thread principal
+                def update_ui():
+                    # Mettre à jour le label de statut s'il existe
+                    if hasattr(self, 'qgis_info_label') and self.qgis_info_label:
+                        self.qgis_info_label.config(
+                            text="❌ Erreur de chargement",
+                            fg=COLORS['ERROR']
+                        )
+                    # Utiliser les nouvelles améliorations visuelles si disponibles
+                    try:
+                        self._update_status_with_animation("Erreur lors du chargement QGis", "❌", COLORS['ERROR'])
+                        self._update_progress_bar(0)
+                    except:
+                        # Fallback vers l'ancienne méthode
+                        self._update_status("error", "Erreur lors du chargement QGis")
 
-                # Mettre à jour les indicateurs de statut
-                if hasattr(self, 'files_status'):
-                    self.files_status.config(text="📁 Fichiers: Erreur QGis", fg=COLORS['ERROR'])
+                    # Mettre à jour les indicateurs de statut
+                    if hasattr(self, 'files_status') and self.files_status:
+                        self.files_status.config(text="📁 Fichiers: Erreur QGis", fg=COLORS['ERROR'])
 
-                self._update_file_indicators()
-                messagebox.showerror("Erreur", f"Impossible de charger le fichier QGis:\n{error}")
-                self.logger.error(f"Erreur chargement QGis: {error}")
+                    self._update_file_indicators()
+                    messagebox.showerror("Erreur", f"Impossible de charger le fichier QGis:\n{error}")
+                    self.logger.error(f"Erreur chargement QGis: {error}")
+
+                # Exécuter dans le thread principal
+                if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                    self.analysis_tab.after(0, update_ui)
+                else:
+                    update_ui()
 
             # Charger de manière asynchrone
             run_async_task(load_qgis, on_success, on_error, "Chargement QGis")
@@ -2153,57 +2143,77 @@ class QualityControlModule:
                 return df, detected_info
 
             def on_success(result):
-                df, detected_info = result
-                self.suivi_data = df
-                self.current_suivi_file_path = file_path
-                self.detected_info = detected_info
+                # S'assurer que les mises à jour UI se font dans le thread principal
+                def update_ui():
+                    df, detected_info = result
+                    self.suivi_data = df
+                    self.current_suivi_file_path = file_path
+                    self.detected_info = detected_info
 
-                # Réinitialiser le flag d'analyse car nouveau fichier
-                self._analysis_triggered = False
+                    # Réinitialiser le flag d'analyse car nouveau fichier
+                    self._analysis_triggered = False
 
-                # Mettre à jour l'affichage des informations détectées
-                self.collaborator_var.set(detected_info.get('collaborateur', 'Non détecté'))
-                self.commune_var.set(detected_info.get('commune', 'Non détecté'))
-                self.insee_var.set(detected_info.get('insee', 'Non détecté'))
-                self.id_tache_var.set(detected_info.get('id_tache', 'Non détecté'))
+                    # Mettre à jour l'affichage des informations détectées
+                    self.collaborator_var.set(detected_info.get('collaborateur', 'Non détecté'))
+                    self.commune_var.set(detected_info.get('commune', 'Non détecté'))
+                    self.insee_var.set(detected_info.get('insee', 'Non détecté'))
+                    self.id_tache_var.set(detected_info.get('id_tache', 'Non détecté'))
 
-                # Évaluer et afficher le statut de conformité si des résultats QC existent
-                if hasattr(self, 'qc_results') and self.qc_results:
-                    evaluation_commune = self._evaluate_commune_status()
-                    self._display_commune_status(evaluation_commune)
+                    # Évaluer et afficher le statut de conformité si des résultats QC existent
+                    if hasattr(self, 'qc_results') and self.qc_results:
+                        evaluation_commune = self._evaluate_commune_status()
+                        self._display_commune_status(evaluation_commune)
 
-                filename = os.path.basename(file_path)
-                self.suivi_info_label.config(
-                    text=f"✅ {filename} ({len(df)} lignes)",
-                    fg=COLORS['SUCCESS']
-                )
-                self._update_status("success", "Fichier suivi chargé avec succès")
-                # Réinitialiser la barre de progression de manière sécurisée
-                try:
-                    self._update_progress_bar(0)
-                except:
-                    if hasattr(self, 'progress_var') and self.progress_var is not None:
-                        self.progress_var.set(0)
-                self._update_file_indicators()
-                self._check_analysis_ready()
-                self.logger.info(f"Fichier suivi chargé: {filename}")
-                self.logger.info(f"Informations détectées: {detected_info}")
+                    filename = os.path.basename(file_path)
+                    # Mettre à jour le label de statut s'il existe
+                    if hasattr(self, 'suivi_info_label') and self.suivi_info_label:
+                        self.suivi_info_label.config(
+                            text=f"✅ {filename} ({len(df)} lignes)",
+                            fg=COLORS['SUCCESS']
+                        )
+                    self._update_status("success", "Fichier suivi chargé avec succès")
+                    # Réinitialiser la barre de progression de manière sécurisée
+                    try:
+                        self._update_progress_bar(0)
+                    except:
+                        if hasattr(self, 'progress_var') and self.progress_var is not None:
+                            self.progress_var.set(0)
+                    self._update_file_indicators()
+                    self._check_analysis_ready()
+                    self.logger.info(f"Fichier suivi chargé: {filename}")
+                    self.logger.info(f"Informations détectées: {detected_info}")
+
+                # Exécuter dans le thread principal
+                if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                    self.analysis_tab.after(0, update_ui)
+                else:
+                    update_ui()
 
             def on_error(error):
-                self.suivi_info_label.config(
-                    text="❌ Erreur de chargement",
-                    fg=COLORS['ERROR']
-                )
-                self._update_status("error", "Erreur lors du chargement suivi")
-                # Réinitialiser la barre de progression de manière sécurisée
-                try:
-                    self._update_progress_bar(0)
-                except:
-                    if hasattr(self, 'progress_var') and self.progress_var is not None:
-                        self.progress_var.set(0)
-                self._update_file_indicators()
-                messagebox.showerror("Erreur", f"Impossible de charger le fichier suivi:\n{error}")
-                self.logger.error(f"Erreur chargement suivi: {error}")
+                # S'assurer que les mises à jour UI se font dans le thread principal
+                def update_ui():
+                    # Mettre à jour le label de statut s'il existe
+                    if hasattr(self, 'suivi_info_label') and self.suivi_info_label:
+                        self.suivi_info_label.config(
+                            text="❌ Erreur de chargement",
+                            fg=COLORS['ERROR']
+                        )
+                    self._update_status("error", "Erreur lors du chargement suivi")
+                    # Réinitialiser la barre de progression de manière sécurisée
+                    try:
+                        self._update_progress_bar(0)
+                    except:
+                        if hasattr(self, 'progress_var') and self.progress_var is not None:
+                            self.progress_var.set(0)
+                    self._update_file_indicators()
+                    messagebox.showerror("Erreur", f"Impossible de charger le fichier suivi:\n{error}")
+                    self.logger.error(f"Erreur chargement suivi: {error}")
+
+                # Exécuter dans le thread principal
+                if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                    self.analysis_tab.after(0, update_ui)
+                else:
+                    update_ui()
 
             # Charger de manière asynchrone
             run_async_task(load_suivi, on_success, on_error, "Chargement suivi")
@@ -2799,43 +2809,60 @@ class QualityControlModule:
                 return results
 
             def on_success(results):
-                self.qc_results = results
+                # S'assurer que les mises à jour UI se font dans le thread principal
+                def update_ui():
+                    self.qc_results = results
 
-                # Rafraîchir le tableau des écarts plan adressage UNIQUEMENT
-                self._refresh_ecarts_table()
+                    # Rafraîchir le tableau des écarts plan adressage UNIQUEMENT
+                    self._refresh_ecarts_table()
 
-                # Note: Plus d'appel à _display_compact_results pour éviter les conflits d'affichage
-                self.export_button.config(state='normal')
-                self._update_status("success", "Analyse terminée - Tableau des écarts mis à jour")
+                    # Note: Plus d'appel à _display_compact_results pour éviter les conflits d'affichage
+                    if hasattr(self, 'export_button') and self.export_button:
+                        self.export_button.config(state='normal')
+                    self._update_status("success", "Analyse terminée - Tableau des écarts mis à jour")
 
-                # NE PAS réinitialiser le flag ici - il sera réinitialisé seulement lors du changement de fichiers
+                    # NE PAS réinitialiser le flag ici - il sera réinitialisé seulement lors du changement de fichiers
 
-                # Mettre à jour les indicateurs de statut
-                if hasattr(self, 'analysis_status'):
-                    self.analysis_status.config(text="🔍 Analyse: ✅ Terminée", fg=COLORS['SUCCESS'])
-                if hasattr(self, 'report_status'):
-                    self.report_status.config(text="📊 Rapport: ⚠️ Prêt", fg=COLORS['WARNING'])
+                    # Mettre à jour les indicateurs de statut
+                    if hasattr(self, 'analysis_status') and self.analysis_status:
+                        self.analysis_status.config(text="🔍 Analyse: ✅ Terminée", fg=COLORS['SUCCESS'])
+                    if hasattr(self, 'report_status') and self.report_status:
+                        self.report_status.config(text="📊 Rapport: ⚠️ Prêt", fg=COLORS['WARNING'])
 
-                # Mettre à jour la barre de progression de manière sécurisée
-                try:
-                    self._update_progress_bar(100)
-                except:
-                    if hasattr(self, 'progress_var') and self.progress_var is not None:
-                        self.progress_var.set(100)
-                self.logger.info("Analyse qualité terminée")
+                    # Mettre à jour la barre de progression de manière sécurisée
+                    try:
+                        self._update_progress_bar(100)
+                    except:
+                        if hasattr(self, 'progress_var') and self.progress_var is not None:
+                            self.progress_var.set(100)
+                    self.logger.info("Analyse qualité terminée")
+
+                # Exécuter dans le thread principal
+                if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                    self.analysis_tab.after(0, update_ui)
+                else:
+                    update_ui()
 
             def on_error(error):
-                self._update_status("error", "Erreur lors de l'analyse")
-                if hasattr(self, 'analysis_status'):
-                    self.analysis_status.config(text="🔍 Analyse: ❌ Erreur", fg=COLORS['ERROR'])
-                # Réinitialiser la barre de progression de manière sécurisée
-                try:
-                    self._update_progress_bar(0)
-                except:
-                    if hasattr(self, 'progress_var') and self.progress_var is not None:
-                        self.progress_var.set(0)
-                messagebox.showerror("Erreur", f"Erreur lors de l'analyse:\n{error}")
-                self.logger.error(f"Erreur analyse qualité: {error}")
+                # S'assurer que les mises à jour UI se font dans le thread principal
+                def update_ui():
+                    self._update_status("error", "Erreur lors de l'analyse")
+                    if hasattr(self, 'analysis_status') and self.analysis_status:
+                        self.analysis_status.config(text="🔍 Analyse: ❌ Erreur", fg=COLORS['ERROR'])
+                    # Réinitialiser la barre de progression de manière sécurisée
+                    try:
+                        self._update_progress_bar(0)
+                    except:
+                        if hasattr(self, 'progress_var') and self.progress_var is not None:
+                            self.progress_var.set(0)
+                    messagebox.showerror("Erreur", f"Erreur lors de l'analyse:\n{error}")
+                    self.logger.error(f"Erreur analyse qualité: {error}")
+
+                # Exécuter dans le thread principal
+                if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                    self.analysis_tab.after(0, update_ui)
+                else:
+                    update_ui()
 
             # Lancer l'analyse de manière asynchrone
             run_async_task(run_analysis, on_success, on_error, "Analyse qualité")
@@ -3637,19 +3664,39 @@ class QualityControlModule:
                 return self._generate_excel_report(file_path)
 
             def on_success(success):
-                if success:
-                    self._update_status("success", "Rapport exporté avec succès")
-                    if hasattr(self, 'report_status'):
-                        self.report_status.config(text="📊 Rapport: ✅ Exporté", fg=COLORS['SUCCESS'])
-                    # Mettre à jour la barre de progression de manière sécurisée
-                    try:
-                        self._update_progress_bar(100)
-                    except:
-                        if hasattr(self, 'progress_var') and self.progress_var is not None:
-                            self.progress_var.set(100)
-                    messagebox.showinfo("Succès", f"Rapport exporté vers:\n{file_path}")
-                    self.logger.info(f"Rapport exporté: {file_path}")
+                # S'assurer que les mises à jour UI se font dans le thread principal
+                def update_ui():
+                    if success:
+                        self._update_status("success", "Rapport exporté avec succès")
+                        if hasattr(self, 'report_status') and self.report_status:
+                            self.report_status.config(text="📊 Rapport: ✅ Exporté", fg=COLORS['SUCCESS'])
+                        # Mettre à jour la barre de progression de manière sécurisée
+                        try:
+                            self._update_progress_bar(100)
+                        except:
+                            if hasattr(self, 'progress_var') and self.progress_var is not None:
+                                self.progress_var.set(100)
+                        messagebox.showinfo("Succès", f"Rapport exporté vers:\n{file_path}")
+                        self.logger.info(f"Rapport exporté: {file_path}")
+                    else:
+                        self._update_status("error", "Erreur lors de l'export")
+                        # Réinitialiser la barre de progression de manière sécurisée
+                        try:
+                            self._update_progress_bar(0)
+                        except:
+                            if hasattr(self, 'progress_var') and self.progress_var is not None:
+                                self.progress_var.set(0)
+                        messagebox.showerror("Erreur", "Échec de la génération du rapport Excel.\nVérifiez les logs pour plus de détails.")
+
+                # Exécuter dans le thread principal
+                if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                    self.analysis_tab.after(0, update_ui)
                 else:
+                    update_ui()
+
+            def on_error(error):
+                # S'assurer que les mises à jour UI se font dans le thread principal
+                def update_ui():
                     self._update_status("error", "Erreur lors de l'export")
                     # Réinitialiser la barre de progression de manière sécurisée
                     try:
@@ -3657,23 +3704,19 @@ class QualityControlModule:
                     except:
                         if hasattr(self, 'progress_var') and self.progress_var is not None:
                             self.progress_var.set(0)
-                    messagebox.showerror("Erreur", "Échec de la génération du rapport Excel.\nVérifiez les logs pour plus de détails.")
+                    error_msg = f"Erreur lors de l'export:\n{str(error)}"
+                    if len(error_msg) > 200:
+                        error_msg = error_msg[:200] + "...\n\nVoir les logs pour plus de détails."
+                    messagebox.showerror("Erreur", error_msg)
+                    self.logger.error(f"Erreur export rapport: {error}")
+                    import traceback
+                    self.logger.error(f"Traceback: {traceback.format_exc()}")
 
-            def on_error(error):
-                self._update_status("error", "Erreur lors de l'export")
-                # Réinitialiser la barre de progression de manière sécurisée
-                try:
-                    self._update_progress_bar(0)
-                except:
-                    if hasattr(self, 'progress_var') and self.progress_var is not None:
-                        self.progress_var.set(0)
-                error_msg = f"Erreur lors de l'export:\n{str(error)}"
-                if len(error_msg) > 200:
-                    error_msg = error_msg[:200] + "...\n\nVoir les logs pour plus de détails."
-                messagebox.showerror("Erreur", error_msg)
-                self.logger.error(f"Erreur export rapport: {error}")
-                import traceback
-                self.logger.error(f"Traceback: {traceback.format_exc()}")
+                # Exécuter dans le thread principal
+                if hasattr(self, 'analysis_tab') and self.analysis_tab:
+                    self.analysis_tab.after(0, update_ui)
+                else:
+                    update_ui()
 
             # Générer de manière asynchrone
             run_async_task(generate_report, on_success, on_error, "Export rapport")
@@ -6777,118 +6820,25 @@ class QualityControlModule:
     # INTERFACE UTILISATEUR MODERNISÉE
     # ==========================================
 
-    def _create_enhanced_header(self):
-        """Crée un en-tête modernisé avec design cohérent avec l'accueil."""
-        # Header avec style Sofrecom compact
-        header_frame = tk.Frame(self.analysis_tab, bg=COLORS['ACCENT'], height=40)
-        header_frame.grid(row=0, column=0, sticky="ew", padx=0, pady=0)
-        header_frame.pack_propagate(False)
-        header_frame.config(highlightbackground=COLORS['PRIMARY'], highlightthickness=1)
+    def _create_vertical_main_content(self):
+        """Crée le contenu principal avec layout vertical."""
+        main_content = tk.Frame(self.analysis_tab, bg=COLORS['BG'])
+        main_content.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        # Conteneur principal avec style Sofrecom compact
-        content = tk.Frame(header_frame, bg=COLORS['ACCENT'])
-        content.pack(fill=tk.BOTH, expand=True, padx=20, pady=8)
+        # Configuration pour layout vertical
+        main_content.grid_rowconfigure(0, weight=0)  # Import fichiers
+        main_content.grid_rowconfigure(1, weight=0)  # Info communes
+        main_content.grid_rowconfigure(2, weight=0)  # Analyse critères
+        main_content.grid_rowconfigure(3, weight=1)  # Résultats (extensible)
+        main_content.grid_columnconfigure(0, weight=1)
 
-        # Titre principal avec style cohérent avec l'accueil
-        title_frame = tk.Frame(content, bg=COLORS['ACCENT'])
-        title_frame.pack(side=tk.LEFT)
+        # Création des sections verticales
+        self._create_enhanced_files_section(main_content, 0)
+        self._create_enhanced_info_section(main_content, 1)
+        self._create_enhanced_analysis_section(main_content, 2)
+        self._create_enhanced_results_section(main_content, 3)
 
-        # Icône avec style Sofrecom
-        icon_label = tk.Label(
-            title_frame,
-            text="🔍",
-            font=("Segoe UI", 16),
-            fg=COLORS['PRIMARY'],
-            bg=COLORS['ACCENT']
-        )
-        icon_label.pack(side=tk.LEFT, padx=(0, 8))
 
-        title_label = tk.Label(
-            title_frame,
-            text="Module 5 - Contrôle Qualité",
-            font=("Segoe UI", 12, "bold"),
-            fg=COLORS['PRIMARY'],
-            bg=COLORS['ACCENT']
-        )
-        title_label.pack(side=tk.LEFT)
-
-        # Sous-titre descriptif
-        subtitle_label = tk.Label(
-            content,
-            text="Système d'analyse et de validation de la qualité des données",
-            font=("Segoe UI", 9),
-            fg=COLORS['INFO'],
-            bg=COLORS['ACCENT']
-        )
-        subtitle_label.pack(side=tk.LEFT, padx=(15, 0))
-
-        # Bouton de choix Mode (Autoévaluation / Contrôle Qualité) - Fonctionnalité future
-        self._create_mode_selection_button(content)
-
-        # Indicateurs de statut modernisés
-        self._create_enhanced_status_indicators(content)
-
-    def _create_mode_selection_button(self, parent: tk.Widget):
-        """Crée le bouton de sélection du mode (Autoévaluation / Contrôle Qualité)."""
-        try:
-            # Séparateur avant le bouton de mode
-            separator = tk.Frame(parent, width=2, bg=COLORS['BORDER'])
-            separator.pack(side=tk.LEFT, fill=tk.Y, padx=10)
-
-            # Frame pour le bouton de mode
-            mode_frame = tk.Frame(parent, bg=COLORS['CARD'])
-            mode_frame.pack(side=tk.LEFT)
-
-            # Variable pour stocker le mode sélectionné
-            self.selected_mode = tk.StringVar(value="Contrôle Qualité")
-
-            # Label descriptif
-            mode_label = tk.Label(
-                mode_frame,
-                text="Mode:",
-                font=("Segoe UI", 9, "bold"),
-                fg=COLORS['TEXT_PRIMARY'],
-                bg=COLORS['CARD']
-            )
-            mode_label.pack(side=tk.LEFT, padx=(0, 5))
-
-            # Bouton de sélection avec menu déroulant
-            self.mode_button = tk.Menubutton(
-                mode_frame,
-                text="🔍 Contrôle Qualité",
-                font=("Segoe UI", 9, "bold"),
-                fg='white',
-                bg=COLORS['PRIMARY'],
-                activebackground=COLORS['ACCENT'],
-                activeforeground='white',
-                relief='flat',
-                padx=12,
-                pady=4,
-                cursor='hand2',
-                direction='below'
-            )
-            self.mode_button.pack(side=tk.LEFT)
-
-            # Menu déroulant pour les options
-            mode_menu = tk.Menu(self.mode_button, tearoff=0)
-            self.mode_button.config(menu=mode_menu)
-
-            # Options du menu
-            mode_menu.add_command(
-                label="🔍 Contrôle Qualité",
-                command=lambda: self._select_mode("Contrôle Qualité", "🔍")
-            )
-            mode_menu.add_command(
-                label="📊 Autoévaluation",
-                command=lambda: self._select_mode("Autoévaluation", "📊")
-            )
-
-            # Tooltip supprimé pour éviter les popups
-
-            self.logger.info("Bouton de sélection de mode créé avec succès")
-
-        except Exception as e:
-            self.logger.warning(f"Erreur création bouton mode: {e}")
 
     def _select_mode(self, mode: str, icon: str):
         """Sélectionne le mode d'analyse."""
@@ -7007,326 +6957,441 @@ class QualityControlModule:
         )
         self.report_status.pack(side=tk.LEFT, padx=8)
 
-    def _create_enhanced_main_content(self):
-        """Crée le contenu principal avec design cohérent avec l'accueil."""
-        main_content = tk.Frame(self.analysis_tab, bg=COLORS['BG'])
-        main_content.grid(row=1, column=0, sticky="nsew", padx=0, pady=0)
+    def _create_enhanced_files_section(self, parent: tk.Widget, row: int):
+        """Section 1: Import des fichiers."""
+        from ui.styles import create_card_frame, create_section_header
 
-        # Configuration de la grille 2x2 avec espacement compact
-        main_content.grid_rowconfigure(0, weight=1)
-        main_content.grid_rowconfigure(1, weight=1)
-        main_content.grid_columnconfigure(0, weight=1)
-        main_content.grid_columnconfigure(1, weight=1)
-
-        # Création des quadrants avec design amélioré
-        self._create_enhanced_files_quadrant(main_content, 0, 0)
-        self._create_enhanced_info_quadrant(main_content, 0, 1)
-        self._create_enhanced_analysis_quadrant(main_content, 1, 0)
-        self._create_enhanced_results_quadrant(main_content, 1, 1)
-
-    def _create_enhanced_files_quadrant(self, parent: tk.Widget, row: int, col: int):
-        """Quadrant 1: Chargement des fichiers avec style Sofrecom."""
-        # Utiliser le style de carte Sofrecom
+        # Container for the card
         card_container = tk.Frame(parent, bg=COLORS['BG'])
-        card_container.grid(row=row, column=col, sticky="nsew", padx=10, pady=10)
+        card_container.grid(row=row, column=0, sticky="ew", pady=(0, 10))
 
-        # Carte avec style Sofrecom
-        frame = tk.Frame(card_container, bg=COLORS['CARD'], relief='flat', bd=0)
-        frame.pack(fill=tk.BOTH, expand=True, padx=1, pady=1)
-        frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+        # Main card for file import
+        files_card = create_card_frame(card_container)
+        files_card.pack(fill=tk.X, expand=False)
 
-        # En-tête compact avec style Sofrecom
-        title_frame = tk.Frame(frame, bg=COLORS['CARD'])
-        title_frame.pack(fill=tk.X, padx=8, pady=(8, 4))
+        # Section header
+        header_frame = create_section_header(files_card, "📁", "Import des fichiers")
+        header_frame.pack(fill=tk.X, padx=12, pady=(8, 5))
 
-        # Icône et titre
-        icon_label = tk.Label(
-            title_frame,
-            text="📁",
-            font=("Segoe UI", 12),
-            fg=COLORS['PRIMARY'],
-            bg=COLORS['CARD']
+        # Content frame
+        content_frame = tk.Frame(files_card, bg=COLORS['CARD'])
+        content_frame.pack(fill=tk.X, expand=False, padx=12, pady=(0, 8))
+
+        # File selection buttons in horizontal layout
+        buttons_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        buttons_frame.pack(fill=tk.X, pady=(0, 8))
+
+        from tkinter import ttk
+
+        # QGis file button
+        self.qgis_button = ttk.Button(
+            buttons_frame,
+            text="📊 Fichier QGis",
+            command=self._load_qgis_file,
+            style='Primary.TButton'
         )
-        icon_label.pack(side=tk.LEFT, padx=(0, 6))
+        self.qgis_button.pack(side=tk.LEFT, padx=(0, 10))
 
-        title_label = tk.Label(
-            title_frame,
-            text="Chargement des Fichiers",
-            font=("Segoe UI", 10, "bold"),
+        # Teams file button
+        self.teams_button = ttk.Button(
+            buttons_frame,
+            text="📋 Fichier Suivi",
+            command=self._load_suivi_file,
+            style='Secondary.TButton'
+        )
+        self.teams_button.pack(side=tk.LEFT)
+
+        # File status labels
+        status_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        status_frame.pack(fill=tk.X)
+
+        # Always create fresh status labels for the new interface
+        self.qgis_info_label = tk.Label(
+            status_frame,
+            text="📊 QGis: En attente",
+            font=("Segoe UI", 9),
             fg=COLORS['INFO'],
             bg=COLORS['CARD']
         )
-        title_label.pack(side=tk.LEFT)
+        self.qgis_info_label.pack(anchor=tk.W, pady=(0, 2))
 
-        # Contenu avec padding compact
-        content = tk.Frame(frame, bg=COLORS['CARD'])
-        content.pack(fill=tk.BOTH, expand=True, padx=8, pady=(0, 8))
+        self.suivi_info_label = tk.Label(
+            status_frame,
+            text="📋 Suivi: En attente",
+            font=("Segoe UI", 9),
+            fg=COLORS['INFO'],
+            bg=COLORS['CARD']
+        )
+        self.suivi_info_label.pack(anchor=tk.W)
 
-        # Créer les labels d'information s'ils n'existent pas
+    def _create_enhanced_info_section(self, parent: tk.Widget, row: int):
+        """Section 2: Informations communes détectées."""
+        from ui.styles import create_card_frame, create_section_header
+
+        # Container for the card
+        card_container = tk.Frame(parent, bg=COLORS['BG'])
+        card_container.grid(row=row, column=0, sticky="ew", pady=(0, 10))
+
+        # Main card for info
+        info_card = create_card_frame(card_container)
+        info_card.pack(fill=tk.X, expand=False)
+
+        # Section header
+        header_frame = create_section_header(info_card, "📋", "Informations communes")
+        header_frame.pack(fill=tk.X, padx=12, pady=(8, 5))
+
+        # Content frame
+        content_frame = tk.Frame(info_card, bg=COLORS['CARD'])
+        content_frame.pack(fill=tk.X, expand=False, padx=12, pady=(0, 8))
+
+        # Info display in horizontal layout
+        info_grid = tk.Frame(content_frame, bg=COLORS['CARD'])
+        info_grid.pack(fill=tk.X)
+
+        # Configure grid for 2 columns
+        info_grid.grid_columnconfigure(0, weight=1)
+        info_grid.grid_columnconfigure(1, weight=1)
+
+        # Initialize info displays dictionary
+        if not hasattr(self, 'info_displays'):
+            self.info_displays = {}
+
+        # Create info fields
+        info_fields = [
+            ("Collaborateur", "👤"),
+            ("Commune", "🏘️"),
+            ("INSEE", "🔢"),
+            ("ID Tâche", "📋")
+        ]
+
+        for i, (label, icon) in enumerate(info_fields):
+            row_pos = i // 2
+            col_pos = i % 2
+
+            field_frame = tk.Frame(info_grid, bg=COLORS['LIGHT'], relief='flat', bd=1)
+            field_frame.grid(row=row_pos, column=col_pos, sticky="ew", padx=2, pady=2)
+
+            # Label
+            label_widget = tk.Label(
+                field_frame,
+                text=f"{icon} {label}:",
+                font=("Segoe UI", 8, "bold"),
+                fg=COLORS['TEXT_PRIMARY'],
+                bg=COLORS['LIGHT']
+            )
+            label_widget.pack(anchor=tk.W, padx=4, pady=2)
+
+            # Value
+            value_label = tk.Label(
+                field_frame,
+                text="Non détecté",
+                font=("Segoe UI", 8),
+                fg=COLORS['INFO'],
+                bg=COLORS['LIGHT']
+            )
+            value_label.pack(anchor=tk.W, padx=4, pady=(0, 2))
+
+            # Store reference for updates
+            self.info_displays[label.lower()] = value_label
+
+    def _create_enhanced_analysis_section(self, parent: tk.Widget, row: int):
+        """Section 3: Analyse critères (simplifiée)."""
+        from ui.styles import create_card_frame, create_section_header
+
+        # Container for the card
+        card_container = tk.Frame(parent, bg=COLORS['BG'])
+        card_container.grid(row=row, column=0, sticky="ew", pady=(0, 10))
+
+        # Main card for analysis
+        analysis_card = create_card_frame(card_container)
+        analysis_card.pack(fill=tk.X, expand=False)
+
+        # Section header
+        header_frame = create_section_header(analysis_card, "⚙️", "Analyse & Critères")
+        header_frame.pack(fill=tk.X, padx=12, pady=(8, 5))
+
+        # Content frame
+        content_frame = tk.Frame(analysis_card, bg=COLORS['CARD'])
+        content_frame.pack(fill=tk.X, expand=False, padx=12, pady=(0, 8))
+
+        # Progress bar
+        progress_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        progress_frame.pack(fill=tk.X, pady=(0, 8))
+
+        from tkinter import ttk
+        self.progress_bar = ttk.Progressbar(
+            progress_frame,
+            mode='determinate',
+            style='Horizontal.TProgressbar',
+            maximum=100,
+            value=0
+        )
+        self.progress_bar.pack(fill=tk.X, pady=(0, 5))
+
+        # Export button
+        self.export_button = ttk.Button(
+            content_frame,
+            text="📤 Exporter",
+            command=self._export_qc_report,
+            style='Success.TButton',
+            state='disabled'
+        )
+        self.export_button.pack(anchor=tk.W)
+
+    def _create_enhanced_results_section(self, parent: tk.Widget, row: int):
+        """Section 4: Résultats d'analyse."""
+        from ui.styles import create_card_frame, create_section_header
+
+        # Container for the card
+        card_container = tk.Frame(parent, bg=COLORS['BG'])
+        card_container.grid(row=row, column=0, sticky="nsew", pady=(0, 10))
+
+        # Main card for results
+        results_card = create_card_frame(card_container)
+        results_card.pack(fill=tk.BOTH, expand=True)
+
+        # Section header
+        header_frame = create_section_header(results_card, "📊", "Résultats d'analyse")
+        header_frame.pack(fill=tk.X, padx=12, pady=(8, 5))
+
+        # Content frame with scrollable area
+        content_frame = tk.Frame(results_card, bg=COLORS['CARD'])
+        content_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 8))
+
+        # Results display area
+        self.results_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        self.results_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Initial message
+        initial_label = tk.Label(
+            self.results_frame,
+            text="📋 En attente de l'analyse\n\nLes résultats s'afficheront ici\naprès le chargement des fichiers",
+            font=("Segoe UI", 10),
+            fg=COLORS['INFO'],
+            bg=COLORS['CARD'],
+            justify=tk.CENTER
+        )
+        initial_label.pack(expand=True)
+
+    def _create_enhanced_files_quadrant(self, parent: tk.Widget, row: int, col: int):
+        """Quadrant 1: Import des fichiers avec design moderne."""
+        from ui.styles import create_card_frame, create_section_header
+
+        # Container for the card
+        card_container = tk.Frame(parent, bg=COLORS['BG'])
+        card_container.grid(row=row, column=col, sticky="nsew", padx=5, pady=5)
+
+        # Main card for file import
+        files_card = create_card_frame(card_container)
+        files_card.pack(fill=tk.BOTH, expand=True)
+
+        # Section header
+        header_frame = create_section_header(files_card, "📁", "Import des fichiers")
+        header_frame.pack(fill=tk.X, padx=12, pady=(8, 5))
+
+        # Content frame
+        content_frame = tk.Frame(files_card, bg=COLORS['CARD'])
+        content_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 8))
+
+        # Initialize info labels if they don't exist
         if self.qgis_info_label is None:
-            self.qgis_info_label = tk.Label(content, text="Aucun fichier chargé", bg=COLORS['CARD'])
+            self.qgis_info_label = tk.Label(content_frame, text="❌ Non chargé",
+                                          font=("Segoe UI", 7), fg=COLORS['TEXT_SECONDARY'],
+                                          bg=COLORS['CARD'])
         if self.suivi_info_label is None:
-            self.suivi_info_label = tk.Label(content, text="Aucun fichier chargé", bg=COLORS['CARD'])
+            self.suivi_info_label = tk.Label(content_frame, text="❌ Non chargé",
+                                           font=("Segoe UI", 7), fg=COLORS['TEXT_SECONDARY'],
+                                           bg=COLORS['CARD'])
 
-        # Section QGis avec design amélioré
-        self._create_enhanced_file_section(content, "QGis", "🗺️", self._load_qgis_file, self.qgis_info_label)
+        # QGis section
+        self._create_modern_file_section(content_frame, "QGis", "🗺️", self._load_qgis_file, self.qgis_info_label)
 
-        # Séparateur élégant
-        separator = tk.Frame(content, height=1, bg=COLORS['BORDER'])
-        separator.pack(fill=tk.X, pady=8)
+        # Separator
+        separator = tk.Frame(content_frame, height=1, bg=COLORS['BORDER'])
+        separator.pack(fill=tk.X, pady=6)
 
-        # Section Suivi Commune
-        self._create_enhanced_file_section(content, "Suivi Commune", "📋", self._load_suivi_file, self.suivi_info_label)
+        # Suivi Commune section
+        self._create_modern_file_section(content_frame, "Suivi Commune", "📋", self._load_suivi_file, self.suivi_info_label)
 
-    def _create_enhanced_file_section(self, parent: tk.Widget, title: str, icon: str, command, info_label):
-        """Crée une section de fichier avec design amélioré."""
-        section_frame = tk.Frame(parent, bg=COLORS['CARD'])
-        section_frame.pack(fill=tk.X, pady=3)
+    def _create_modern_file_section(self, parent: tk.Widget, title: str, icon: str, command, info_label):
+        """Create a modern file section with consistent styling."""
+        # Section container with light background
+        section_frame = tk.Frame(parent, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        section_frame.pack(fill=tk.X, pady=(0, 2))
 
-        # En-tête de section
-        header_frame = tk.Frame(section_frame, bg=COLORS['CARD'])
-        header_frame.pack(fill=tk.X)
+        section_content = tk.Frame(section_frame, bg=COLORS['LIGHT'])
+        section_content.pack(fill=tk.X, padx=4, pady=3)
+
+        # Section header
+        header_frame = tk.Frame(section_content, bg=COLORS['LIGHT'])
+        header_frame.pack(fill=tk.X, pady=(0, 1))
 
         tk.Label(
             header_frame,
             text=f"{icon} {title}",
-            font=("Segoe UI", 10, "bold"),
-            fg=COLORS['TEXT_PRIMARY'],
-            bg=COLORS['CARD']
-        ).pack(side=tk.LEFT)
-
-        # Bouton avec style Sofrecom compact
-        btn = tk.Button(
-            header_frame,
-            text="📂 Charger",
-            font=("Segoe UI", 8, "bold"),
-            fg='white',
-            bg=COLORS['PRIMARY'],
-            activebackground=COLORS['PRIMARY_LIGHT'],
-            activeforeground='white',
-            relief='flat',
-            padx=8,
-            pady=2,
-            cursor='hand2',
-            command=command
-        )
-        btn.pack(side=tk.RIGHT)
-
-        # Effet hover Sofrecom
-        def on_enter(e):
-            btn.config(bg=COLORS['PRIMARY_LIGHT'])
-        def on_leave(e):
-            btn.config(bg=COLORS['PRIMARY'])
-
-        btn.bind("<Enter>", on_enter)
-        btn.bind("<Leave>", on_leave)
-
-        # Label d'information avec style amélioré
-        info_label.config(
-            font=("Segoe UI", 8),
-            fg=COLORS['TEXT_SECONDARY'],
-            bg=COLORS['CARD'],
-            wraplength=200,
-            justify=tk.LEFT
-        )
-        info_label.pack(anchor=tk.W, pady=(5, 0))
-
-    def _create_enhanced_info_quadrant(self, parent: tk.Widget, row: int, col: int):
-        """Quadrant 2: Informations détectées avec design modernisé."""
-        frame = tk.Frame(parent, bg=COLORS['CARD'], relief='flat', bd=0)
-        frame.grid(row=row, column=col, sticky="nsew", padx=2, pady=2)
-        frame.config(highlightbackground=COLORS['SUCCESS'], highlightthickness=2)
-
-        # En-tête avec couleur distinctive
-        title_frame = tk.Frame(frame, bg=COLORS['SUCCESS'], height=35)
-        title_frame.pack(fill=tk.X)
-        title_frame.pack_propagate(False)
-
-        title_label = tk.Label(
-            title_frame,
-            text="ℹ️ Informations Détectées",
-            font=("Segoe UI", 11, "bold"),
-            fg='white',
-            bg=COLORS['SUCCESS']
-        )
-        title_label.pack(expand=True)
-
-        # Contenu avec grille améliorée
-        content = tk.Frame(frame, bg=COLORS['CARD'])
-        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=10)
-
-        # Configuration de la grille pour les champs d'information
-        content.grid_columnconfigure(0, weight=1)
-        content.grid_columnconfigure(1, weight=1)
-
-        # Champs d'information avec design amélioré
-        self._create_enhanced_info_field(content, 0, 0, "🏢", "Commune", self.commune_var)
-        self._create_enhanced_info_field(content, 0, 1, "👤", "Collaborateur", self.collaborator_var)
-        self._create_enhanced_info_field(content, 1, 0, "🆔", "INSEE", self.insee_var)
-        self._create_enhanced_info_field(content, 1, 1, "📋", "ID Tâche", self.id_tache_var)
-
-        # Note informative avec style amélioré
-        note_frame = tk.Frame(content, bg=COLORS['LIGHT'], relief='flat', bd=1)
-        note_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(10, 0))
-        note_frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
-
-        note_label = tk.Label(
-            note_frame,
-            text="💡 Ces informations sont détectées automatiquement lors du chargement des fichiers",
-            font=("Segoe UI", 8, "italic"),
-            fg=COLORS['INFO'],
-            bg=COLORS['LIGHT'],
-            wraplength=300,
-            justify=tk.CENTER
-        )
-        note_label.pack(pady=8)
-
-    def _create_enhanced_info_field(self, parent: tk.Widget, row: int, col: int,
-                                   icon: str, label: str, var: tk.StringVar):
-        """Crée un champ d'information avec design modernisé."""
-        field_frame = tk.Frame(parent, bg=COLORS['LIGHT'], relief='flat', bd=1)
-        field_frame.grid(row=row, column=col, sticky="ew", padx=3, pady=3)
-        field_frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
-
-        # Contenu avec padding amélioré
-        content = tk.Frame(field_frame, bg=COLORS['LIGHT'])
-        content.pack(fill=tk.X, padx=8, pady=6)
-
-        # En-tête avec icône
-        header = tk.Frame(content, bg=COLORS['LIGHT'])
-        header.pack(fill=tk.X)
-
-        tk.Label(
-            header,
-            text=f"{icon} {label}",
-            font=("Segoe UI", 9, "bold"),
-            fg=COLORS['TEXT_PRIMARY'],
+            font=UIConfig.FONT_SUBTITLE,
+            fg=COLORS['SECONDARY'],
             bg=COLORS['LIGHT']
         ).pack(side=tk.LEFT)
 
-        # Valeur avec style amélioré - Texte en noir
+        # Modern button using ttk
+        btn = ttk.Button(
+            header_frame,
+            text="📂 Importer",
+            command=command,
+            style='Compact.TButton'
+        )
+        btn.pack(side=tk.RIGHT)
+
+        # Info label with modern styling
+        info_label.config(
+            font=("Segoe UI", 7),
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['LIGHT'],
+            wraplength=200,
+            justify=tk.LEFT
+        )
+        info_label.pack(anchor=tk.W, pady=(2, 0))
+
+    def _create_enhanced_info_quadrant(self, parent: tk.Widget, row: int, col: int):
+        """Quadrant 2: Informations détectées avec design moderne."""
+        from ui.styles import create_card_frame, create_section_header
+
+        # Container for the card
+        card_container = tk.Frame(parent, bg=COLORS['BG'])
+        card_container.grid(row=row, column=col, sticky="nsew", padx=5, pady=5)
+
+        # Main card for detected info
+        info_card = create_card_frame(card_container)
+        info_card.pack(fill=tk.BOTH, expand=True)
+
+        # Section header
+        header_frame = create_section_header(info_card, "ℹ️", "Informations détectées")
+        header_frame.pack(fill=tk.X, padx=12, pady=(8, 5))
+
+        # Content frame
+        content_frame = tk.Frame(info_card, bg=COLORS['CARD'])
+        content_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 8))
+
+        # Grid configuration for info fields
+        content_frame.grid_columnconfigure(0, weight=1)
+        content_frame.grid_columnconfigure(1, weight=1)
+
+        # Information fields with modern design
+        self._create_modern_info_field(content_frame, 0, 0, "🏢", "Commune", self.commune_var)
+        self._create_modern_info_field(content_frame, 0, 1, "👤", "Collaborateur", self.collaborator_var)
+        self._create_modern_info_field(content_frame, 1, 0, "🆔", "INSEE", self.insee_var)
+        self._create_modern_info_field(content_frame, 1, 1, "📋", "ID Tâche", self.id_tache_var)
+
+        # Info note
+        note_frame = tk.Frame(content_frame, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        note_frame.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+
+        note_label = tk.Label(
+            note_frame,
+            text="💡 Informations détectées automatiquement",
+            font=("Segoe UI", 8, "italic"),
+            fg=COLORS['INFO'],
+            bg=COLORS['LIGHT']
+        )
+        note_label.pack(pady=6)
+
+    def _create_modern_info_field(self, parent: tk.Widget, row: int, col: int,
+                                 icon: str, label: str, var: tk.StringVar):
+        """Create a modern info field with consistent styling."""
+        field_frame = tk.Frame(parent, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        field_frame.grid(row=row, column=col, sticky="ew", padx=2, pady=2)
+
+        # Content with compact padding
+        content = tk.Frame(field_frame, bg=COLORS['LIGHT'])
+        content.pack(fill=tk.X, padx=6, pady=4)
+
+        # Header with icon
+        tk.Label(
+            content,
+            text=f"{icon} {label}",
+            font=("Segoe UI", 8, "bold"),
+            fg=COLORS['TEXT_PRIMARY'],
+            bg=COLORS['LIGHT']
+        ).pack(anchor=tk.W)
+
+        # Value label
         value_label = tk.Label(
             content,
             textvariable=var,
-            font=("Segoe UI", 9),
-            fg=COLORS['TEXT_PRIMARY'],  # Changé de ACCENT à TEXT_PRIMARY pour texte noir
+            font=("Segoe UI", 8),
+            fg=COLORS['TEXT_SECONDARY'],
             bg=COLORS['LIGHT'],
             wraplength=120,
             justify=tk.LEFT
         )
-        value_label.pack(anchor=tk.W, pady=(3, 0))
+        value_label.pack(anchor=tk.W, pady=(2, 0))
 
-        # Stocker la référence pour les mises à jour
+        # Store reference for updates
         self.info_displays[label.lower()] = value_label
 
     def _create_enhanced_analysis_quadrant(self, parent: tk.Widget, row: int, col: int):
-        """Quadrant 3: Analyse et critères avec style Sofrecom."""
-        # Carte avec style Sofrecom
+        """Quadrant 3: Analyse et critères avec design moderne."""
+        from ui.styles import create_card_frame, create_section_header
+
+        # Container for the card
         card_container = tk.Frame(parent, bg=COLORS['BG'])
-        card_container.grid(row=row, column=col, sticky="nsew", padx=10, pady=10)
+        card_container.grid(row=row, column=col, sticky="nsew", padx=5, pady=5)
 
-        frame = tk.Frame(card_container, bg=COLORS['CARD'], relief='flat', bd=0)
-        frame.pack(fill=tk.BOTH, expand=True, padx=1, pady=1)
-        frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+        # Main card for analysis
+        analysis_card = create_card_frame(card_container)
+        analysis_card.pack(fill=tk.BOTH, expand=True)
 
-        # En-tête avec style Sofrecom
-        title_frame = tk.Frame(frame, bg=COLORS['CARD'])
-        title_frame.pack(fill=tk.X, padx=8, pady=(8, 4))
+        # Section header
+        header_frame = create_section_header(analysis_card, "⚙️", "Analyse & Critères")
+        header_frame.pack(fill=tk.X, padx=12, pady=(8, 5))
 
-        # Icône et titre
-        icon_label = tk.Label(
-            title_frame,
-            text="⚙️",
-            font=("Segoe UI", 12),
-            fg=COLORS['SECONDARY'],
-            bg=COLORS['CARD']
-        )
-        icon_label.pack(side=tk.LEFT, padx=(0, 6))
+        # Content frame
+        content_frame = tk.Frame(analysis_card, bg=COLORS['CARD'])
+        content_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 8))
 
-        title_label = tk.Label(
-            title_frame,
-            text="Analyse & Critères",
-            font=("Segoe UI", 10, "bold"),
-            fg=COLORS['INFO'],
-            bg=COLORS['CARD']
-        )
-        title_label.pack(side=tk.LEFT)
-
-        # Contenu compact
-        content = tk.Frame(frame, bg=COLORS['CARD'])
-        content.pack(fill=tk.BOTH, expand=True, padx=8, pady=(0, 8))
-
-        # Informations sur les critères avec design compact mais lisible
-        criteria_info = tk.Frame(content, bg=COLORS['LIGHT'], relief='flat', bd=1)
-        criteria_info.pack(fill=tk.X, pady=(0, 8))
-        criteria_info.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+        # Criteria info
+        criteria_info = tk.Frame(content_frame, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        criteria_info.pack(fill=tk.X, pady=(0, 6))
 
         criteria_label = tk.Label(
             criteria_info,
             text="🔍 5 Critères de Contrôle Qualité",
-            font=("Segoe UI", 9, "bold"),
+            font=("Segoe UI", 8, "bold"),
             fg=COLORS['TEXT_PRIMARY'],
             bg=COLORS['LIGHT']
         )
-        criteria_label.pack(pady=6)
+        criteria_label.pack(pady=4)
 
-        # Indicateur d'analyse automatique avec design amélioré
-        auto_frame = tk.Frame(content, bg=COLORS['LIGHT'], relief='flat', bd=1)
-        auto_frame.pack(fill=tk.X, pady=(5, 8))
-        auto_frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+        # Auto analysis indicator
+        auto_frame = tk.Frame(content_frame, bg=COLORS['LIGHT'], relief='flat', bd=1)
+        auto_frame.pack(fill=tk.X, pady=(4, 6))
 
         auto_label = tk.Label(
             auto_frame,
-            text="🔄 Analyse Automatique Activée",
-            font=("Segoe UI", 9, "bold"),
+            text="🔄 Analyse automatique activée",
+            font=("Segoe UI", 8, "bold"),
             fg=COLORS['INFO'],
             bg=COLORS['LIGHT']
         )
-        auto_label.pack(pady=6)
+        auto_label.pack(pady=4)
 
-        auto_desc = tk.Label(
-            auto_frame,
-            text="L'analyse se lance automatiquement dès que les deux fichiers sont chargés",
-            font=("Segoe UI", 8),
-            fg=COLORS['TEXT_SECONDARY'],
-            bg=COLORS['LIGHT'],
-            wraplength=200
-        )
-        auto_desc.pack(pady=(0, 6))
+        # Action buttons
+        buttons_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        buttons_frame.pack(fill=tk.X, pady=(4, 0))
 
-        # Boutons d'action avec design amélioré
-        buttons_frame = tk.Frame(content, bg=COLORS['CARD'])
-        buttons_frame.pack(fill=tk.X, pady=(5, 0))
-
-        # Bouton Export avec style Sofrecom secondaire
-        self.export_button = tk.Button(
+        # Export button using ttk
+        self.export_button = ttk.Button(
             buttons_frame,
             text="📊 Exporter",
-            font=("Segoe UI", 9, "bold"),
-            fg='white',
-            bg=COLORS['SECONDARY'],
-            activebackground=COLORS['SECONDARY_LIGHT'],
-            activeforeground='white',
-            relief='flat',
-            padx=12,
-            pady=4,
-            cursor='hand2',
-            command=self._export_qc_report
+            command=self._export_qc_report,
+            style='Secondary.TButton'
         )
         self.export_button.pack(side=tk.LEFT)
 
-        # Effet hover Sofrecom
-        def on_export_enter(e):
-            self.export_button.config(bg=COLORS['SECONDARY_LIGHT'])
-        def on_export_leave(e):
-            self.export_button.config(bg=COLORS['SECONDARY'])
-
-        self.export_button.bind("<Enter>", on_export_enter)
-        self.export_button.bind("<Leave>", on_export_leave)
-
-        # Barre de progression compacte
-        progress_frame = tk.Frame(content, bg=COLORS['CARD'])
-        progress_frame.pack(fill=tk.X, pady=(8, 0))
+        # Progress section
+        progress_frame = tk.Frame(content_frame, bg=COLORS['CARD'])
+        progress_frame.pack(fill=tk.X, pady=(6, 0))
 
         tk.Label(
             progress_frame,
@@ -7336,98 +7401,90 @@ class QualityControlModule:
             bg=COLORS['CARD']
         ).pack(anchor=tk.W)
 
-        # Conteneur pour la barre de progression avec bordure
-        progress_container = tk.Frame(progress_frame, bg=COLORS['BORDER'], height=8)
-        progress_container.pack(fill=tk.X, pady=(5, 0))
+        # Progress bar container
+        progress_container = tk.Frame(progress_frame, bg=COLORS['BORDER'], height=6)
+        progress_container.pack(fill=tk.X, pady=(3, 0))
         progress_container.pack_propagate(False)
 
-        # Barre de progression avec couleur dynamique
-        self.progress_bar = tk.Frame(progress_container, bg=COLORS['SUCCESS'], height=6)
-        self.progress_bar.place(x=1, y=1, width=0, height=6)
+        # Progress bar
+        self.progress_bar = tk.Frame(progress_container, bg=COLORS['SUCCESS'], height=4)
+        self.progress_bar.place(x=1, y=1, width=0, height=4)
 
     def _create_enhanced_results_quadrant(self, parent: tk.Widget, row: int, col: int):
-        """Quadrant 4: Résultats avec style Sofrecom."""
-        # Carte avec style Sofrecom
+        """Quadrant 4: Résultats avec design moderne."""
+        from ui.styles import create_card_frame, create_section_header
+
+        # Container for the card
         card_container = tk.Frame(parent, bg=COLORS['BG'])
-        card_container.grid(row=row, column=col, sticky="nsew", padx=10, pady=10)
+        card_container.grid(row=row, column=col, sticky="nsew", padx=5, pady=5)
 
-        frame = tk.Frame(card_container, bg=COLORS['CARD'], relief='flat', bd=0)
-        frame.pack(fill=tk.BOTH, expand=True, padx=1, pady=1)
-        frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
+        # Main card for results
+        results_card = create_card_frame(card_container)
+        results_card.pack(fill=tk.BOTH, expand=True)
 
-        # En-tête avec couleur distinctive pour les écarts
-        title_frame = tk.Frame(frame, bg=COLORS['PRIMARY'], height=35)
-        title_frame.pack(fill=tk.X)
-        title_frame.pack_propagate(False)
+        # Section header
+        header_frame = create_section_header(results_card, "📋", "Résultats d'analyse")
+        header_frame.pack(fill=tk.X, padx=12, pady=(8, 5))
 
-        title_label = tk.Label(
-            title_frame,
-            text="📋 Tableau des Écarts Plan Adressage",
-            font=("Segoe UI", 11, "bold"),
-            fg='white',
-            bg=COLORS['PRIMARY']
-        )
-        title_label.pack(expand=True)
+        # Content frame
+        content_frame = tk.Frame(results_card, bg=COLORS['CARD'])
+        content_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 8))
 
-        # Contenu pour le tableau des écarts
-        content = tk.Frame(frame, bg=COLORS['CARD'])
-        content.pack(fill=tk.BOTH, expand=True, padx=8, pady=8)
-
-        # Zone de résultats dédiée au tableau des écarts
-        results_container = tk.Frame(content, bg=COLORS['CARD'], relief='flat', bd=1)
+        # Results container
+        results_container = tk.Frame(content_frame, bg=COLORS['CARD'], relief='flat', bd=1)
         results_container.pack(fill=tk.BOTH, expand=True)
         results_container.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
 
-        # Créer le results_frame pour le tableau des écarts avec nom unique
+        # Create results frame for compatibility
         self.ecarts_results_frame_enhanced = tk.Frame(results_container, bg=COLORS['CARD'])
         self.ecarts_results_frame_enhanced.pack(fill=tk.BOTH, expand=True, padx=3, pady=3)
 
-        # Assigner à results_frame pour compatibilité
+        # Assign to results_frame for compatibility
         self.results_frame = self.ecarts_results_frame_enhanced
 
-        # Créer le tableau des écarts plan adressage (initial)
+        # Create the results table
         self._create_ecarts_plan_adressage_table(self.ecarts_results_frame_enhanced)
 
     def _create_enhanced_status_bar(self):
-        """Crée la barre de statut compacte avec style Sofrecom."""
-        status_frame = tk.Frame(self.analysis_tab, bg=COLORS['LIGHT'], height=30)
-        status_frame.grid(row=2, column=0, sticky="ew", padx=0, pady=0)
+        """Create modern status bar with consistent design."""
+        status_frame = tk.Frame(self.analysis_tab, bg=COLORS['CARD'], height=25)
+        status_frame.grid(row=1, column=0, sticky="ew", padx=10, pady=(0, 10))
         status_frame.pack_propagate(False)
         status_frame.config(highlightbackground=COLORS['BORDER'], highlightthickness=1)
 
-        # Contenu avec padding amélioré
-        content = tk.Frame(status_frame, bg=COLORS['LIGHT'])
-        content.pack(fill=tk.BOTH, expand=True, padx=15, pady=6)
+        # Content with compact padding
+        content = tk.Frame(status_frame, bg=COLORS['CARD'])
+        content.pack(fill=tk.BOTH, expand=True, padx=12, pady=4)
 
-        # Icône de statut avec animation potentielle
+        # Status icon
         self.status_icon = tk.Label(
             content,
             text="⚡",
-            font=("Segoe UI", 12),
+            font=("Segoe UI", 10),
             fg=COLORS['SUCCESS'],
-            bg=COLORS['LIGHT']
+            bg=COLORS['CARD']
         )
         self.status_icon.pack(side=tk.LEFT)
 
-        # Message de statut avec style amélioré
+        # Status message
         self.status_label = tk.Label(
             content,
             text="Prêt - Module de Contrôle Qualité initialisé",
-            font=("Segoe UI", 9),
-            fg=COLORS['TEXT_PRIMARY'],
-            bg=COLORS['LIGHT']
-        )
-        self.status_label.pack(side=tk.LEFT, padx=(8, 0))
-
-        # Indicateur de temps/version à droite
-        time_label = tk.Label(
-            content,
-            text="Pladria v3.0 | Module 5",
             font=("Segoe UI", 8),
-            fg=COLORS['TEXT_SECONDARY'],
-            bg=COLORS['LIGHT']
+            fg=COLORS['TEXT_PRIMARY'],
+            bg=COLORS['CARD']
         )
-        time_label.pack(side=tk.RIGHT)
+        self.status_label.pack(side=tk.LEFT, padx=(6, 0))
+
+        # Version info
+        version_label = tk.Label(
+            content,
+            text="Pladria v2.5 | Module 5",
+            font=("Segoe UI", 7),
+            fg=COLORS['TEXT_SECONDARY'],
+            bg=COLORS['CARD']
+        )
+        version_label.pack(side=tk.RIGHT)
 
     # ==========================================
     # MÉTHODES D'AMÉLIORATION DE L'EXPÉRIENCE UTILISATEUR
@@ -7436,9 +7493,18 @@ class QualityControlModule:
     def _update_progress_bar(self, percentage: float):
         """Met à jour la barre de progression avec animation."""
         try:
+            # Nouvelle interface : barre de progression ttk.Progressbar
             if (hasattr(self, 'progress_bar') and
                 self.progress_bar is not None and
-                self.progress_bar.winfo_exists()):
+                hasattr(self.progress_bar, 'configure')):  # C'est un ttk.Progressbar
+
+                self.progress_bar.configure(value=percentage)
+
+            # Ancienne interface : Frame avec largeur variable
+            elif (hasattr(self, 'progress_bar') and
+                  self.progress_bar is not None and
+                  hasattr(self.progress_bar, 'place') and
+                  self.progress_bar.winfo_exists()):  # C'est un Frame
 
                 # Calculer la largeur basée sur le pourcentage
                 container_width = self.progress_bar.master.winfo_width()
@@ -7455,12 +7521,19 @@ class QualityControlModule:
 
                     self.progress_bar.config(bg=color)
                     self.progress_bar.place(width=new_width)
-            else:
-                # Fallback vers l'ancienne méthode si disponible
-                if hasattr(self, 'progress_var') and self.progress_var is not None:
-                    self.progress_var.set(percentage)
+
+            # Fallback vers l'ancienne méthode si disponible
+            elif hasattr(self, 'progress_var') and self.progress_var is not None:
+                self.progress_var.set(percentage)
+
         except Exception as e:
             self.logger.error(f"Erreur mise à jour barre de progression: {e}")
+            # Fallback silencieux
+            try:
+                if hasattr(self, 'progress_var') and self.progress_var is not None:
+                    self.progress_var.set(percentage)
+            except:
+                pass
 
     def _update_status_with_animation(self, message: str, icon: str = "⚡", color: str = None):
         """Met à jour le statut avec une animation visuelle."""

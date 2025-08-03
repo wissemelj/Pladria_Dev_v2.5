@@ -157,11 +157,52 @@ class FileConfig:
 class AppInfo:
     """Application information"""
 
-    VERSION = "2.5.2"  # Semantic versioning for better update management
+    _BASE_VERSION = "2.5.1"  # Base version for fallback
     AUTHOR = "Equipe Plan Adressage - BLI"
     COPYRIGHT = "© 2025 Sofrecom Tunisie"
-    DESCRIPTION = "Pladria - Activité Plan Adressae"
-    FULL_DESCRIPTION = "Pladria : Une Initiative pour automatiser la génération des suivis pour l'activité CMS Adresse & Plan Adressage"
+    DESCRIPTION = "Pladria - Activité CMS Adresse & Plan Adressage"
+    FULL_DESCRIPTION = "Pladria : Une Initiative dédiée pour faciliter la Production,le Suivi & la Contrôle Qualité de l'activité CMS Adresse & Plan Adressage"
+
+    @classmethod
+    def get_version(cls) -> str:
+        """Get the current version, checking for updates"""
+        try:
+            import os
+            import sys
+
+            # Get application directory
+            if getattr(sys, 'frozen', False):
+                # PyInstaller executable
+                app_dir = os.path.dirname(sys.executable)
+            else:
+                # Development mode
+                app_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+
+            # Check for version file first (created by update system)
+            version_file = os.path.join(app_dir, "version.txt")
+            if os.path.exists(version_file):
+                with open(version_file, 'r', encoding='utf-8') as f:
+                    version = f.read().strip()
+                    if version:
+                        return version
+
+            # Fallback to base version
+            return cls._BASE_VERSION
+
+        except Exception:
+            # If anything fails, return base version
+            return cls._BASE_VERSION
+
+# Create a singleton instance for easy access
+_app_info = AppInfo()
+
+# For backward compatibility, expose VERSION at module level
+def get_app_version():
+    """Get the current application version"""
+    return _app_info.get_version()
+
+# Update the VERSION to use the dynamic version
+AppInfo.VERSION = _app_info.get_version()
 
 # Logging configuration
 class LoggingConfig:

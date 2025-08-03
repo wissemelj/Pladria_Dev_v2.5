@@ -97,7 +97,7 @@ class UpdateManager:
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.current_version = AppInfo.VERSION
+        self.current_version = AppInfo.get_version()
         self.update_in_progress = False
         self.download_progress_callback: Optional[Callable] = None
         self.status_callback: Optional[Callable] = None
@@ -307,6 +307,9 @@ class UpdateManager:
             self._update_status(f"📥 Téléchargement de la mise à jour v{update_info.version}...")
             self._update_progress(0, "Initialisation du téléchargement...")
 
+            # Store version for later use during installation
+            self._current_update_version = update_info.version
+
             # Create download path
             filename = f"pladria-v{update_info.version}-update.zip"
             download_path = os.path.join(self.temp_dir, filename)
@@ -372,21 +375,29 @@ class UpdateManager:
             self.logger.error(f"Error verifying checksum: {e}")
             return False
 
-    def create_backup(self) -> bool:
-        """Create backup of current application"""
+    def create_backup(self, quick_backup: bool = False) -> bool:
+        """Create backup of current application with progress tracking
+
+        Args:
+            quick_backup: If True, only backup essential files for faster operation
+        """
         try:
-            self._update_status("💾 Création de la sauvegarde...")
+            backup_type = "rapide" if quick_backup else "complète"
+            self._update_status(f"💾 Création de la sauvegarde {backup_type}...")
+            self._update_progress(0, "Initialisation de la sauvegarde...")
 
             # Create backup filename with timestamp
             from datetime import datetime
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            backup_name = f"pladria_v{self.current_version}_{timestamp}"
+            backup_type_suffix = "_quick" if quick_backup else ""
+            backup_name = f"pladria_v{self.current_version}_{timestamp}{backup_type_suffix}"
             backup_path = os.path.join(self.backup_dir, backup_name)
 
             # Create backup directory
             os.makedirs(backup_path, exist_ok=True)
+            self._update_progress(10, "Dossier de sauvegarde créé...")
 
-            # Copy essential files
+            # Essential files to backup
             essential_files = [
                 "Pladria.exe",
                 "Icone_App.png",
@@ -395,22 +406,78 @@ class UpdateManager:
                 "Background.png"
             ]
 
-            for file_name in essential_files:
-                src_path = os.path.join(self.app_dir, file_name)
-                if os.path.exists(src_path):
-                    dst_path = os.path.join(backup_path, file_name)
-                    shutil.copy2(src_path, dst_path)
+            if quick_backup:
+                # Quick backup: only essential files
+                total_files = len(essential_files)
+                self._update_progress(20, "Sauvegarde rapide des fichiers essentiels...")
 
-            # Copy any additional directories that might exist
-            for item in os.listdir(self.app_dir):
-                item_path = os.path.join(self.app_dir, item)
-                if os.path.isdir(item_path) and item not in ['backup', '__pycache__']:
-                    dst_path = os.path.join(backup_path, item)
-                    shutil.copytree(item_path, dst_path, ignore=shutil.ignore_patterns('*.pyc', '__pycache__'))
+                for i, file_name in enumerate(essential_files):
+                    src_path = os.path.join(self.app_dir, file_name)
+                    if os.path.exists(src_path):
+                        dst_path = os.path.join(backup_path, file_name)
+                        try:
+                            shutil.copy2(src_path, dst_path)
+                            progress = 20 + ((i + 1) / total_files) * 60  # 60% for file copying
+                            self._update_progress(int(progress), f"Sauvegarde: {file_name}")
+                        except Exception as e:
+                            self.logger.warning(f"Failed to backup {file_name}: {e}")
+
+                self._update_progress(85, "Sauvegarde rapide terminée")
+
+            else:
+                # Full backup: all files and directories
+                dirs_to_backup = []
+                total_files = len(essential_files)
+
+                for item in os.listdir(self.app_dir):
+                    item_path = os.path.join(self.app_dir, item)
+                    if os.path.isdir(item_path) and item not in ['backup', '__pycache__', 'logs']:
+                        dirs_to_backup.append(item)
+                        # Count files in directory for progress
+                        for _, _, files in os.walk(item_path):
+                            total_files += len(files)
+
+                self.logger.info(f"Total files to backup: {total_files}")
+                current_file = 0
+
+                # Copy essential files first
+                self._update_progress(15, "Sauvegarde des fichiers essentiels...")
+                for file_name in essential_files:
+                    src_path = os.path.join(self.app_dir, file_name)
+                    if os.path.exists(src_path):
+                        dst_path = os.path.join(backup_path, file_name)
+                        try:
+                            shutil.copy2(src_path, dst_path)
+                            current_file += 1
+                            progress = 15 + (current_file / total_files) * 60  # 60% for file copying
+                            self._update_progress(int(progress), f"Sauvegarde: {file_name}")
+                        except Exception as e:
+                            self.logger.warning(f"Failed to backup {file_name}: {e}")
+
+                # Copy directories with progress tracking
+                for dir_name in dirs_to_backup:
+                    src_dir = os.path.join(self.app_dir, dir_name)
+                    dst_dir = os.path.join(backup_path, dir_name)
+
+                    try:
+                        self._update_progress(int(15 + (current_file / total_files) * 60),
+                                            f"Sauvegarde du dossier: {dir_name}...")
+
+                        # Use custom copy function with progress
+                        self._copy_directory_with_progress(src_dir, dst_dir, current_file, total_files)
+
+                        # Update current_file count
+                        for _, _, files in os.walk(src_dir):
+                            current_file += len(files)
+
+                    except Exception as e:
+                        self.logger.warning(f"Failed to backup directory {dir_name}: {e}")
 
             # Clean old backups
+            self._update_progress(85, "Nettoyage des anciennes sauvegardes...")
             self._cleanup_old_backups()
 
+            self._update_progress(100, "Sauvegarde terminée avec succès")
             self._update_status("✅ Sauvegarde créée avec succès")
             self.logger.info(f"Backup created at: {backup_path}")
             return True
@@ -418,6 +485,86 @@ class UpdateManager:
         except Exception as e:
             self.logger.error(f"Error creating backup: {e}")
             self._update_status("❌ Erreur lors de la sauvegarde")
+            return False
+
+    def _copy_directory_with_progress(self, src_dir: str, dst_dir: str, current_file: int, total_files: int):
+        """Copy directory with progress updates and timeout protection"""
+        import time
+        start_time = time.time()
+        timeout_seconds = 300  # 5 minutes timeout
+
+        try:
+            os.makedirs(dst_dir, exist_ok=True)
+
+            for root, dirs, files in os.walk(src_dir):
+                # Check timeout
+                if time.time() - start_time > timeout_seconds:
+                    self.logger.warning(f"Backup timeout reached for directory {src_dir}")
+                    break
+
+                # Create subdirectories
+                for dir_name in dirs:
+                    src_subdir = os.path.join(root, dir_name)
+                    rel_path = os.path.relpath(src_subdir, src_dir)
+                    dst_subdir = os.path.join(dst_dir, rel_path)
+                    os.makedirs(dst_subdir, exist_ok=True)
+
+                # Copy files
+                for file_name in files:
+                    # Check timeout for each file
+                    if time.time() - start_time > timeout_seconds:
+                        self.logger.warning(f"Backup timeout reached during file copy")
+                        return
+
+                    src_file = os.path.join(root, file_name)
+                    rel_path = os.path.relpath(src_file, src_dir)
+                    dst_file = os.path.join(dst_dir, rel_path)
+
+                    try:
+                        # Skip very large files (>100MB) to avoid hanging
+                        if os.path.getsize(src_file) > 100 * 1024 * 1024:
+                            self.logger.warning(f"Skipping large file: {rel_path}")
+                            continue
+
+                        shutil.copy2(src_file, dst_file)
+                        current_file += 1
+
+                        # Update progress every 10 files to avoid too frequent updates
+                        if current_file % 10 == 0:
+                            progress = 15 + (current_file / total_files) * 60
+                            self._update_progress(int(progress), f"Sauvegarde: {rel_path}")
+
+                    except (PermissionError, OSError) as e:
+                        self.logger.warning(f"Failed to copy {src_file}: {e}")
+                        continue
+                    except Exception as e:
+                        self.logger.warning(f"Unexpected error copying {src_file}: {e}")
+                        continue
+
+        except Exception as e:
+            self.logger.error(f"Error copying directory {src_dir}: {e}")
+            raise
+
+    def perform_quick_update(self, update_info: UpdateInfo) -> bool:
+        """Perform a quick update with minimal backup"""
+        try:
+            self._update_status("🚀 Mise à jour rapide en cours...")
+
+            # Quick backup (essential files only)
+            if not self.create_backup(quick_backup=True):
+                return False
+
+            # Download update
+            download_path = self.download_update(update_info)
+            if not download_path:
+                return False
+
+            # Install update
+            return self.install_update(download_path)
+
+        except Exception as e:
+            self.logger.error(f"Error during quick update: {e}")
+            self._update_status("❌ Erreur lors de la mise à jour rapide")
             return False
 
     def _cleanup_old_backups(self):
@@ -442,7 +589,7 @@ class UpdateManager:
 
     def install_update(self, update_package_path: str) -> bool:
         """
-        Install the downloaded update
+        Install the downloaded update with progress tracking
 
         Args:
             update_package_path: Path to the downloaded update package
@@ -452,20 +599,44 @@ class UpdateManager:
         """
         try:
             self._update_status("🔧 Installation de la mise à jour...")
+            self._update_progress(0, "Préparation de l'installation...")
 
             # Extract update package
             extract_path = os.path.join(self.temp_dir, "extracted")
             os.makedirs(extract_path, exist_ok=True)
 
-            with zipfile.ZipFile(update_package_path, 'r') as zip_ref:
-                zip_ref.extractall(extract_path)
+            self._update_progress(10, "Extraction du package...")
 
+            with zipfile.ZipFile(update_package_path, 'r') as zip_ref:
+                # Get list of files for progress tracking
+                file_list = zip_ref.namelist()
+                total_files = len(file_list)
+
+                for i, file_name in enumerate(file_list):
+                    zip_ref.extract(file_name, extract_path)
+
+                    # Update progress every 10 files
+                    if i % 10 == 0 or i == total_files - 1:
+                        progress = 10 + (i / total_files) * 40  # 40% for extraction
+                        self._update_progress(int(progress), f"Extraction: {file_name}")
+
+            self._update_progress(50, "Extraction terminée")
             self._update_status("📦 Extraction terminée")
 
-            # Apply updates
+            # Apply updates with progress
+            self._update_progress(55, "Application des mises à jour...")
             if self._apply_update_files(extract_path):
-                self._update_status("✅ Mise à jour installée avec succès")
-                return True
+                # Update version information after successful file installation
+                self._update_progress(95, "Mise à jour de la version...")
+                if self._update_version_info(update_package_path):
+                    self._update_progress(100, "Installation terminée")
+                    self._update_status("✅ Mise à jour installée avec succès")
+                    return True
+                else:
+                    self.logger.warning("Version info update failed, but files were updated")
+                    self._update_progress(100, "Installation terminée (avertissement version)")
+                    self._update_status("⚠️ Mise à jour installée avec avertissement")
+                    return True  # Still consider it successful since files were updated
             else:
                 self._update_status("❌ Échec de l'installation")
                 return False
@@ -480,25 +651,147 @@ class UpdateManager:
             return False
 
     def _apply_update_files(self, extract_path: str) -> bool:
-        """Apply extracted update files to application directory"""
+        """Apply extracted update files to application directory with progress"""
         try:
-            # Look for update manifest or apply all files
-            for root, dirs, files in os.walk(extract_path):
+            # Count total files first
+            total_files = 0
+            for root, _, files in os.walk(extract_path):
+                total_files += len(files)
+
+            if total_files == 0:
+                self.logger.warning("No files found in update package")
+                return False
+
+            current_file = 0
+
+            # Apply all files with progress tracking
+            for root, _, files in os.walk(extract_path):
                 for file in files:
                     src_file = os.path.join(root, file)
                     rel_path = os.path.relpath(src_file, extract_path)
                     dst_file = os.path.join(self.app_dir, rel_path)
 
-                    # Create destination directory if needed
-                    os.makedirs(os.path.dirname(dst_file), exist_ok=True)
+                    try:
+                        # Create destination directory if needed
+                        os.makedirs(os.path.dirname(dst_file), exist_ok=True)
 
-                    # Copy file
-                    shutil.copy2(src_file, dst_file)
-                    self.logger.debug(f"Updated file: {rel_path}")
+                        # Copy file
+                        shutil.copy2(src_file, dst_file)
+                        self.logger.debug(f"Updated file: {rel_path}")
+
+                        current_file += 1
+
+                        # Update progress every 5 files or on last file
+                        if current_file % 5 == 0 or current_file == total_files:
+                            progress = 55 + (current_file / total_files) * 45  # 45% for file copying
+                            self._update_progress(int(progress), f"Installation: {rel_path}")
+
+                    except Exception as e:
+                        self.logger.error(f"Failed to update file {rel_path}: {e}")
+                        # Continue with other files instead of failing completely
+                        continue
 
             return True
         except Exception as e:
             self.logger.error(f"Error applying update files: {e}")
+            return False
+
+    def _update_version_info(self, update_package_path: str) -> bool:
+        """Update version information after successful installation"""
+        try:
+            # Extract version from update package filename or metadata
+            new_version = self._extract_version_from_package(update_package_path)
+            if not new_version:
+                self.logger.warning("Could not extract version from update package")
+                return False
+
+            # Method 1: Update constants.py file
+            if self._update_constants_file(new_version):
+                self.logger.info(f"Successfully updated version to {new_version} in constants.py")
+                return True
+
+            # Method 2: Create/update version file as fallback
+            if self._create_version_file(new_version):
+                self.logger.info(f"Successfully created version file with version {new_version}")
+                return True
+
+            return False
+
+        except Exception as e:
+            self.logger.error(f"Error updating version info: {e}")
+            return False
+
+    def _extract_version_from_package(self, package_path: str) -> Optional[str]:
+        """Extract version number from update package filename"""
+        try:
+            # Extract from filename pattern: pladria-v{version}-update.zip
+            filename = os.path.basename(package_path)
+            if 'pladria-v' in filename.lower():
+                # Extract version between 'v' and '-update'
+                start = filename.lower().find('v') + 1
+                end = filename.lower().find('-update')
+                if start > 0 and end > start:
+                    version_str = filename[start:end]
+                    self.logger.debug(f"Extracted version from filename: {version_str}")
+                    return version_str
+
+            # Fallback: try to extract from current update info
+            if hasattr(self, '_current_update_version'):
+                return self._current_update_version
+
+            return None
+
+        except Exception as e:
+            self.logger.error(f"Error extracting version from package: {e}")
+            return None
+
+    def _update_constants_file(self, new_version: str) -> bool:
+        """Update the VERSION in constants.py file"""
+        try:
+            constants_path = os.path.join(self.app_dir, "src", "config", "constants.py")
+            if not os.path.exists(constants_path):
+                self.logger.warning(f"Constants file not found: {constants_path}")
+                return False
+
+            # Read the current file
+            with open(constants_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            # Update the VERSION line
+            import re
+            pattern = r'(VERSION\s*=\s*["\'])([^"\']+)(["\'])'
+            match = re.search(pattern, content)
+
+            if match:
+                old_version = match.group(2)
+                new_content = re.sub(pattern, f'{match.group(1)}{new_version}{match.group(3)}', content)
+
+                # Write back the updated content
+                with open(constants_path, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+
+                self.logger.info(f"Updated version in constants.py from {old_version} to {new_version}")
+                return True
+            else:
+                self.logger.warning("Could not find VERSION pattern in constants.py")
+                return False
+
+        except Exception as e:
+            self.logger.error(f"Error updating constants file: {e}")
+            return False
+
+    def _create_version_file(self, new_version: str) -> bool:
+        """Create a separate version file as fallback"""
+        try:
+            version_file_path = os.path.join(self.app_dir, "version.txt")
+            with open(version_file_path, 'w', encoding='utf-8') as f:
+                f.write(new_version)
+
+            self.logger.info(f"Created version file with version {new_version}")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Error creating version file: {e}")
             return False
 
     def rollback_update(self) -> bool:
